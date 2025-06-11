@@ -6,8 +6,28 @@ import CategoryCard from '@/components/CategoryCard';
 import AdCard from '@/components/AdCard';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 const Index = () => {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Images d'arrière-plan thématiques
+  const backgroundImages = [
+    "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+  ];
+
+  // Changer l'image toutes les 5 secondes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => 
+        (prevIndex + 1) % backgroundImages.length
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [backgroundImages.length]);
+
   // Mock data pour les annonces récentes
   const recentAds = [
     {
@@ -50,9 +70,34 @@ const Index = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative py-20 px-4">
-        <div className="container mx-auto text-center">
+      {/* Hero Section with Dynamic Background */}
+      <section className="relative py-20 px-4 overflow-hidden">
+        {/* Background Images */}
+        <div className="absolute inset-0">
+          {backgroundImages.map((image, index) => (
+            <div
+              key={index}
+              className={`absolute inset-0 transition-opacity duration-1000 ${
+                index === currentImageIndex ? 'opacity-100' : 'opacity-0'
+              }`}
+              style={{
+                backgroundImage: `url(${image})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat'
+              }}
+            />
+          ))}
+          
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+          
+          {/* Gold gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background/90" />
+        </div>
+
+        {/* Content */}
+        <div className="container mx-auto text-center relative z-10">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Bienvenue sur <span className="text-gradient-gold">Yamo</span>
           </h1>
