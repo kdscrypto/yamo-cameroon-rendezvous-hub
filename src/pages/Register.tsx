@@ -1,27 +1,94 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { useEffect } from 'react';
 
 const Register = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
     confirmPassword: '',
+    fullName: '',
     acceptTerms: false,
     isAdult: false
   });
+  const [isLoading, setIsLoading] = useState(false);
+  const { signUp, user } = useAuth();
+  const { toast } = useToast();
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Redirect if user is already logged in
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement registration logic
-    console.log('Registration attempt:', formData);
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Erreur",
+        description: "Les mots de passe ne correspondent pas.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!formData.acceptTerms || !formData.isAdult) {
+      toast({
+        title: "Erreur",
+        description: "Vous devez accepter les conditions et certifier avoir plus de 18 ans.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const { error } = await signUp(formData.email, formData.password, formData.fullName);
+
+      if (error) {
+        if (error.message.includes('already registered')) {
+          toast({
+            title: "Compte existant",
+            description: "Cette adresse email est déjà utilisée. Essayez de vous connecter.",
+            variant: "destructive"
+          });
+        } else {
+          toast({
+            title: "Erreur d'inscription",
+            description: error.message,
+            variant: "destructive"
+          });
+        }
+      } else {
+        toast({
+          title: "Inscription réussie",
+          description: "Vérifiez votre email pour confirmer votre compte."
+        });
+        navigate('/login');
+      }
+    } catch (error) {
+      toast({
+        title: "Erreur",
+        description: "Une erreur inattendue s'est produite.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -49,6 +116,18 @@ const Register = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
+                <Label htmlFor="fullName">Nom complet</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder="Votre nom complet"
+                  value={formData.fullName}
+                  onChange={(e) => handleInputChange('fullName', e.target.value)}
+                  disabled={isLoading}
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
@@ -57,6 +136,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={(e) => handleInputChange('email', e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
               
@@ -69,6 +149,7 @@ const Register = () => {
                   value={formData.password}
                   onChange={(e) => handleInputChange('password', e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
               
@@ -81,6 +162,7 @@ const Register = () => {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                   required
+                  disabled={isLoading}
                 />
               </div>
               
@@ -90,6 +172,7 @@ const Register = () => {
                     id="isAdult"
                     checked={formData.isAdult}
                     onCheckedChange={(checked) => handleInputChange('isAdult', checked)}
+                    disabled={isLoading}
                   />
                   <Label htmlFor="isAdult" className="text-sm">
                     Je certifie avoir plus de 18 ans
@@ -101,6 +184,7 @@ const Register = () => {
                     id="acceptTerms"
                     checked={formData.acceptTerms}
                     onCheckedChange={(checked) => handleInputChange('acceptTerms', checked)}
+                    disabled={isLoading}
                   />
                   <Label htmlFor="acceptTerms" className="text-sm">
                     J'accepte les{' '}
@@ -114,9 +198,9 @@ const Register = () => {
               <Button 
                 type="submit" 
                 className="w-full"
-                disabled={!formData.acceptTerms || !formData.isAdult}
+                disabled={!formData.acceptTerms || !formData.isAdult || isLoading}
               >
-                S'inscrire
+                {isLoading ? 'Inscription...' : "S'inscrire"}
               </Button>
             </form>
             
