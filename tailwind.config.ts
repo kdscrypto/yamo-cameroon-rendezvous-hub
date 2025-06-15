@@ -63,17 +63,18 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				luxe: {
-					purple: '#581c87',
-					'purple-light': '#9333ea',
-					'purple-dark': '#3b0764',
-					'rose-gold': '#e77f67',
-					'rose-gold-light': '#f472b6',
-					'rose-gold-dark': '#be185d',
-					cream: '#fefcfb',
-					'cream-dark': '#f8f5f3',
-					charcoal: '#1e1e2e',
-					'charcoal-light': '#2a2a3a',
+				modern: {
+					indigo: '#6366f1',
+					'indigo-light': '#a5b4fc',
+					'indigo-dark': '#4338ca',
+					blue: '#3b82f6',
+					'blue-light': '#93c5fd',
+					'blue-dark': '#1d4ed8',
+					cyan: '#06b6d4',
+					'cyan-light': '#67e8f9',
+					'cyan-dark': '#0891b2',
+					slate: '#1e293b',
+					'slate-light': '#475569',
 				}
 			},
 			borderRadius: {
@@ -108,7 +109,7 @@ export default {
 						transform: 'translateY(0)'
 					}
 				},
-				'luxe-shimmer': {
+				'modern-shimmer': {
 					'0%': {
 						backgroundPosition: '-200% 0'
 					},
@@ -121,7 +122,7 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
-				'luxe-shimmer': 'luxe-shimmer 2s ease-in-out infinite'
+				'modern-shimmer': 'modern-shimmer 2s ease-in-out infinite'
 			}
 		}
 	},
