@@ -19,10 +19,6 @@ export default {
 			}
 		},
 		extend: {
-			fontFamily: {
-				sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-				inter: ['Inter', 'sans-serif'],
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -67,23 +63,18 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Stripe-inspired color palette
-				stripe: {
-					purple: '#6254f3',
-					'purple-light': '#9c88ff',
-					'purple-dark': '#4f46e5',
-					gray: {
-						50: '#f8fafc',
-						100: '#f1f5f9',
-						200: '#e2e8f0',
-						300: '#cbd5e1',
-						400: '#94a3b8',
-						500: '#64748b',
-						600: '#475569',
-						700: '#334155',
-						800: '#1e293b',
-						900: '#0f172a',
-					}
+				modern: {
+					indigo: '#6366f1',
+					'indigo-light': '#a5b4fc',
+					'indigo-dark': '#4338ca',
+					blue: '#3b82f6',
+					'blue-light': '#93c5fd',
+					'blue-dark': '#1d4ed8',
+					cyan: '#06b6d4',
+					'cyan-light': '#67e8f9',
+					'cyan-dark': '#0891b2',
+					slate: '#1e293b',
+					'slate-light': '#475569',
 				}
 			},
 			borderRadius: {
@@ -118,7 +109,7 @@ export default {
 						transform: 'translateY(0)'
 					}
 				},
-				'stripe-shimmer': {
+				'modern-shimmer': {
 					'0%': {
 						backgroundPosition: '-200% 0'
 					},
@@ -131,7 +122,7 @@ export default {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
 				'fade-in': 'fade-in 0.5s ease-out',
-				'stripe-shimmer': 'stripe-shimmer 2s ease-in-out infinite'
+				'modern-shimmer': 'modern-shimmer 2s ease-in-out infinite'
 			}
 		}
 	},
