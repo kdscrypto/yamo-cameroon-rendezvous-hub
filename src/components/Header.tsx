@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Search, User, LogOut, Settings } from 'lucide-react';
+import { Search, User, LogOut, Settings, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -102,6 +102,12 @@ const Header = () => {
                             </p>
                           </div>
                         </div>
+                        <DropdownMenuItem asChild>
+                          <Link to="/dashboard" className="cursor-pointer">
+                            <BarChart3 className="mr-2 h-4 w-4" />
+                            <span>Tableau de bord</span>
+                          </Link>
+                        </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link to="/profile" className="cursor-pointer">
                             <Settings className="mr-2 h-4 w-4" />

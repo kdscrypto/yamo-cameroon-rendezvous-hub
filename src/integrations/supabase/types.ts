@@ -9,6 +9,92 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ads: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          images: string[] | null
+          location: string | null
+          price: number | null
+          status: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          price?: number | null
+          status?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          images?: string[] | null
+          location?: string | null
+          price?: number | null
+          status?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          ad_id: string | null
+          content: string
+          created_at: string
+          id: string
+          is_read: boolean
+          recipient_id: string
+          sender_id: string
+          subject: string | null
+        }
+        Insert: {
+          ad_id?: string | null
+          content: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id: string
+          sender_id: string
+          subject?: string | null
+        }
+        Update: {
+          ad_id?: string | null
+          content?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          recipient_id?: string
+          sender_id?: string
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -33,6 +119,45 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_stats: {
+        Row: {
+          active_ads: number
+          created_at: string
+          id: string
+          last_login: string | null
+          profile_views: number
+          total_ads: number
+          total_messages: number
+          unread_messages: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_ads?: number
+          created_at?: string
+          id?: string
+          last_login?: string | null
+          profile_views?: number
+          total_ads?: number
+          total_messages?: number
+          unread_messages?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_ads?: number
+          created_at?: string
+          id?: string
+          last_login?: string | null
+          profile_views?: number
+          total_ads?: number
+          total_messages?: number
+          unread_messages?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
