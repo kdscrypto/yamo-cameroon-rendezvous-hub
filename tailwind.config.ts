@@ -63,13 +63,17 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				yamo: {
-					gold: '#D4AF37',
-					'gold-light': '#F4E4BC',
-					'gold-dark': '#B8941F',
-					dark: '#1A1A1A',
-					'dark-light': '#2A2A2A',
-					'gray-dark': '#333333',
+				luxe: {
+					purple: '#581c87',
+					'purple-light': '#9333ea',
+					'purple-dark': '#3b0764',
+					'rose-gold': '#e77f67',
+					'rose-gold-light': '#f472b6',
+					'rose-gold-dark': '#be185d',
+					cream: '#fefcfb',
+					'cream-dark': '#f8f5f3',
+					charcoal: '#1e1e2e',
+					'charcoal-light': '#2a2a3a',
 				}
 			},
 			borderRadius: {
@@ -103,12 +107,21 @@ export default {
 						opacity: '1',
 						transform: 'translateY(0)'
 					}
+				},
+				'luxe-shimmer': {
+					'0%': {
+						backgroundPosition: '-200% 0'
+					},
+					'100%': {
+						backgroundPosition: '200% 0'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'fade-in': 'fade-in 0.5s ease-out'
+				'fade-in': 'fade-in 0.5s ease-out',
+				'luxe-shimmer': 'luxe-shimmer 2s ease-in-out infinite'
 			}
 		}
 	},

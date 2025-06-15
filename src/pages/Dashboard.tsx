@@ -16,7 +16,10 @@ const Dashboard = () => {
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         <div className="flex-1 flex items-center justify-center">
-          <p>Chargement...</p>
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Chargement...</p>
+          </div>
         </div>
         <Footer />
       </div>
@@ -33,14 +36,21 @@ const Dashboard = () => {
       
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl font-bold mb-8">Tableau de bord</h1>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold mb-2 text-gradient-luxe">Tableau de bord</h1>
+            <p className="text-muted-foreground">Gérez vos annonces et messages depuis votre espace personnel</p>
+          </div>
           
           <DashboardStats />
           
           <Tabs defaultValue="ads" className="mt-8">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="ads">Mes annonces</TabsTrigger>
-              <TabsTrigger value="messages">Messages</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-secondary">
+              <TabsTrigger value="ads" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                Mes annonces
+              </TabsTrigger>
+              <TabsTrigger value="messages" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                Messages
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="ads" className="mt-6">
