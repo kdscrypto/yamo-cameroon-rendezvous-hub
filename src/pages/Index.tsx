@@ -4,12 +4,32 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CategoryCard from '@/components/CategoryCard';
 import AdCard from '@/components/AdCard';
+import AgeVerification from '@/components/AgeVerification';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 const Index = () => {
+  const [ageVerified, setAgeVerified] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  // Vérifier si l'utilisateur a déjà confirmé son âge
+  useEffect(() => {
+    const verified = localStorage.getItem('ageVerified');
+    if (verified === 'true') {
+      setAgeVerified(true);
+    }
+  }, []);
+
+  const handleAgeVerification = () => {
+    localStorage.setItem('ageVerified', 'true');
+    setAgeVerified(true);
+  };
+
+  // Si l'âge n'est pas vérifié, afficher la page de vérification
+  if (!ageVerified) {
+    return <AgeVerification onConfirm={handleAgeVerification} />;
+  }
   
   // Images d'arrière-plan thématiques
   const backgroundImages = [
@@ -89,11 +109,11 @@ const Index = () => {
             />
           ))}
           
-          {/* Dark overlay for text readability */}
-          <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" />
+          {/* Dark overlay for text readability - Correction ici */}
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
           
           {/* Gold gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/50 to-background/90" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-background/90" />
         </div>
 
         {/* Content */}
@@ -101,7 +121,7 @@ const Index = () => {
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
             Bienvenue sur <span className="text-gradient-gold">Yamo</span>
           </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             La plateforme de référence pour les annonces adultes au Cameroun. 
             Trouvez ce que vous cherchez en toute discrétion et sécurité.
           </p>
@@ -147,7 +167,7 @@ const Index = () => {
       </section>
 
       {/* Recent Ads Section */}
-      <section className="py-16 px-4 bg-card/50">
+      <section className="py-16 px-4 bg-card/30">
         <div className="container mx-auto">
           <div className="flex justify-between items-center mb-12">
             <h2 className="text-3xl font-bold">Annonces récentes</h2>
@@ -166,7 +186,7 @@ const Index = () => {
       {/* Safety Information */}
       <section className="py-16 px-4">
         <div className="container mx-auto">
-          <div className="bg-card border border-border rounded-lg p-8 text-center">
+          <div className="bg-card/50 border border-border rounded-lg p-8 text-center">
             <h2 className="text-2xl font-bold mb-4">Sécurité et confidentialité</h2>
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Votre sécurité est notre priorité. Nous mettons en place des mesures strictes 
