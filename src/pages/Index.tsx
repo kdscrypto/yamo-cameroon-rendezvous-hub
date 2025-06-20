@@ -128,10 +128,10 @@ const Index = () => {
             Trouvez ce que vous cherchez en toute discrétion et sécurité.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" asChild>
+            <Button size="lg" asChild className="gradient-gold text-black hover:opacity-90 border-0">
               <Link to="/browse">Parcourir les annonces</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild>
+            <Button size="lg" variant="outline" asChild className="border-2 border-primary text-primary hover:bg-primary hover:text-black bg-transparent">
               <Link to="/create-ad">Publier une annonce</Link>
             </Button>
           </div>

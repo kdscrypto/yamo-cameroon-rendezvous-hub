@@ -40,12 +40,12 @@ const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
           </p>
         </div>
 
-        {/* Buttons */}
+        {/* Buttons - Correction des couleurs */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center mt-12">
           <Button 
             onClick={onConfirm}
             size="lg"
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold"
+            className="gradient-gold text-black hover:opacity-90 px-8 py-4 text-lg font-semibold border-0"
           >
             J'ai 18 ans ou plus - Entrer
           </Button>
@@ -54,7 +54,7 @@ const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
             onClick={handleExit}
             variant="outline"
             size="lg"
-            className="border-border hover:bg-muted px-8 py-4 text-lg font-semibold"
+            className="border-2 border-primary text-primary hover:bg-primary hover:text-black px-8 py-4 text-lg font-semibold bg-transparent"
           >
             J'ai moins de 18 ans - Sortir
           </Button>
