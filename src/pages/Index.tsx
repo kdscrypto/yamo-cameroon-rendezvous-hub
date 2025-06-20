@@ -131,7 +131,7 @@ const Index = () => {
             <Button size="lg" asChild className="gradient-gold text-black hover:opacity-90 border-0">
               <Link to="/browse">Parcourir les annonces</Link>
             </Button>
-            <Button size="lg" variant="outline" asChild className="border-2 border-primary text-primary hover:bg-primary hover:text-black bg-transparent">
+            <Button size="lg" asChild className="gradient-gold text-black hover:opacity-90 border-0">
               <Link to="/create-ad">Publier une annonce</Link>
             </Button>
           </div>
