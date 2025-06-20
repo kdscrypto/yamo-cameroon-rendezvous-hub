@@ -13,6 +13,12 @@ const Index = () => {
   const [ageVerified, setAgeVerified] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   
+  // Images d'arrière-plan thématiques
+  const backgroundImages = [
+    "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
+    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+  ];
+
   // Vérifier si l'utilisateur a déjà confirmé son âge
   useEffect(() => {
     const verified = localStorage.getItem('ageVerified');
@@ -21,24 +27,10 @@ const Index = () => {
     }
   }, []);
 
-  const handleAgeVerification = () => {
-    localStorage.setItem('ageVerified', 'true');
-    setAgeVerified(true);
-  };
-
-  // Si l'âge n'est pas vérifié, afficher la page de vérification
-  if (!ageVerified) {
-    return <AgeVerification onConfirm={handleAgeVerification} />;
-  }
-  
-  // Images d'arrière-plan thématiques
-  const backgroundImages = [
-    "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-  ];
-
-  // Changer l'image toutes les 5 secondes
+  // Changer l'image toutes les 5 secondes (seulement si age vérifié)
   useEffect(() => {
+    if (!ageVerified) return;
+    
     const interval = setInterval(() => {
       setCurrentImageIndex((prevIndex) => 
         (prevIndex + 1) % backgroundImages.length
@@ -46,7 +38,12 @@ const Index = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [backgroundImages.length]);
+  }, [backgroundImages.length, ageVerified]);
+
+  const handleAgeVerification = () => {
+    localStorage.setItem('ageVerified', 'true');
+    setAgeVerified(true);
+  };
 
   // Mock data pour les annonces récentes
   const recentAds = [
@@ -86,6 +83,11 @@ const Index = () => {
     }
   ];
 
+  // Si l'âge n'est pas vérifié, afficher la page de vérification
+  if (!ageVerified) {
+    return <AgeVerification onConfirm={handleAgeVerification} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -109,7 +111,7 @@ const Index = () => {
             />
           ))}
           
-          {/* Dark overlay for text readability - Correction ici */}
+          {/* Dark overlay for text readability */}
           <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
           
           {/* Gold gradient overlay */}
