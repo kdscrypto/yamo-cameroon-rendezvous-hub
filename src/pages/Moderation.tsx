@@ -28,7 +28,7 @@ const Moderation = () => {
         return null;
       }
       
-      return data?.role;
+      return data?.role as 'moderator' | 'admin';
     },
     enabled: !!user
   });
