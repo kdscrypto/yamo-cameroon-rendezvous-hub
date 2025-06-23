@@ -1,5 +1,8 @@
 
 import { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
 import Header from '@/components/Header';
@@ -7,6 +10,8 @@ import Footer from '@/components/Footer';
 import AdPreview from '@/components/AdPreview';
 import AdForm from '@/components/CreateAd/AdForm';
 import CreateAdSidebar from '@/components/CreateAd/CreateAdSidebar';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 const CreateAd = () => {
   const [formData, setFormData] = useState({
@@ -22,10 +27,94 @@ const CreateAd = () => {
   });
 
   const [showPreview, setShowPreview] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const createAdMutation = useMutation({
+    mutationFn: async (adData: any) => {
+      if (!user) throw new Error('User not authenticated');
+
+      // Upload images first if any
+      let imageUrls: string[] = [];
+      if (formData.photos.length > 0) {
+        const uploadPromises = formData.photos.map(async (photo, index) => {
+          const fileExt = photo.name.split('.').pop();
+          const fileName = `${user.id}/${Date.now()}_${index}.${fileExt}`;
+          
+          const { data, error } = await supabase.storage
+            .from('ad-images')
+            .upload(fileName, photo);
+          
+          if (error) throw error;
+          
+          const { data: { publicUrl } } = supabase.storage
+            .from('ad-images')
+            .getPublicUrl(fileName);
+          
+          return publicUrl;
+        });
+        
+        imageUrls = await Promise.all(uploadPromises);
+      }
+
+      // Determine expiration for VIP ads
+      let expiresAt = null;
+      if (formData.vipOption === '24h') {
+        expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
+      } else if (formData.vipOption === '7days') {
+        expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+      }
+
+      const { data, error } = await supabase
+        .from('ads')
+        .insert({
+          title: formData.title,
+          description: formData.description,
+          category: formData.category,
+          location: formData.location,
+          price: formData.price ? parseFloat(formData.price) : null,
+          images: imageUrls,
+          expires_at: expiresAt,
+          user_id: user.id,
+          // moderation_status will be 'pending' by default
+          // status will be 'inactive' by default (changed from 'active' in migration)
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Annonce créée avec succès",
+        description: "Votre annonce a été soumise pour modération. Elle sera visible dès qu'elle sera approuvée.",
+      });
+      navigate('/dashboard');
+    },
+    onError: (error) => {
+      console.error('Error creating ad:', error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer l'annonce. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    }
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setShowPreview(true);
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour créer une annonce.",
+        variant: "destructive",
+      });
+      navigate('/login');
+      return;
+    }
+    createAdMutation.mutate(formData);
   };
 
   const handleInputChange = (field: string, value: string | boolean | File[]) => {
@@ -71,7 +160,7 @@ const CreateAd = () => {
             
             <div className="mt-8 text-center space-y-4">
               <p className="text-muted-foreground">
-                Voici comment votre annonce apparaîtra après validation par notre équipe de modération.
+                Votre annonce sera soumise pour modération et sera visible après approbation par notre équipe.
               </p>
               <div className="flex gap-4 justify-center">
                 <Button 
@@ -80,8 +169,12 @@ const CreateAd = () => {
                 >
                   Modifier l'annonce
                 </Button>
-                <Button className="gradient-gold text-black">
-                  Publier l'annonce - {getVipPrice()}
+                <Button 
+                  className="gradient-gold text-black"
+                  onClick={handleSubmit}
+                  disabled={createAdMutation.isPending}
+                >
+                  {createAdMutation.isPending ? 'Publication...' : `Publier l'annonce - ${getVipPrice()}`}
                 </Button>
               </div>
             </div>

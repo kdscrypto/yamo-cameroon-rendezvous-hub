@@ -11,6 +11,7 @@ import Profile from "./pages/Profile";
 import Dashboard from "./pages/Dashboard";
 import Browse from "./pages/Browse";
 import CreateAd from "./pages/CreateAd";
+import Moderation from "./pages/Moderation";
 import Terms from "./pages/Terms";
 import NotFound from "./pages/NotFound";
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/create-ad" element={<CreateAd />} />
+          <Route path="/moderation" element={<Moderation />} />
           <Route path="/rencontres" element={<Browse />} />
           <Route path="/massages" element={<Browse />} />
           <Route path="/produits" element={<Browse />} />

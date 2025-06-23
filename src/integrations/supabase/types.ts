@@ -18,6 +18,10 @@ export type Database = {
           id: string
           images: string[] | null
           location: string | null
+          moderated_at: string | null
+          moderated_by: string | null
+          moderation_notes: string | null
+          moderation_status: string | null
           price: number | null
           status: string
           title: string
@@ -32,6 +36,10 @@ export type Database = {
           id?: string
           images?: string[] | null
           location?: string | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
           price?: number | null
           status?: string
           title: string
@@ -46,6 +54,10 @@ export type Database = {
           id?: string
           images?: string[] | null
           location?: string | null
+          moderated_at?: string | null
+          moderated_by?: string | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
           price?: number | null
           status?: string
           title?: string
@@ -94,6 +106,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      moderation_reasons: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
