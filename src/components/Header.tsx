@@ -80,7 +80,7 @@ const Header = () => {
                 {user ? (
                   // Authenticated user menu
                   <div className="flex items-center space-x-4">
-                    <Button asChild>
+                    <Button variant="ghost" asChild>
                       <Link to="/create-ad">Publier une annonce</Link>
                     </Button>
                     
@@ -130,7 +130,7 @@ const Header = () => {
                         Connexion
                       </Link>
                     </Button>
-                    <Button asChild>
+                    <Button variant="ghost" asChild>
                       <Link to="/create-ad">Publier une annonce</Link>
                     </Button>
                   </>
