@@ -5,16 +5,46 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Check, X, Clock } from 'lucide-react';
-import { useState } from 'react';
+import { Eye, Check, X, Clock, AlertTriangle } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import AdModerationModal from './AdModerationModal';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 
-const ModerationDashboard = () => {
+interface ModerationDashboardProps {
+  userRole: 'moderator' | 'admin';
+}
+
+const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
   const [selectedAd, setSelectedAd] = useState<any>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { user } = useAuth();
+
+  // Set up real-time subscription for ads
+  useEffect(() => {
+    const channel = supabase
+      .channel('moderation-ads-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'ads'
+        },
+        (payload) => {
+          console.log('Real-time update:', payload);
+          // Invalidate queries to refresh data
+          queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   const { data: pendingAds, isLoading: pendingLoading } = useQuery({
     queryKey: ['moderation-ads', 'pending'],
@@ -45,6 +75,23 @@ const ModerationDashboard = () => {
     }
   });
 
+  const { data: moderationStats } = useQuery({
+    queryKey: ['moderation-stats'],
+    queryFn: async () => {
+      const [pendingCount, approvedCount, rejectedCount] = await Promise.all([
+        supabase.from('ads').select('id', { count: 'exact' }).eq('moderation_status', 'pending'),
+        supabase.from('ads').select('id', { count: 'exact' }).eq('moderation_status', 'approved'),
+        supabase.from('ads').select('id', { count: 'exact' }).eq('moderation_status', 'rejected')
+      ]);
+
+      return {
+        pending: pendingCount.count || 0,
+        approved: approvedCount.count || 0,
+        rejected: rejectedCount.count || 0
+      };
+    }
+  });
+
   const quickApproveMutation = useMutation({
     mutationFn: async (adId: string) => {
       const { error } = await supabase
@@ -52,7 +99,8 @@ const ModerationDashboard = () => {
         .update({
           moderation_status: 'approved',
           status: 'active',
-          moderated_at: new Date().toISOString()
+          moderated_at: new Date().toISOString(),
+          moderated_by: user?.id
         })
         .eq('id', adId);
       
@@ -82,7 +130,8 @@ const ModerationDashboard = () => {
           moderation_status: 'rejected',
           status: 'inactive',
           moderated_at: new Date().toISOString(),
-          moderation_notes: 'Rejet rapide'
+          moderated_by: user?.id,
+          moderation_notes: 'Rejet rapide par le modérateur'
         })
         .eq('id', adId);
       
@@ -111,13 +160,20 @@ const ModerationDashboard = () => {
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'En attente' },
-      approved: { color: 'bg-green-100 text-green-800', label: 'Approuvée' },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejetée' }
+      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'En attente', icon: Clock },
+      approved: { color: 'bg-green-100 text-green-800', label: 'Approuvée', icon: Check },
+      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejetée', icon: X }
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    return <Badge className={config.color}>{config.label}</Badge>;
+    const Icon = config.icon;
+    
+    return (
+      <Badge className={config.color}>
+        <Icon className="w-3 h-3 mr-1" />
+        {config.label}
+      </Badge>
+    );
   };
 
   const AdCard = ({ ad, showQuickActions = false }: { ad: any; showQuickActions?: boolean }) => (
@@ -189,14 +245,40 @@ const ModerationDashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Modération des annonces</h2>
+        <div>
+          <h2 className="text-2xl font-bold">Modération des annonces</h2>
+          <p className="text-muted-foreground">
+            Rôle: {userRole === 'admin' ? 'Administrateur' : 'Modérateur'}
+          </p>
+        </div>
         <div className="flex gap-4 text-sm">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-yellow-500" />
-            <span>{pendingAds?.length || 0} en attente</span>
+            <span>{moderationStats?.pending || 0} en attente</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Check className="w-4 h-4 text-green-500" />
+            <span>{moderationStats?.approved || 0} approuvées</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <X className="w-4 h-4 text-red-500" />
+            <span>{moderationStats?.rejected || 0} rejetées</span>
           </div>
         </div>
       </div>
+
+      {moderationStats?.pending && moderationStats.pending > 10 && (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-2 text-yellow-800">
+              <AlertTriangle className="w-5 h-5" />
+              <p className="font-medium">
+                Attention: {moderationStats.pending} annonces en attente de modération
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
