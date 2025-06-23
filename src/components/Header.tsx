@@ -80,9 +80,12 @@ const Header = () => {
                 {user ? (
                   // Authenticated user menu
                   <div className="flex items-center space-x-4">
-                    <Button variant="ghost" asChild>
-                      <Link to="/create-ad">Publier une annonce</Link>
-                    </Button>
+                    <Link 
+                      to="/create-ad" 
+                      className="px-4 py-2 text-white hover:text-orange-300 transition-colors duration-200"
+                    >
+                      Publier une annonce
+                    </Link>
                     
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -124,15 +127,19 @@ const Header = () => {
                 ) : (
                   // Guest user buttons
                   <>
-                    <Button variant="ghost" asChild>
-                      <Link to="/login">
-                        <User className="w-4 h-4 mr-2" />
-                        Connexion
-                      </Link>
-                    </Button>
-                    <Button variant="ghost" asChild>
-                      <Link to="/create-ad">Publier une annonce</Link>
-                    </Button>
+                    <Link 
+                      to="/login" 
+                      className="flex items-center px-4 py-2 text-white hover:text-orange-300 transition-colors duration-200"
+                    >
+                      <User className="w-4 h-4 mr-2" />
+                      Connexion
+                    </Link>
+                    <Link 
+                      to="/create-ad" 
+                      className="px-4 py-2 text-white hover:text-orange-300 transition-colors duration-200"
+                    >
+                      Publier une annonce
+                    </Link>
                   </>
                 )}
               </>
