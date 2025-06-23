@@ -28,11 +28,11 @@ const AdCard = ({
     <Card className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 overflow-hidden bg-card border-border">
       {isVip && (
         <div className="gradient-gold text-black text-xs font-bold px-2 py-1 text-center">
-          ⭐ ANNONCE VIP
+          ⭐ VIP
         </div>
       )}
       
-      <div className="aspect-video bg-muted relative overflow-hidden">
+      <div className="aspect-square bg-muted relative overflow-hidden">
         {imageUrl ? (
           <img 
             src={imageUrl} 
@@ -41,37 +41,37 @@ const AdCard = ({
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <User className="w-16 h-16 text-muted-foreground" />
+            <User className="w-12 h-12 text-muted-foreground" />
           </div>
         )}
         <Button 
           size="sm" 
           variant="ghost" 
-          className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white"
+          className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1 h-auto"
         >
-          <Heart className="w-4 h-4" />
+          <Heart className="w-3 h-3" />
         </Button>
       </div>
 
-      <CardContent className="p-4">
+      <CardContent className="p-3">
         <div className="mb-2">
           <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
             {category}
           </span>
         </div>
         
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
           {title}
         </h3>
         
-        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+        <p className="text-muted-foreground text-xs mb-2 line-clamp-2">
           {description}
         </p>
         
         <div className="flex justify-between items-center">
-          <span className="text-sm text-muted-foreground">{location}</span>
+          <span className="text-xs text-muted-foreground">{location}</span>
           {price && (
-            <span className="font-bold text-primary">{price}</span>
+            <span className="font-bold text-primary text-sm">{price}</span>
           )}
         </div>
       </CardContent>
