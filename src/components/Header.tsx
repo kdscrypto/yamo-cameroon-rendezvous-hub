@@ -1,11 +1,11 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search, User, LogOut, Settings, BarChart3 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { User, LogOut, Settings, BarChart3 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import SearchBar from '@/components/SearchBar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +18,7 @@ const Header = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const { user, signOut, loading } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     const { error } = await signOut();
@@ -32,6 +33,14 @@ const Header = () => {
         title: "Déconnexion réussie",
         description: "À bientôt !"
       });
+    }
+  };
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/browse?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/browse');
     }
   };
 
@@ -61,16 +70,12 @@ const Header = () => {
 
           {/* Search Bar */}
           <div className="flex-1 max-w-md mx-4">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                type="text"
-                placeholder="Rechercher des annonces..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 bg-background border-border"
-              />
-            </div>
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={handleSearch}
+              placeholder="Rechercher des annonces..."
+            />
           </div>
 
           {/* Navigation */}
