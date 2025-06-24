@@ -133,7 +133,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         required
       />
       
-      <AgreementCheck‌boxes
+      <AgreementCheckboxes
         isAdult={formData.isAdult}
         acceptTerms={formData.acceptTerms}
         onIsAdultChange={(checked) => handleInputChange('isAdult', checked)}
