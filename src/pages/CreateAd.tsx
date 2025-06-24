@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -27,9 +27,21 @@ const CreateAd = () => {
   });
 
   const [showPreview, setShowPreview] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Redirect to login if user is not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour créer une annonce.",
+        variant: "destructive",
+      });
+      navigate('/login');
+    }
+  }, [user, loading, navigate, toast]);
 
   const createAdMutation = useMutation({
     mutationFn: async (adData: any) => {
@@ -77,8 +89,6 @@ const CreateAd = () => {
           images: imageUrls,
           expires_at: expiresAt,
           user_id: user.id,
-          // moderation_status will be 'pending' by default
-          // status will be 'inactive' by default (changed from 'active' in migration)
         })
         .select()
         .single();
@@ -135,6 +145,27 @@ const CreateAd = () => {
     }
   };
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Chargement...</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Don't render the form if user is not authenticated
+  if (!user) {
+    return null;
+  }
+
   if (showPreview) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
@@ -146,7 +177,7 @@ const CreateAd = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setShowPreview(false)}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 hover:bg-muted hover:text-foreground"
               >
                 <X className="w-4 h-4" />
                 Retour au formulaire
@@ -166,11 +197,12 @@ const CreateAd = () => {
                 <Button 
                   variant="outline" 
                   onClick={() => setShowPreview(false)}
+                  className="hover:bg-muted hover:text-foreground"
                 >
                   Modifier l'annonce
                 </Button>
                 <Button 
-                  className="gradient-gold text-black"
+                  className="gradient-gold text-black hover:opacity-90"
                   onClick={handleSubmit}
                   disabled={createAdMutation.isPending}
                 >

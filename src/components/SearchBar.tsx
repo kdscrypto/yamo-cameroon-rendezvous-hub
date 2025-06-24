@@ -48,7 +48,7 @@ const SearchBar = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          className="pl-10 pr-10 bg-background border-border"
+          className="pl-10 pr-10 bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
         />
         {value && (
           <Button
@@ -56,7 +56,7 @@ const SearchBar = ({
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-muted"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-muted hover:text-foreground"
           >
             <X className="w-3 h-3" />
           </Button>

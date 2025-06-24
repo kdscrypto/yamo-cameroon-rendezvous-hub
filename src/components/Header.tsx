@@ -44,6 +44,19 @@ const Header = () => {
     }
   };
 
+  const handleCreateAdClick = () => {
+    if (!user) {
+      toast({
+        title: "Connexion requise",
+        description: "Vous devez être connecté pour créer une annonce.",
+        variant: "destructive",
+      });
+      navigate('/login');
+    } else {
+      navigate('/create-ad');
+    }
+  };
+
   const getUserDisplayName = () => {
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name;
@@ -85,44 +98,44 @@ const Header = () => {
                 {user ? (
                   // Authenticated user menu
                   <div className="flex items-center space-x-4">
-                    <Link 
-                      to="/create-ad" 
+                    <button 
+                      onClick={handleCreateAdClick}
                       className="px-4 py-2 text-white hover:text-orange-300 transition-colors duration-200"
                     >
                       Publier une annonce
-                    </Link>
+                    </button>
                     
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                        <Button variant="ghost" className="relative h-10 w-10 rounded-full hover:bg-muted">
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={user.user_metadata?.avatar_url} />
-                            <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                            <AvatarFallback className="bg-primary text-primary-foreground">{getUserInitials()}</AvatarFallback>
                           </Avatar>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-56" align="end" forceMount>
+                      <DropdownMenuContent className="w-56 bg-card border-border" align="end" forceMount>
                         <div className="flex items-center justify-start gap-2 p-2">
                           <div className="flex flex-col space-y-1 leading-none">
-                            <p className="font-medium">{getUserDisplayName()}</p>
+                            <p className="font-medium text-foreground">{getUserDisplayName()}</p>
                             <p className="w-[200px] truncate text-sm text-muted-foreground">
                               {user.email}
                             </p>
                           </div>
                         </div>
                         <DropdownMenuItem asChild>
-                          <Link to="/dashboard" className="cursor-pointer">
+                          <Link to="/dashboard" className="cursor-pointer text-foreground hover:bg-muted">
                             <BarChart3 className="mr-2 h-4 w-4" />
                             <span>Tableau de bord</span>
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/profile" className="cursor-pointer">
+                          <Link to="/profile" className="cursor-pointer text-foreground hover:bg-muted">
                             <Settings className="mr-2 h-4 w-4" />
                             <span>Profil</span>
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-foreground hover:bg-muted">
                           <LogOut className="mr-2 h-4 w-4" />
                           <span>Se déconnecter</span>
                         </DropdownMenuItem>
@@ -139,12 +152,12 @@ const Header = () => {
                       <User className="w-4 h-4 mr-2" />
                       Connexion
                     </Link>
-                    <Link 
-                      to="/create-ad" 
+                    <button 
+                      onClick={handleCreateAdClick}
                       className="px-4 py-2 text-white hover:text-orange-300 transition-colors duration-200"
                     >
                       Publier une annonce
-                    </Link>
+                    </button>
                   </>
                 )}
               </>

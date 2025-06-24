@@ -133,7 +133,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         required
       />
       
-      <AgreementCheckboxes
+      <AgreementCheck‌boxes
         isAdult={formData.isAdult}
         acceptTerms={formData.acceptTerms}
         onIsAdultChange={(checked) => handleInputChange('isAdult', checked)}
@@ -143,7 +143,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       
       <Button 
         type="submit" 
-        className="w-full"
+        className="w-full gradient-gold text-black hover:opacity-90"
         disabled={!formData.acceptTerms || !formData.isAdult || isLoading}
       >
         {isLoading ? 'Inscription...' : "S'inscrire"}

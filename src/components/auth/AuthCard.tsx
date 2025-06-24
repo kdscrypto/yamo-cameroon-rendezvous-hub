@@ -9,15 +9,15 @@ interface AuthCardProps {
 
 const AuthCard = ({ title, description, children }: AuthCardProps) => {
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full max-w-md bg-card border-border">
       <CardHeader className="text-center">
         <div className="flex justify-center mb-4">
           <div className="w-12 h-12 gradient-gold rounded-lg flex items-center justify-center">
             <span className="text-black font-bold text-xl">Y</span>
           </div>
         </div>
-        <CardTitle className="text-2xl">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardTitle className="text-2xl text-foreground">{title}</CardTitle>
+        <CardDescription className="text-muted-foreground">{description}</CardDescription>
       </CardHeader>
       
       <CardContent>{children}</CardContent>

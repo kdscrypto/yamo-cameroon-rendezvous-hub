@@ -62,15 +62,15 @@ const Login = () => {
       <Header />
       
       <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <Card className="w-full max-w-md">
+        <Card className="w-full max-w-md bg-card border-border">
           <CardHeader className="text-center">
             <div className="flex justify-center mb-4">
               <div className="w-12 h-12 gradient-gold rounded-lg flex items-center justify-center">
                 <span className="text-black font-bold text-xl">Y</span>
               </div>
             </div>
-            <CardTitle className="text-2xl">Connexion</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-2xl text-foreground">Connexion</CardTitle>
+            <CardDescription className="text-muted-foreground">
               Connectez-vous à votre compte Yamo
             </CardDescription>
           </CardHeader>
@@ -78,7 +78,7 @@ const Login = () => {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email" className="text-foreground">Email</Label>
                 <Input
                   id="email"
                   type="email"
@@ -87,11 +87,12 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe</Label>
+                <Label htmlFor="password" className="text-foreground">Mot de passe</Label>
                 <Input
                   id="password"
                   type="password"
@@ -100,10 +101,15 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   disabled={isLoading}
+                  className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
                 />
               </div>
               
-              <Button type="submit" className="w-full" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full gradient-gold text-black hover:opacity-90" 
+                disabled={isLoading}
+              >
                 {isLoading ? 'Connexion...' : 'Se connecter'}
               </Button>
             </form>
