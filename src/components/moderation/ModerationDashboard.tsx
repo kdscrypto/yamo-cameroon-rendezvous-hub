@@ -8,7 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, Check, X, Clock, AlertTriangle } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import AdModerationModal from './AdModerationModal';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 
 interface ModerationDashboardProps {
@@ -17,13 +17,14 @@ interface ModerationDashboardProps {
 
 const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
   const [selectedAd, setSelectedAd] = useState<any>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
-  const { toast } = useToast();
   const { user } = useAuth();
 
   // Set up real-time subscription for ads
   useEffect(() => {
+    console.log('Setting up real-time subscription for moderation dashboard');
+    
     const channel = supabase
       .channel('moderation-ads-changes')
       .on(
@@ -34,9 +35,10 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
           table: 'ads'
         },
         (payload) => {
-          console.log('Real-time update:', payload);
+          console.log('Moderation real-time update:', payload);
           // Invalidate queries to refresh data
           queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
+          queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
         }
       )
       .subscribe();
@@ -46,16 +48,23 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
     };
   }, [queryClient]);
 
-  const { data: pendingAds, isLoading: pendingLoading } = useQuery({
+  const { data: pendingAds, isLoading: pendingLoading, refetch: refetchPending } = useQuery({
     queryKey: ['moderation-ads', 'pending'],
     queryFn: async () => {
+      console.log('Fetching pending ads for moderation');
+      
       const { data, error } = await supabase
         .from('ads')
         .select('*')
         .eq('moderation_status', 'pending')
         .order('created_at', { ascending: true });
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching pending ads:', error);
+        throw error;
+      }
+      
+      console.log('Fetched pending ads:', data);
       return data;
     }
   });
@@ -75,7 +84,7 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
     }
   });
 
-  const { data: moderationStats } = useQuery({
+  const { data: moderationStats, refetch: refetchStats } = useQuery({
     queryKey: ['moderation-stats'],
     queryFn: async () => {
       const [pendingCount, approvedCount, rejectedCount] = await Promise.all([
@@ -94,6 +103,8 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
 
   const quickApproveMutation = useMutation({
     mutationFn: async (adId: string) => {
+      console.log('Quick approving ad:', adId);
+      
       const { error } = await supabase
         .from('ads')
         .update({
@@ -104,26 +115,30 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
         })
         .eq('id', adId);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error approving ad:', error);
+        throw error;
+      }
+      
+      console.log('Ad approved successfully');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-      toast({
-        title: "Annonce approuvée",
-        description: "L'annonce a été approuvée avec succès.",
-      });
+      queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
+      refetchPending();
+      refetchStats();
+      toast.success('Annonce approuvée avec succès');
     },
     onError: (error) => {
-      toast({
-        title: "Erreur",
-        description: "Impossible d'approuver l'annonce.",
-        variant: "destructive",
-      });
+      console.error('Error in approval mutation:', error);
+      toast.error('Erreur lors de l\'approbation de l\'annonce');
     }
   });
 
   const quickRejectMutation = useMutation({
     mutationFn: async (adId: string) => {
+      console.log('Quick rejecting ad:', adId);
+      
       const { error } = await supabase
         .from('ads')
         .update({
@@ -135,27 +150,50 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
         })
         .eq('id', adId);
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error rejecting ad:', error);
+        throw error;
+      }
+      
+      console.log('Ad rejected successfully');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-      toast({
-        title: "Annonce rejetée",
-        description: "L'annonce a été rejetée avec succès.",
-      });
+      queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
+      refetchPending();
+      refetchStats();
+      toast.success('Annonce rejetée avec succès');
     },
     onError: (error) => {
-      toast({
-        title: "Erreur",
-        description: "Impossible de rejeter l'annonce.",
-        variant: "destructive",
-      });
+      console.error('Error in rejection mutation:', error);
+      toast.error('Erreur lors du rejet de l\'annonce');
     }
   });
 
   const handleViewAd = (ad: any) => {
+    console.log('Opening moderation modal for ad:', ad.id);
     setSelectedAd(ad);
-    setModalOpen(true);
+    setIsModalOpen(true);
+  };
+
+  const handleQuickApprove = (ad: any) => {
+    console.log('Quick approve triggered for ad:', ad.id);
+    quickApproveMutation.mutate(ad.id);
+  };
+
+  const handleQuickReject = (ad: any) => {
+    console.log('Quick reject triggered for ad:', ad.id);
+    quickRejectMutation.mutate(ad.id);
+  };
+
+  const handleModerationComplete = () => {
+    console.log('Moderation completed, refreshing data');
+    queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
+    queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
+    refetchPending();
+    refetchStats();
+    setIsModalOpen(false);
+    setSelectedAd(null);
   };
 
   const getStatusBadge = (status: string) => {
@@ -218,22 +256,22 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => quickApproveMutation.mutate(ad.id)}
+                onClick={() => handleQuickApprove(ad)}
                 disabled={quickApproveMutation.isPending}
                 className="text-green-600 hover:text-green-700"
               >
                 <Check className="w-4 h-4 mr-2" />
-                Approuver
+                {quickApproveMutation.isPending ? 'En cours...' : 'Approuver'}
               </Button>
               <Button 
                 variant="outline" 
                 size="sm" 
-                onClick={() => quickRejectMutation.mutate(ad.id)}
+                onClick={() => handleQuickReject(ad)}
                 disabled={quickRejectMutation.isPending}
                 className="text-red-600 hover:text-red-700"
               >
                 <X className="w-4 h-4 mr-2" />
-                Rejeter
+                {quickRejectMutation.isPending ? 'En cours...' : 'Rejeter'}
               </Button>
             </>
           )}
@@ -354,12 +392,9 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
 
       <AdModerationModal
         ad={selectedAd}
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onModerationComplete={() => {
-          queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-          setModalOpen(false);
-        }}
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        onModerationComplete={handleModerationComplete}
       />
     </div>
   );
