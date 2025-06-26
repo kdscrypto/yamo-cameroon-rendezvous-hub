@@ -3,7 +3,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import DashboardStats from '@/components/dashboard/DashboardStats';
 import UserAds from '@/components/dashboard/UserAds';
 import UserMessages from '@/components/dashboard/UserMessages';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -40,8 +39,6 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold mb-2 text-gradient-luxe">Tableau de bord</h1>
             <p className="text-muted-foreground">Gérez vos annonces et messages depuis votre espace personnel</p>
           </div>
-          
-          <DashboardStats />
           
           <Tabs defaultValue="ads" className="mt-8">
             <TabsList className="grid w-full grid-cols-2 bg-secondary">
