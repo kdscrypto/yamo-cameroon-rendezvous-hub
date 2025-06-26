@@ -20,14 +20,36 @@ export const useModerationMutations = () => {
     mutationFn: async (adId: string) => {
       console.log('Quick approving ad:', adId);
       
+      // First, get the ad details to check if it's VIP
+      const { data: adData, error: fetchError } = await supabase
+        .from('ads')
+        .select('expires_at')
+        .eq('id', adId)
+        .single();
+      
+      if (fetchError) {
+        console.error('Error fetching ad details:', fetchError);
+        throw fetchError;
+      }
+
+      console.log('Ad details:', adData);
+      
+      // Check if the ad is VIP (has expires_at and it's in the future)
+      const isVip = adData.expires_at && new Date(adData.expires_at) > new Date();
+      console.log('Is VIP ad:', isVip);
+      
+      const updateData = {
+        moderation_status: 'approved',
+        status: 'active',
+        moderated_at: new Date().toISOString(),
+        moderated_by: user?.id
+      };
+
+      console.log('Updating ad with data:', updateData);
+      
       const { error } = await supabase
         .from('ads')
-        .update({
-          moderation_status: 'approved',
-          status: 'active',
-          moderated_at: new Date().toISOString(),
-          moderated_by: user?.id
-        })
+        .update(updateData)
         .eq('id', adId);
       
       if (error) {
@@ -35,11 +57,19 @@ export const useModerationMutations = () => {
         throw error;
       }
       
-      console.log('Ad approved successfully - now visible to public');
+      const statusMessage = isVip 
+        ? 'Annonce VIP approuvée avec succès et maintenant visible sur le site avec mise en avant prioritaire'
+        : 'Annonce approuvée avec succès et maintenant visible sur le site';
+      
+      console.log('Ad approved successfully:', statusMessage);
+      return { isVip };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       invalidateQueries();
-      toast.success('Annonce approuvée avec succès et maintenant visible sur le site');
+      const message = data.isVip 
+        ? 'Annonce VIP approuvée avec succès et maintenant visible avec mise en avant prioritaire'
+        : 'Annonce approuvée avec succès et maintenant visible sur le site';
+      toast.success(message);
     },
     onError: (error) => {
       console.error('Error in approval mutation:', error);

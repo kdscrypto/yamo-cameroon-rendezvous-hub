@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
@@ -47,6 +46,8 @@ const CreateAd = () => {
     mutationFn: async (adData: any) => {
       if (!user) throw new Error('User not authenticated');
 
+      console.log('Creating ad with VIP option:', formData.vipOption);
+
       // Upload images first if any
       let imageUrls: string[] = [];
       if (formData.photos.length > 0) {
@@ -78,28 +79,42 @@ const CreateAd = () => {
         expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
       }
 
+      // Create the ad with proper initial status
+      // All ads (including VIP) should start with 'pending' moderation status
+      const adData = {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        location: formData.location,
+        price: formData.price ? parseFloat(formData.price) : null,
+        images: imageUrls,
+        expires_at: expiresAt,
+        user_id: user.id,
+        moderation_status: 'pending', // Force pending status for all ads
+        status: 'inactive' // Keep inactive until approved
+      };
+
+      console.log('Inserting ad with data:', adData);
+
       const { data, error } = await supabase
         .from('ads')
-        .insert({
-          title: formData.title,
-          description: formData.description,
-          category: formData.category,
-          location: formData.location,
-          price: formData.price ? parseFloat(formData.price) : null,
-          images: imageUrls,
-          expires_at: expiresAt,
-          user_id: user.id,
-        })
+        .insert(adData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating ad:', error);
+        throw error;
+      }
+
+      console.log('Ad created successfully:', data);
       return data;
     },
     onSuccess: (data) => {
+      console.log('Ad creation success:', data);
       toast({
         title: "Annonce créée avec succès",
-        description: "Votre annonce a été soumise pour modération. Elle sera visible dès qu'elle sera approuvée.",
+        description: "Votre annonce a été soumise pour modération. Elle sera visible dès qu'elle sera approuvée par notre équipe.",
       });
       navigate('/dashboard');
     },
@@ -124,6 +139,7 @@ const CreateAd = () => {
       navigate('/login');
       return;
     }
+    console.log('Submitting ad with form data:', formData);
     createAdMutation.mutate(formData);
   };
 
@@ -193,6 +209,11 @@ const CreateAd = () => {
               <p className="text-muted-foreground">
                 Votre annonce sera soumise pour modération et sera visible après approbation par notre équipe.
               </p>
+              {formData.vipOption !== 'standard' && (
+                <p className="text-sm text-blue-600 font-medium">
+                  Annonce VIP : Votre annonce bénéficiera d'une mise en avant prioritaire une fois approuvée.
+                </p>
+              )}
               <div className="flex gap-4 justify-center">
                 <Button 
                   variant="outline" 

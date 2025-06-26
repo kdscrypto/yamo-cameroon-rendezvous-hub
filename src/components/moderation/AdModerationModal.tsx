@@ -37,6 +37,10 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
     mutationFn: async ({ action, reason, notes }: { action: 'approve' | 'reject'; reason?: string; notes?: string }) => {
       console.log('Processing moderation:', { action, reason, notes, adId: ad.id });
       
+      // Check if the ad is VIP (has expires_at and it's in the future)
+      const isVip = ad.expires_at && new Date(ad.expires_at) > new Date();
+      console.log('Is VIP ad:', isVip);
+      
       const updateData: any = {
         moderation_status: action === 'approve' ? 'approved' : 'rejected',
         status: action === 'approve' ? 'active' : 'inactive',
@@ -65,6 +69,8 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
         console.log('Setting moderation notes:', moderationNotes);
       }
 
+      console.log('Updating ad with data:', updateData);
+
       const { error } = await supabase
         .from('ads')
         .update(updateData)
@@ -75,11 +81,26 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
         throw error;
       }
       
-      console.log('Ad moderation completed successfully');
+      const statusMessage = action === 'approve' 
+        ? (isVip ? 'Annonce VIP approuvée - visible avec mise en avant prioritaire' : 'Annonce approuvée - maintenant visible sur le site')
+        : 'Annonce rejetée';
+      
+      console.log('Ad moderation completed successfully:', statusMessage);
+      return { action, isVip };
     },
-    onSuccess: (_, variables) => {
-      const actionText = variables.action === 'approve' ? 'approuvée' : 'rejetée';
-      toast.success(`Annonce ${actionText} avec succès`);
+    onSuccess: (data, variables) => {
+      const { action, isVip } = data;
+      let message = '';
+      
+      if (action === 'approve') {
+        message = isVip 
+          ? 'Annonce VIP approuvée avec succès et maintenant visible avec mise en avant prioritaire'
+          : 'Annonce approuvée avec succès et maintenant visible sur le site';
+      } else {
+        message = 'Annonce rejetée avec succès';
+      }
+      
+      toast.success(message);
       onModerationComplete();
     },
     onError: (error) => {
@@ -95,13 +116,24 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
 
   if (!ad) return null;
 
+  // Check if the ad is VIP for display purposes
+  const isVip = ad.expires_at && new Date(ad.expires_at) > new Date();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Modération d'annonce</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            Modération d'annonce
+            {isVip && (
+              <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+                VIP
+              </span>
+            )}
+          </DialogTitle>
           <DialogDescription>
             Examinez l'annonce et prenez une décision de modération
+            {isVip && ' (Cette annonce bénéficiera d\'une mise en avant prioritaire si approuvée)'}
           </DialogDescription>
         </DialogHeader>
 
