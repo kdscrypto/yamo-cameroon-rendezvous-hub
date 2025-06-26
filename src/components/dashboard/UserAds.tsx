@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,15 +7,37 @@ import { Badge } from '@/components/ui/badge';
 import { Eye, Edit, Trash2, Plus, Clock, Check, X, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import AdPreviewModal from './AdPreviewModal';
+import { toast } from 'sonner';
+
+interface Ad {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  location: string;
+  price?: number;
+  images?: string[];
+  status: string;
+  moderation_status: string;
+  created_at: string;
+  moderated_at?: string;
+  moderation_notes?: string;
+  user_id: string;
+}
 
 const UserAds = () => {
   const { user } = useAuth();
+  const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const { data: ads, isLoading, refetch } = useQuery({
     queryKey: ['user-ads', user?.id],
     queryFn: async () => {
       if (!user) return [];
+      
+      console.log('Fetching ads for user:', user.id);
       
       const { data, error } = await supabase
         .from('ads')
@@ -24,10 +47,12 @@ const UserAds = () => {
       
       if (error) {
         console.error('Error fetching user ads:', error);
+        toast.error('Erreur lors du chargement des annonces');
         return [];
       }
       
-      return data;
+      console.log('Fetched ads:', data);
+      return data as Ad[];
     },
     enabled: !!user
   });
@@ -35,6 +60,8 @@ const UserAds = () => {
   // Set up real-time subscription for user's ads
   useEffect(() => {
     if (!user) return;
+
+    console.log('Setting up real-time subscription for user ads');
 
     const channel = supabase
       .channel('user-ads-changes')
@@ -49,6 +76,7 @@ const UserAds = () => {
         (payload) => {
           console.log('User ads updated:', payload);
           refetch();
+          toast.success('Vos annonces ont été mises à jour');
         }
       )
       .subscribe();
@@ -101,18 +129,39 @@ const UserAds = () => {
     }
   };
 
+  const handleViewAd = (ad: Ad) => {
+    console.log('Opening preview for ad:', ad.id);
+    setSelectedAd(ad);
+    setIsPreviewOpen(true);
+  };
+
+  const handleEditAd = (ad: Ad) => {
+    console.log('Edit ad:', ad.id);
+    toast.info('Fonctionnalité de modification en cours de développement');
+    // TODO: Implement edit functionality
+  };
+
   const handleDeleteAd = async (adId: string) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')) return;
     
-    const { error } = await supabase
-      .from('ads')
-      .delete()
-      .eq('id', adId);
+    console.log('Deleting ad:', adId);
     
-    if (error) {
-      console.error('Error deleting ad:', error);
-    } else {
-      refetch();
+    try {
+      const { error } = await supabase
+        .from('ads')
+        .delete()
+        .eq('id', adId);
+      
+      if (error) {
+        console.error('Error deleting ad:', error);
+        toast.error('Erreur lors de la suppression de l\'annonce');
+      } else {
+        toast.success('Annonce supprimée avec succès');
+        refetch();
+      }
+    } catch (error) {
+      console.error('Unexpected error:', error);
+      toast.error('Erreur inattendue lors de la suppression');
     }
   };
 
@@ -242,11 +291,11 @@ const UserAds = () => {
                       )}
 
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleViewAd(ad)}>
                           <Eye className="w-4 h-4 mr-2" />
                           Voir
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleEditAd(ad)}>
                           <Edit className="w-4 h-4 mr-2" />
                           Modifier
                         </Button>
@@ -310,7 +359,7 @@ const UserAds = () => {
                       </div>
 
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleViewAd(ad)}>
                           <Eye className="w-4 h-4 mr-2" />
                           Voir
                         </Button>
@@ -374,11 +423,11 @@ const UserAds = () => {
                       )}
 
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleViewAd(ad)}>
                           <Eye className="w-4 h-4 mr-2" />
                           Voir
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => handleEditAd(ad)}>
                           <Edit className="w-4 h-4 mr-2" />
                           Modifier
                         </Button>
@@ -400,6 +449,16 @@ const UserAds = () => {
           )}
         </div>
       )}
+
+      {/* Ad Preview Modal */}
+      <AdPreviewModal 
+        ad={selectedAd}
+        isOpen={isPreviewOpen}
+        onClose={() => {
+          setIsPreviewOpen(false);
+          setSelectedAd(null);
+        }}
+      />
     </div>
   );
 };
