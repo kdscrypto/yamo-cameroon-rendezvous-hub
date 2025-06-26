@@ -1,15 +1,13 @@
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, Check, X, Clock, AlertTriangle } from 'lucide-react';
+import { Clock } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import AdModerationModal from './AdModerationModal';
-import { toast } from 'sonner';
-import { useAuth } from '@/hooks/useAuth';
+import ModerationHeader from './ModerationHeader';
+import AdsList from './AdsList';
+import { useModerationMutations } from './useModerationMutations';
 
 interface ModerationDashboardProps {
   userRole: 'moderator' | 'admin';
@@ -18,8 +16,7 @@ interface ModerationDashboardProps {
 const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
   const [selectedAd, setSelectedAd] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { quickApproveMutation, quickRejectMutation } = useModerationMutations();
 
   // Set up real-time subscription for ads
   useEffect(() => {
@@ -36,9 +33,6 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
         },
         (payload) => {
           console.log('Moderation real-time update:', payload);
-          // Invalidate queries to refresh data
-          queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-          queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
         }
       )
       .subscribe();
@@ -46,9 +40,9 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [queryClient]);
+  }, []);
 
-  const { data: pendingAds, isLoading: pendingLoading, refetch: refetchPending } = useQuery({
+  const { data: pendingAds, isLoading: pendingLoading } = useQuery({
     queryKey: ['moderation-ads', 'pending'],
     queryFn: async () => {
       console.log('Fetching pending ads for moderation');
@@ -84,7 +78,7 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
     }
   });
 
-  const { data: moderationStats, refetch: refetchStats } = useQuery({
+  const { data: moderationStats } = useQuery({
     queryKey: ['moderation-stats'],
     queryFn: async () => {
       const [pendingCount, approvedCount, rejectedCount] = await Promise.all([
@@ -98,75 +92,6 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
         approved: approvedCount.count || 0,
         rejected: rejectedCount.count || 0
       };
-    }
-  });
-
-  const quickApproveMutation = useMutation({
-    mutationFn: async (adId: string) => {
-      console.log('Quick approving ad:', adId);
-      
-      const { error } = await supabase
-        .from('ads')
-        .update({
-          moderation_status: 'approved',
-          status: 'active',
-          moderated_at: new Date().toISOString(),
-          moderated_by: user?.id
-        })
-        .eq('id', adId);
-      
-      if (error) {
-        console.error('Error approving ad:', error);
-        throw error;
-      }
-      
-      console.log('Ad approved successfully');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-      queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
-      refetchPending();
-      refetchStats();
-      toast.success('Annonce approuvée avec succès');
-    },
-    onError: (error) => {
-      console.error('Error in approval mutation:', error);
-      toast.error('Erreur lors de l\'approbation de l\'annonce');
-    }
-  });
-
-  const quickRejectMutation = useMutation({
-    mutationFn: async (adId: string) => {
-      console.log('Quick rejecting ad:', adId);
-      
-      const { error } = await supabase
-        .from('ads')
-        .update({
-          moderation_status: 'rejected',
-          status: 'inactive',
-          moderated_at: new Date().toISOString(),
-          moderated_by: user?.id,
-          moderation_notes: 'Rejet rapide par le modérateur'
-        })
-        .eq('id', adId);
-      
-      if (error) {
-        console.error('Error rejecting ad:', error);
-        throw error;
-      }
-      
-      console.log('Ad rejected successfully');
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-      queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
-      refetchPending();
-      refetchStats();
-      toast.success('Annonce rejetée avec succès');
-    },
-    onError: (error) => {
-      console.error('Error in rejection mutation:', error);
-      toast.error('Erreur lors du rejet de l\'annonce');
     }
   });
 
@@ -188,135 +113,13 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
 
   const handleModerationComplete = () => {
     console.log('Moderation completed, refreshing data');
-    queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
-    queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
-    refetchPending();
-    refetchStats();
     setIsModalOpen(false);
     setSelectedAd(null);
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { color: 'bg-yellow-100 text-yellow-800', label: 'En attente', icon: Clock },
-      approved: { color: 'bg-green-100 text-green-800', label: 'Approuvée', icon: Check },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejetée', icon: X }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    const Icon = config.icon;
-    
-    return (
-      <Badge className={config.color}>
-        <Icon className="w-3 h-3 mr-1" />
-        {config.label}
-      </Badge>
-    );
-  };
-
-  const AdCard = ({ ad, showQuickActions = false }: { ad: any; showQuickActions?: boolean }) => (
-    <Card key={ad.id} className="mb-4">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <div>
-            <CardTitle className="text-lg">{ad.title}</CardTitle>
-            <CardDescription>
-              {ad.category} • {ad.location} • {new Date(ad.created_at).toLocaleDateString('fr-FR')}
-            </CardDescription>
-          </div>
-          {getStatusBadge(ad.moderation_status)}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
-          {ad.description}
-        </p>
-        {ad.price && (
-          <p className="text-lg font-semibold text-primary mb-4">
-            {ad.price} FCFA
-          </p>
-        )}
-        {ad.moderated_at && (
-          <p className="text-xs text-muted-foreground mb-4">
-            Modéré le {new Date(ad.moderated_at).toLocaleDateString('fr-FR')}
-          </p>
-        )}
-        {ad.moderation_notes && (
-          <p className="text-sm bg-muted p-2 rounded mb-4">
-            <strong>Notes:</strong> {ad.moderation_notes}
-          </p>
-        )}
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={() => handleViewAd(ad)}>
-            <Eye className="w-4 h-4 mr-2" />
-            Examiner
-          </Button>
-          {showQuickActions && (
-            <>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleQuickApprove(ad)}
-                disabled={quickApproveMutation.isPending}
-                className="text-green-600 hover:text-green-700"
-              >
-                <Check className="w-4 h-4 mr-2" />
-                {quickApproveMutation.isPending ? 'En cours...' : 'Approuver'}
-              </Button>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={() => handleQuickReject(ad)}
-                disabled={quickRejectMutation.isPending}
-                className="text-red-600 hover:text-red-700"
-              >
-                <X className="w-4 h-4 mr-2" />
-                {quickRejectMutation.isPending ? 'En cours...' : 'Rejeter'}
-              </Button>
-            </>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
-
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold">Modération des annonces</h2>
-          <p className="text-muted-foreground">
-            Rôle: {userRole === 'admin' ? 'Administrateur' : 'Modérateur'}
-          </p>
-        </div>
-        <div className="flex gap-4 text-sm">
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4 text-yellow-500" />
-            <span>{moderationStats?.pending || 0} en attente</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Check className="w-4 h-4 text-green-500" />
-            <span>{moderationStats?.approved || 0} approuvées</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <X className="w-4 h-4 text-red-500" />
-            <span>{moderationStats?.rejected || 0} rejetées</span>
-          </div>
-        </div>
-      </div>
-
-      {moderationStats?.pending && moderationStats.pending > 10 && (
-        <Card className="border-yellow-200 bg-yellow-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-yellow-800">
-              <AlertTriangle className="w-5 h-5" />
-              <p className="font-medium">
-                Attention: {moderationStats.pending} annonces en attente de modération
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      <ModerationHeader userRole={userRole} stats={moderationStats} />
 
       <Tabs defaultValue="pending" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
@@ -329,64 +132,26 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
         </TabsList>
         
         <TabsContent value="pending" className="mt-6">
-          {pendingLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <div className="h-4 bg-muted rounded animate-pulse" />
-                    <div className="h-3 bg-muted rounded animate-pulse w-2/3" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-20 bg-muted rounded animate-pulse" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : !pendingAds || pendingAds.length === 0 ? (
-            <Card>
-              <CardContent className="text-center py-12">
-                <Clock className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Aucune annonce en attente de modération.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {pendingAds.map((ad) => (
-                <AdCard key={ad.id} ad={ad} showQuickActions={true} />
-              ))}
-            </div>
-          )}
+          <AdsList
+            ads={pendingAds}
+            isLoading={pendingLoading}
+            showQuickActions={true}
+            onViewAd={handleViewAd}
+            onQuickApprove={handleQuickApprove}
+            onQuickReject={handleQuickReject}
+            isApproving={quickApproveMutation.isPending}
+            isRejecting={quickRejectMutation.isPending}
+            emptyMessage="Aucune annonce en attente de modération."
+          />
         </TabsContent>
         
         <TabsContent value="moderated" className="mt-6">
-          {moderatedLoading ? (
-            <div className="space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i}>
-                  <CardHeader>
-                    <div className="h-4 bg-muted rounded animate-pulse" />
-                    <div className="h-3 bg-muted rounded animate-pulse w-2/3" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-20 bg-muted rounded animate-pulse" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : !moderatedAds || moderatedAds.length === 0 ? (
-            <Card>
-              <CardContent className="text-center py-12">
-                <p className="text-muted-foreground">Aucune annonce modérée récemment.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-4">
-              {moderatedAds.map((ad) => (
-                <AdCard key={ad.id} ad={ad} />
-              ))}
-            </div>
-          )}
+          <AdsList
+            ads={moderatedAds}
+            isLoading={moderatedLoading}
+            onViewAd={handleViewAd}
+            emptyMessage="Aucune annonce modérée récemment."
+          />
         </TabsContent>
       </Tabs>
 
