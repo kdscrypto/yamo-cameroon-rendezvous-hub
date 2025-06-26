@@ -43,7 +43,7 @@ const CreateAd = () => {
   }, [user, loading, navigate, toast]);
 
   const createAdMutation = useMutation({
-    mutationFn: async (adData: any) => {
+    mutationFn: async (formDataParam: any) => {
       if (!user) throw new Error('User not authenticated');
 
       console.log('Creating ad with VIP option:', formData.vipOption);
@@ -81,7 +81,7 @@ const CreateAd = () => {
 
       // Create the ad with proper initial status
       // All ads (including VIP) should start with 'pending' moderation status
-      const adData = {
+      const newAdData = {
         title: formData.title,
         description: formData.description,
         category: formData.category,
@@ -94,11 +94,11 @@ const CreateAd = () => {
         status: 'inactive' // Keep inactive until approved
       };
 
-      console.log('Inserting ad with data:', adData);
+      console.log('Inserting ad with data:', newAdData);
 
       const { data, error } = await supabase
         .from('ads')
-        .insert(adData)
+        .insert(newAdData)
         .select()
         .single();
 
