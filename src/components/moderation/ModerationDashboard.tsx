@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,6 +6,7 @@ import { useState, useEffect } from 'react';
 import AdModerationModal from './AdModerationModal';
 import ModerationHeader from './ModerationHeader';
 import AdsList from './AdsList';
+import QuickModerationDialog from './QuickModerationDialog';
 import { useModerationMutations } from './useModerationMutations';
 
 interface ModerationDashboardProps {
@@ -16,6 +16,9 @@ interface ModerationDashboardProps {
 const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
   const [selectedAd, setSelectedAd] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [quickModerationAd, setQuickModerationAd] = useState<any>(null);
+  const [quickModerationAction, setQuickModerationAction] = useState<'approve' | 'reject' | null>(null);
+  const [isQuickDialogOpen, setIsQuickDialogOpen] = useState(false);
   const { quickApproveMutation, quickRejectMutation } = useModerationMutations();
 
   // Set up real-time subscription for ads
@@ -103,12 +106,30 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
 
   const handleQuickApprove = (ad: any) => {
     console.log('Quick approve triggered for ad:', ad.id);
-    quickApproveMutation.mutate(ad.id);
+    setQuickModerationAd(ad);
+    setQuickModerationAction('approve');
+    setIsQuickDialogOpen(true);
   };
 
   const handleQuickReject = (ad: any) => {
     console.log('Quick reject triggered for ad:', ad.id);
-    quickRejectMutation.mutate(ad.id);
+    setQuickModerationAd(ad);
+    setQuickModerationAction('reject');
+    setIsQuickDialogOpen(true);
+  };
+
+  const handleQuickModerationConfirm = (message?: string) => {
+    if (!quickModerationAd) return;
+
+    if (quickModerationAction === 'approve') {
+      quickApproveMutation.mutate(quickModerationAd.id);
+    } else if (quickModerationAction === 'reject' && message) {
+      quickRejectMutation.mutate({ adId: quickModerationAd.id, message });
+    }
+
+    setIsQuickDialogOpen(false);
+    setQuickModerationAd(null);
+    setQuickModerationAction(null);
   };
 
   const handleModerationComplete = () => {
@@ -160,6 +181,15 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
         onModerationComplete={handleModerationComplete}
+      />
+
+      <QuickModerationDialog
+        ad={quickModerationAd}
+        action={quickModerationAction}
+        open={isQuickDialogOpen}
+        onOpenChange={setIsQuickDialogOpen}
+        onConfirm={handleQuickModerationConfirm}
+        isSubmitting={quickApproveMutation.isPending || quickRejectMutation.isPending}
       />
     </div>
   );

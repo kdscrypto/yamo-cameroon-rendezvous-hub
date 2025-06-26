@@ -45,8 +45,8 @@ export const useModerationMutations = () => {
   });
 
   const quickRejectMutation = useMutation({
-    mutationFn: async (adId: string) => {
-      console.log('Quick rejecting ad:', adId);
+    mutationFn: async ({ adId, message }: { adId: string; message: string }) => {
+      console.log('Quick rejecting ad:', adId, 'with message:', message);
       
       const { error } = await supabase
         .from('ads')
@@ -55,7 +55,7 @@ export const useModerationMutations = () => {
           status: 'inactive',
           moderated_at: new Date().toISOString(),
           moderated_by: user?.id,
-          moderation_notes: 'Rejet rapide par le modérateur'
+          moderation_notes: message || 'Annonce rejetée par le modérateur'
         })
         .eq('id', adId);
       
