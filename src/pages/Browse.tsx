@@ -1,12 +1,13 @@
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Search, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import AdCard from '@/components/AdCard';
+import SearchResults from '@/components/SearchResults';
+import { useApprovedAds } from '@/hooks/useApprovedAds';
 
 const Browse = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -14,59 +15,70 @@ const Browse = () => {
   const [location, setLocation] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
 
-  // Mock data pour les annonces
-  const ads = [
-    {
-      id: '1',
-      title: 'Belle femme disponible pour rencontres discrètes',
-      description: 'Jolie femme de 25 ans, disponible pour des moments de détente et de plaisir...',
-      location: 'Douala, Akwa',
-      category: 'Rencontres',
-      price: '25,000 FCFA',
-      isVip: true
-    },
-    {
-      id: '2',
-      title: 'Massage relaxant et thérapeutique',
-      description: 'Massage professionnel dans un cadre discret et hygiénique. Techniques variées...',
-      location: 'Yaoundé, Bastos',
-      category: 'Massages',
-      price: '15,000 FCFA'
-    },
-    {
-      id: '3',
-      title: 'Escort de luxe disponible',
-      description: 'Accompagnatrice de haut niveau pour soirées et événements. Élégante et raffinée...',
-      location: 'Douala, Bonanjo',
-      category: 'Rencontres',
-      price: '50,000 FCFA',
-      isVip: true
-    },
-    {
-      id: '4',
-      title: 'Produits intimes de qualité',
-      description: 'Large gamme de produits adultes, livraison discrète dans tout le Cameroun...',
-      location: 'Yaoundé, Centre-ville',
-      category: 'Produits',
-      price: 'Variable'
-    },
-    {
-      id: '5',
-      title: 'Jeune homme disponible',
-      description: 'Jeune homme de 28 ans, sportif, disponible pour rencontres...',
-      location: 'Douala, New Bell',
-      category: 'Rencontres',
-      price: '20,000 FCFA'
-    },
-    {
-      id: '6',
-      title: 'Massage tantrique spécialisé',
-      description: 'Massage tantrique par professionnelle expérimentée. Ambiance relaxante...',
-      location: 'Yaoundé, Melen',
-      category: 'Massages',
-      price: '30,000 FCFA'
+  const { data: ads = [], isLoading, error } = useApprovedAds();
+
+  // Filter and sort ads based on search criteria
+  const filteredAds = useMemo(() => {
+    let filtered = [...ads];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(ad => 
+        ad.title.toLowerCase().includes(query) ||
+        ad.description?.toLowerCase().includes(query) ||
+        ad.location?.toLowerCase().includes(query)
+      );
     }
-  ];
+
+    // Filter by category
+    if (category !== 'all') {
+      filtered = filtered.filter(ad => ad.category.toLowerCase() === category.toLowerCase());
+    }
+
+    // Filter by location
+    if (location !== 'all') {
+      filtered = filtered.filter(ad => ad.location?.toLowerCase().includes(location.toLowerCase()));
+    }
+
+    // Sort ads
+    switch (sortBy) {
+      case 'recent':
+        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+      case 'price-low':
+        filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+        break;
+      case 'price-high':
+        filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+        break;
+      case 'popular':
+        // For now, sort by recent as we don't have popularity metrics
+        filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        break;
+      default:
+        break;
+    }
+
+    return filtered;
+  }, [ads, searchQuery, category, location, sortBy]);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold mb-4">Erreur de chargement</h2>
+            <p className="text-muted-foreground">
+              Impossible de charger les annonces. Veuillez réessayer.
+            </p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -78,7 +90,7 @@ const Browse = () => {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-4">Parcourir les annonces</h1>
             <p className="text-muted-foreground">
-              Trouvez l'annonce qui vous correspond parmi notre sélection
+              Trouvez l'annonce qui vous correspond parmi notre sélection d'annonces approuvées
             </p>
           </div>
 
@@ -137,34 +149,24 @@ const Browse = () => {
             </div>
           </div>
 
-          {/* Results */}
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">
-              {ads.length} annonce{ads.length > 1 ? 's' : ''} trouvée{ads.length > 1 ? 's' : ''}
-            </h2>
-            <Button variant="outline" size="sm">
-              <Settings className="w-4 h-4 mr-2" />
-              Filtres avancés
-            </Button>
-          </div>
+          {/* Search Results */}
+          <SearchResults
+            results={filteredAds}
+            query={searchQuery}
+            totalResults={filteredAds.length}
+            loading={isLoading}
+          />
 
-          {/* Ads Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {ads.map((ad) => (
-              <AdCard key={ad.id} {...ad} />
-            ))}
-          </div>
-
-          {/* Pagination */}
-          <div className="flex justify-center mt-12">
-            <div className="flex space-x-2">
-              <Button variant="outline" disabled>Précédent</Button>
-              <Button>1</Button>
-              <Button variant="outline">2</Button>
-              <Button variant="outline">3</Button>
-              <Button variant="outline">Suivant</Button>
+          {/* Pagination - For future implementation */}
+          {filteredAds.length > 0 && (
+            <div className="flex justify-center mt-12">
+              <div className="flex space-x-2">
+                <Button variant="outline" disabled>Précédent</Button>
+                <Button>1</Button>
+                <Button variant="outline">Suivant</Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
       

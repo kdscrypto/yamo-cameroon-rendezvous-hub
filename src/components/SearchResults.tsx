@@ -2,7 +2,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import AdCard from '@/components/AdCard';
-import { AdData } from '@/hooks/useSearch';
+import { AdData } from '@/hooks/useApprovedAds';
 import { Search } from 'lucide-react';
 
 interface SearchResultsProps {
@@ -13,6 +13,11 @@ interface SearchResultsProps {
 }
 
 const SearchResults = ({ results, query, totalResults, loading = false }: SearchResultsProps) => {
+  // Filter results to ensure only approved and active ads are shown
+  const approvedResults = results.filter(ad => 
+    ad.moderation_status === 'approved' && ad.status === 'active'
+  );
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -36,16 +41,16 @@ const SearchResults = ({ results, query, totalResults, loading = false }: Search
     );
   }
 
-  if (results.length === 0) {
+  if (approvedResults.length === 0) {
     return (
       <div className="text-center py-12">
         <Search className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-50" />
         <h3 className="text-xl font-semibold mb-2">Aucun résultat trouvé</h3>
         <p className="text-muted-foreground mb-4">
           {query ? (
-            <>Aucune annonce ne correspond à votre recherche "<strong>{query}</strong>"</>
+            <>Aucune annonce approuvée ne correspond à votre recherche "<strong>{query}</strong>"</>
           ) : (
-            'Aucune annonce ne correspond à vos critères de recherche'
+            'Aucune annonce approuvée ne correspond à vos critères de recherche'
           )}
         </p>
         <p className="text-sm text-muted-foreground">
@@ -61,7 +66,7 @@ const SearchResults = ({ results, query, totalResults, loading = false }: Search
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold">
-            {totalResults} résultat{totalResults > 1 ? 's' : ''} trouvé{totalResults > 1 ? 's' : ''}
+            {approvedResults.length} annonce{approvedResults.length > 1 ? 's' : ''} approuvée{approvedResults.length > 1 ? 's' : ''} trouvée{approvedResults.length > 1 ? 's' : ''}
           </h2>
           {query && (
             <Badge variant="secondary" className="text-sm">
@@ -73,8 +78,18 @@ const SearchResults = ({ results, query, totalResults, loading = false }: Search
 
       {/* Results Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {results.map((ad) => (
-          <AdCard key={ad.id} {...ad} />
+        {approvedResults.map((ad) => (
+          <AdCard 
+            key={ad.id} 
+            id={ad.id}
+            title={ad.title}
+            description={ad.description || ''}
+            price={ad.price ? `${ad.price.toLocaleString()} FCFA` : undefined}
+            location={ad.location || ''}
+            category={ad.category}
+            imageUrl={ad.images && ad.images.length > 0 ? ad.images[0] : undefined}
+            isVip={!!ad.expires_at && new Date(ad.expires_at) > new Date()}
+          />
         ))}
       </div>
     </div>

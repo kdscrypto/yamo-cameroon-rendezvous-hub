@@ -11,6 +11,9 @@ export const useModerationMutations = () => {
   const invalidateQueries = () => {
     queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
     queryClient.invalidateQueries({ queryKey: ['moderation-stats'] });
+    // Invalidate public-facing queries to refresh the site content
+    queryClient.invalidateQueries({ queryKey: ['approved-ads'] });
+    queryClient.invalidateQueries({ queryKey: ['user-ads'] });
   };
 
   const quickApproveMutation = useMutation({
@@ -32,11 +35,11 @@ export const useModerationMutations = () => {
         throw error;
       }
       
-      console.log('Ad approved successfully');
+      console.log('Ad approved successfully - now visible to public');
     },
     onSuccess: () => {
       invalidateQueries();
-      toast.success('Annonce approuvée avec succès');
+      toast.success('Annonce approuvée avec succès et maintenant visible sur le site');
     },
     onError: (error) => {
       console.error('Error in approval mutation:', error);
