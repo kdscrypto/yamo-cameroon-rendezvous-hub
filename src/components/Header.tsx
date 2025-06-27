@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, LogOut, Settings, BarChart3 } from 'lucide-react';
@@ -21,17 +20,28 @@ const Header = () => {
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    const { error } = await signOut();
-    if (error) {
+    try {
+      const { error } = await signOut();
+      if (error) {
+        console.error('Erreur de déconnexion:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de se déconnecter. Veuillez réessayer.",
+          variant: "destructive"
+        });
+      } else {
+        toast({
+          title: "Déconnexion réussie",
+          description: "À bientôt !"
+        });
+        navigate('/');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
       toast({
         title: "Erreur",
-        description: "Impossible de se déconnecter.",
+        description: "Une erreur inattendue s'est produite lors de la déconnexion.",
         variant: "destructive"
-      });
-    } else {
-      toast({
-        title: "Déconnexion réussie",
-        description: "À bientôt !"
       });
     }
   };

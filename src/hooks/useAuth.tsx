@@ -68,8 +68,16 @@ export const useAuth = () => {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Erreur lors de la déconnexion:', error);
+      }
+      return { error };
+    } catch (error) {
+      console.error('Erreur inattendue lors de la déconnexion:', error);
+      return { error };
+    }
   };
 
   return {
