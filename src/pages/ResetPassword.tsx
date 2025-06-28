@@ -29,7 +29,7 @@ const ResetPassword = () => {
       console.log('ResetPassword: Location search:', location.search);
 
       try {
-        // Check for tokens in URL search params (query parameters)
+        // Check for tokens in URL search params (query parameters) first
         const searchParams = new URLSearchParams(location.search);
         const searchAccessToken = searchParams.get('access_token');
         const searchRefreshToken = searchParams.get('refresh_token');
@@ -41,7 +41,7 @@ const ResetPassword = () => {
           type: searchType 
         });
 
-        // Also check hash params as backup
+        // Also check hash params as backup (Supabase might use either)
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const hashAccessToken = hashParams.get('access_token');
         const hashRefreshToken = hashParams.get('refresh_token');
@@ -61,11 +61,11 @@ const ResetPassword = () => {
         if (finalAccessToken && finalType === 'recovery') {
           console.log('ResetPassword: Setting session with recovery tokens...');
           
-          // For password recovery, we might not always have a refresh token
-          // We'll try to set the session with just the access token if needed
-          const sessionData = finalRefreshToken 
-            ? { access_token: finalAccessToken, refresh_token: finalRefreshToken }
-            : { access_token: finalAccessToken, refresh_token: '' };
+          // Create session data - for recovery, refresh token might be empty
+          const sessionData = {
+            access_token: finalAccessToken,
+            refresh_token: finalRefreshToken || ''
+          };
           
           const { data, error } = await supabase.auth.setSession(sessionData);
 
@@ -80,7 +80,7 @@ const ResetPassword = () => {
           } else {
             console.log('ResetPassword: Session set successfully:', data);
             setIsValidSession(true);
-            // Clear the URL params to clean up the URL
+            // Clean up the URL to remove tokens
             window.history.replaceState(null, '', window.location.pathname);
           }
         } else {

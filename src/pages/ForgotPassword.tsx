@@ -22,8 +22,8 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // Ensure we redirect to the correct reset password page
-      const redirectUrl = `${window.location.origin}/reset-password`;
+      // Use the exact URL structure for the redirect - this is crucial
+      const redirectUrl = 'https://46696abf-934c-4833-b13f-28104db75aab.lovableproject.com/reset-password';
       console.log('ForgotPassword: Redirect URL set to:', redirectUrl);
       console.log('ForgotPassword: Sending reset email for:', email);
       
