@@ -19,21 +19,55 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Vérifier si nous avons un token de réinitialisation
-    const accessToken = searchParams.get('access_token');
-    const refreshToken = searchParams.get('refresh_token');
-    
-    if (accessToken && refreshToken) {
-      // Établir la session avec les tokens
-      supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken
-      });
-    } else {
-      // Rediriger vers la page de mot de passe oublié si pas de tokens
-      navigate('/forgot-password');
-    }
-  }, [searchParams, navigate]);
+    // Handle the authentication tokens from URL fragment or search params
+    const handleAuthTokens = () => {
+      // Check URL fragment first (this is where Supabase usually puts the tokens)
+      const fragment = window.location.hash.substring(1);
+      const params = new URLSearchParams(fragment);
+      
+      let accessToken = params.get('access_token');
+      let refreshToken = params.get('refresh_token');
+      
+      // If not in fragment, check search params
+      if (!accessToken) {
+        accessToken = searchParams.get('access_token');
+        refreshToken = searchParams.get('refresh_token');
+      }
+      
+      console.log('Auth tokens found:', { accessToken: !!accessToken, refreshToken: !!refreshToken });
+      
+      if (accessToken && refreshToken) {
+        // Set the session with the tokens
+        console.log('Setting session with tokens...');
+        supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
+        }).then(({ data, error }) => {
+          if (error) {
+            console.error('Error setting session:', error);
+            toast({
+              title: "Erreur",
+              description: "Le lien de réinitialisation est invalide ou a expiré.",
+              variant: "destructive"
+            });
+            navigate('/forgot-password');
+          } else {
+            console.log('Session set successfully:', data);
+          }
+        });
+      } else {
+        console.log('No auth tokens found, redirecting to forgot-password');
+        toast({
+          title: "Lien invalide",
+          description: "Le lien de réinitialisation est invalide ou a expiré.",
+          variant: "destructive"
+        });
+        navigate('/forgot-password');
+      }
+    };
+
+    handleAuthTokens();
+  }, [searchParams, navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,17 +93,20 @@ const ResetPassword = () => {
     setIsLoading(true);
 
     try {
+      console.log('Updating password...');
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
       if (error) {
+        console.error('Error updating password:', error);
         toast({
           title: "Erreur",
           description: error.message,
           variant: "destructive"
         });
       } else {
+        console.log('Password updated successfully');
         toast({
           title: "Mot de passe modifié",
           description: "Votre mot de passe a été mis à jour avec succès."
@@ -77,6 +114,7 @@ const ResetPassword = () => {
         navigate('/login');
       }
     } catch (error) {
+      console.error('Unexpected error:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite.",

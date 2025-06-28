@@ -22,7 +22,9 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
+      // Use the current origin to ensure the redirect works correctly
       const redirectUrl = `${window.location.origin}/reset-password`;
+      console.log('Redirect URL set to:', redirectUrl);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl
@@ -42,6 +44,7 @@ const ForgotPassword = () => {
         });
       }
     } catch (error) {
+      console.error('Error sending reset email:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite.",
