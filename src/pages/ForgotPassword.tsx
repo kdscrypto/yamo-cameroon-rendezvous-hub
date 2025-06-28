@@ -22,13 +22,10 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // Use the exact URL structure for the redirect - this is crucial
-      const redirectUrl = 'https://46696abf-934c-4833-b13f-28104db75aab.lovableproject.com/reset-password';
-      console.log('ForgotPassword: Redirect URL set to:', redirectUrl);
       console.log('ForgotPassword: Sending reset email for:', email);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: redirectUrl
+        redirectTo: `${window.location.origin}/reset-password`
       });
 
       if (error) {

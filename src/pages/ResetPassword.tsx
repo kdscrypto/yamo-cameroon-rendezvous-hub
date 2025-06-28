@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -18,99 +18,108 @@ const ResetPassword = () => {
   const [isCheckingSession, setIsCheckingSession] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
-    const handleAuthTokens = async () => {
-      console.log('ResetPassword: Starting token handling');
+    const handlePasswordReset = async () => {
+      console.log('ResetPassword: Starting password reset validation');
       console.log('ResetPassword: Current URL:', window.location.href);
-      console.log('ResetPassword: Location pathname:', location.pathname);
-      console.log('ResetPassword: Location hash:', window.location.hash);
-      console.log('ResetPassword: Location search:', location.search);
-
+      
       try {
-        // Check for tokens in URL search params (query parameters) first
-        const searchParams = new URLSearchParams(location.search);
-        const searchAccessToken = searchParams.get('access_token');
-        const searchRefreshToken = searchParams.get('refresh_token');
-        const searchType = searchParams.get('type');
-
-        console.log('ResetPassword: Search params found:', { 
-          hasAccessToken: !!searchAccessToken, 
-          hasRefreshToken: !!searchRefreshToken, 
-          type: searchType 
-        });
-
-        // Also check hash params as backup (Supabase might use either)
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const hashAccessToken = hashParams.get('access_token');
-        const hashRefreshToken = hashParams.get('refresh_token');
-        const hashType = hashParams.get('type');
-
-        console.log('ResetPassword: Hash params found:', { 
-          hasAccessToken: !!hashAccessToken, 
-          hasRefreshToken: !!hashRefreshToken, 
-          type: hashType 
-        });
-
-        // Prioritize search params over hash params
-        const finalAccessToken = searchAccessToken || hashAccessToken;
-        const finalRefreshToken = searchRefreshToken || hashRefreshToken;
-        const finalType = searchType || hashType;
-
-        if (finalAccessToken && finalType === 'recovery') {
-          console.log('ResetPassword: Setting session with recovery tokens...');
+        // First, check if we have tokens in the URL hash (most common for Supabase)
+        const hashFragment = window.location.hash.substring(1);
+        console.log('ResetPassword: Hash fragment:', hashFragment);
+        
+        if (hashFragment) {
+          const hashParams = new URLSearchParams(hashFragment);
+          const accessToken = hashParams.get('access_token');
+          const refreshToken = hashParams.get('refresh_token');
+          const type = hashParams.get('type');
           
-          // Create session data - for recovery, refresh token might be empty
-          const sessionData = {
-            access_token: finalAccessToken,
-            refresh_token: finalRefreshToken || ''
-          };
-          
-          const { data, error } = await supabase.auth.setSession(sessionData);
+          console.log('ResetPassword: Hash params:', { 
+            hasAccessToken: !!accessToken, 
+            hasRefreshToken: !!refreshToken, 
+            type 
+          });
 
-          if (error) {
-            console.error('ResetPassword: Error setting session:', error);
-            toast({
-              title: "Erreur",
-              description: "Le lien de réinitialisation est invalide ou a expiré.",
-              variant: "destructive"
+          if (accessToken && type === 'recovery') {
+            console.log('ResetPassword: Found recovery tokens in hash, setting session...');
+            
+            const { data, error } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken || ''
             });
-            navigate('/forgot-password');
-          } else {
-            console.log('ResetPassword: Session set successfully:', data);
+
+            if (error) {
+              console.error('ResetPassword: Session error:', error);
+              throw error;
+            }
+
+            console.log('ResetPassword: Session set successfully');
             setIsValidSession(true);
-            // Clean up the URL to remove tokens
-            window.history.replaceState(null, '', window.location.pathname);
-          }
-        } else {
-          console.log('ResetPassword: No recovery tokens found, checking existing session...');
-          
-          // Check if user already has a valid session
-          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-          
-          if (sessionError) {
-            console.error('ResetPassword: Error getting session:', sessionError);
-          }
-          
-          if (session) {
-            console.log('ResetPassword: Valid existing session found');
-            setIsValidSession(true);
-          } else {
-            console.log('ResetPassword: No valid session found, redirecting to forgot password');
-            toast({
-              title: "Lien invalide",
-              description: "Le lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
-              variant: "destructive"
-            });
-            navigate('/forgot-password');
+            
+            // Clean up the URL
+            window.history.replaceState(null, '', '/reset-password');
+            setIsCheckingSession(false);
+            return;
           }
         }
+
+        // Fallback: check query parameters
+        const searchParams = new URLSearchParams(window.location.search);
+        const accessToken = searchParams.get('access_token');
+        const refreshToken = searchParams.get('refresh_token');
+        const type = searchParams.get('type');
+        
+        console.log('ResetPassword: Query params:', { 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken, 
+          type 
+        });
+
+        if (accessToken && type === 'recovery') {
+          console.log('ResetPassword: Found recovery tokens in query, setting session...');
+          
+          const { data, error } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || ''
+          });
+
+          if (error) {
+            console.error('ResetPassword: Session error:', error);
+            throw error;
+          }
+
+          console.log('ResetPassword: Session set successfully');
+          setIsValidSession(true);
+          
+          // Clean up the URL
+          window.history.replaceState(null, '', '/reset-password');
+          setIsCheckingSession(false);
+          return;
+        }
+
+        // Check if user already has a valid session
+        console.log('ResetPassword: No tokens found, checking existing session...');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error('ResetPassword: Error getting session:', sessionError);
+          throw sessionError;
+        }
+        
+        if (session?.user) {
+          console.log('ResetPassword: Valid existing session found');
+          setIsValidSession(true);
+        } else {
+          console.log('ResetPassword: No valid session, redirecting...');
+          throw new Error('No valid reset session found');
+        }
+
       } catch (error) {
-        console.error('ResetPassword: Error handling auth tokens:', error);
+        console.error('ResetPassword: Error during validation:', error);
         toast({
-          title: "Erreur",
-          description: "Une erreur s'est produite lors de la vérification du lien.",
+          title: "Lien invalide",
+          description: "Le lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
           variant: "destructive"
         });
         navigate('/forgot-password');
@@ -119,8 +128,8 @@ const ResetPassword = () => {
       }
     };
 
-    handleAuthTokens();
-  }, [navigate, toast, location]);
+    handlePasswordReset();
+  }, [navigate, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
