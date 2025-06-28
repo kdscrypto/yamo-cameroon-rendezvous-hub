@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,34 +15,58 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isValidSession, setIsValidSession] = useState(false);
+  const [isCheckingSession, setIsCheckingSession] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleAuthTokens = async () => {
+      console.log('ResetPassword: Starting token handling');
+      console.log('ResetPassword: Current URL:', window.location.href);
+      console.log('ResetPassword: Location pathname:', location.pathname);
+      console.log('ResetPassword: Location hash:', window.location.hash);
+      console.log('ResetPassword: Location search:', location.search);
+
       try {
-        // Check if we have tokens in the URL fragment
+        // First, let's check if we have tokens in the URL hash
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
         const type = hashParams.get('type');
 
-        console.log('URL fragment params:', { 
-          accessToken: !!accessToken, 
-          refreshToken: !!refreshToken, 
+        console.log('ResetPassword: Hash params found:', { 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken, 
           type 
         });
 
-        if (accessToken && refreshToken && type === 'recovery') {
-          console.log('Setting session with recovery tokens...');
+        // Also check query parameters as backup
+        const searchParams = new URLSearchParams(location.search);
+        const searchAccessToken = searchParams.get('access_token');
+        const searchRefreshToken = searchParams.get('refresh_token');
+        const searchType = searchParams.get('type');
+
+        console.log('ResetPassword: Search params found:', { 
+          hasAccessToken: !!searchAccessToken, 
+          hasRefreshToken: !!searchRefreshToken, 
+          type: searchType 
+        });
+
+        const finalAccessToken = accessToken || searchAccessToken;
+        const finalRefreshToken = refreshToken || searchRefreshToken;
+        const finalType = type || searchType;
+
+        if (finalAccessToken && finalRefreshToken && finalType === 'recovery') {
+          console.log('ResetPassword: Setting session with recovery tokens...');
           
           const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken
+            access_token: finalAccessToken,
+            refresh_token: finalRefreshToken
           });
 
           if (error) {
-            console.error('Error setting session:', error);
+            console.error('ResetPassword: Error setting session:', error);
             toast({
               title: "Erreur",
               description: "Le lien de réinitialisation est invalide ou a expiré.",
@@ -50,40 +74,48 @@ const ResetPassword = () => {
             });
             navigate('/forgot-password');
           } else {
-            console.log('Session set successfully:', data);
+            console.log('ResetPassword: Session set successfully:', data);
             setIsValidSession(true);
-            // Clear the URL hash to clean up the URL
+            // Clear the URL hash and search params to clean up the URL
             window.history.replaceState(null, '', window.location.pathname);
           }
         } else {
+          console.log('ResetPassword: No recovery tokens found, checking existing session...');
           // Check if user already has a valid session
-          const { data: { session } } = await supabase.auth.getSession();
+          const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+          
+          if (sessionError) {
+            console.error('ResetPassword: Error getting session:', sessionError);
+          }
+          
           if (session) {
-            console.log('Valid session found');
+            console.log('ResetPassword: Valid existing session found');
             setIsValidSession(true);
           } else {
-            console.log('No valid session or recovery tokens found');
+            console.log('ResetPassword: No valid session found, redirecting to forgot password');
             toast({
               title: "Lien invalide",
-              description: "Le lien de réinitialisation est invalide ou a expiré.",
+              description: "Le lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
               variant: "destructive"
             });
             navigate('/forgot-password');
           }
         }
       } catch (error) {
-        console.error('Error handling auth tokens:', error);
+        console.error('ResetPassword: Error handling auth tokens:', error);
         toast({
           title: "Erreur",
           description: "Une erreur s'est produite lors de la vérification du lien.",
           variant: "destructive"
         });
         navigate('/forgot-password');
+      } finally {
+        setIsCheckingSession(false);
       }
     };
 
     handleAuthTokens();
-  }, [navigate, toast]);
+  }, [navigate, toast, location]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,20 +141,20 @@ const ResetPassword = () => {
     setIsLoading(true);
 
     try {
-      console.log('Updating password...');
+      console.log('ResetPassword: Updating password...');
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
       if (error) {
-        console.error('Error updating password:', error);
+        console.error('ResetPassword: Error updating password:', error);
         toast({
           title: "Erreur",
           description: error.message,
           variant: "destructive"
         });
       } else {
-        console.log('Password updated successfully');
+        console.log('ResetPassword: Password updated successfully');
         toast({
           title: "Mot de passe modifié",
           description: "Votre mot de passe a été mis à jour avec succès."
@@ -133,7 +165,7 @@ const ResetPassword = () => {
         navigate('/login');
       }
     } catch (error) {
-      console.error('Unexpected error:', error);
+      console.error('ResetPassword: Unexpected error:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite.",
@@ -145,7 +177,7 @@ const ResetPassword = () => {
   };
 
   // Show loading state while we're validating the session
-  if (!isValidSession) {
+  if (isCheckingSession) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
@@ -155,6 +187,24 @@ const ResetPassword = () => {
               <div className="text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
                 <p className="text-muted-foreground">Vérification du lien de réinitialisation...</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!isValidSession) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        <div className="flex-1 flex items-center justify-center px-4 py-12">
+          <Card className="w-full max-w-md bg-card border-border">
+            <CardContent className="pt-6">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4">Redirection vers la page de demande de réinitialisation...</p>
               </div>
             </CardContent>
           </Card>

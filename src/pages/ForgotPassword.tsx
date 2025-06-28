@@ -24,19 +24,22 @@ const ForgotPassword = () => {
     try {
       // Use the current origin to ensure the redirect works correctly
       const redirectUrl = `${window.location.origin}/reset-password`;
-      console.log('Redirect URL set to:', redirectUrl);
+      console.log('ForgotPassword: Redirect URL set to:', redirectUrl);
+      console.log('ForgotPassword: Sending reset email for:', email);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl
       });
 
       if (error) {
+        console.error('ForgotPassword: Error sending reset email:', error);
         toast({
           title: "Erreur",
           description: error.message,
           variant: "destructive"
         });
       } else {
+        console.log('ForgotPassword: Reset email sent successfully');
         setIsEmailSent(true);
         toast({
           title: "Email envoyé",
@@ -44,7 +47,7 @@ const ForgotPassword = () => {
         });
       }
     } catch (error) {
-      console.error('Error sending reset email:', error);
+      console.error('ForgotPassword: Error sending reset email:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite.",
