@@ -22,8 +22,8 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // Use the current origin to ensure the redirect works correctly
-      const redirectUrl = `${window.location.origin}/reset-password`;
+      // Use the new update-password route to ensure the redirect works correctly
+      const redirectUrl = `${window.location.origin}/update-password`;
       console.log('ForgotPassword: Redirect URL set to:', redirectUrl);
       console.log('ForgotPassword: Sending reset email for:', email);
       
