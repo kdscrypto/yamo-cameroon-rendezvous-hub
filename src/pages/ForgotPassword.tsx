@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // Use the reset-password route to match the existing route in App.tsx
+      // Ensure we redirect to the correct reset password page
       const redirectUrl = `${window.location.origin}/reset-password`;
       console.log('ForgotPassword: Redirect URL set to:', redirectUrl);
       console.log('ForgotPassword: Sending reset email for:', email);
