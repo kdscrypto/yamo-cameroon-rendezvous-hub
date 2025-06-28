@@ -29,19 +29,7 @@ const ResetPassword = () => {
       console.log('ResetPassword: Location search:', location.search);
 
       try {
-        // First, let's check if we have tokens in the URL hash
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        const accessToken = hashParams.get('access_token');
-        const refreshToken = hashParams.get('refresh_token');
-        const type = hashParams.get('type');
-
-        console.log('ResetPassword: Hash params found:', { 
-          hasAccessToken: !!accessToken, 
-          hasRefreshToken: !!refreshToken, 
-          type 
-        });
-
-        // Also check query parameters as backup
+        // Check for tokens in URL search params (query parameters)
         const searchParams = new URLSearchParams(location.search);
         const searchAccessToken = searchParams.get('access_token');
         const searchRefreshToken = searchParams.get('refresh_token');
@@ -53,17 +41,33 @@ const ResetPassword = () => {
           type: searchType 
         });
 
-        const finalAccessToken = accessToken || searchAccessToken;
-        const finalRefreshToken = refreshToken || searchRefreshToken;
-        const finalType = type || searchType;
+        // Also check hash params as backup
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const hashAccessToken = hashParams.get('access_token');
+        const hashRefreshToken = hashParams.get('refresh_token');
+        const hashType = hashParams.get('type');
 
-        if (finalAccessToken && finalRefreshToken && finalType === 'recovery') {
+        console.log('ResetPassword: Hash params found:', { 
+          hasAccessToken: !!hashAccessToken, 
+          hasRefreshToken: !!hashRefreshToken, 
+          type: hashType 
+        });
+
+        // Prioritize search params over hash params
+        const finalAccessToken = searchAccessToken || hashAccessToken;
+        const finalRefreshToken = searchRefreshToken || hashRefreshToken;
+        const finalType = searchType || hashType;
+
+        if (finalAccessToken && finalType === 'recovery') {
           console.log('ResetPassword: Setting session with recovery tokens...');
           
-          const { data, error } = await supabase.auth.setSession({
-            access_token: finalAccessToken,
-            refresh_token: finalRefreshToken
-          });
+          // For password recovery, we might not always have a refresh token
+          // We'll try to set the session with just the access token if needed
+          const sessionData = finalRefreshToken 
+            ? { access_token: finalAccessToken, refresh_token: finalRefreshToken }
+            : { access_token: finalAccessToken, refresh_token: '' };
+          
+          const { data, error } = await supabase.auth.setSession(sessionData);
 
           if (error) {
             console.error('ResetPassword: Error setting session:', error);
@@ -76,11 +80,12 @@ const ResetPassword = () => {
           } else {
             console.log('ResetPassword: Session set successfully:', data);
             setIsValidSession(true);
-            // Clear the URL hash and search params to clean up the URL
+            // Clear the URL params to clean up the URL
             window.history.replaceState(null, '', window.location.pathname);
           }
         } else {
           console.log('ResetPassword: No recovery tokens found, checking existing session...');
+          
           // Check if user already has a valid session
           const { data: { session }, error: sessionError } = await supabase.auth.getSession();
           
