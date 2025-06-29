@@ -29,39 +29,39 @@ export const usePasswordReset = () => {
           return;
         }
 
-        // Method 2: Check URL fragments (hash)
-        const hashFragment = window.location.hash.substring(1);
-        console.log('ResetPassword: Hash fragment:', hashFragment);
-        
         let accessToken = null;
         let refreshToken = null;
         let type = null;
 
-        if (hashFragment) {
-          const hashParams = new URLSearchParams(hashFragment);
-          accessToken = hashParams.get('access_token');
-          refreshToken = hashParams.get('refresh_token');
-          type = hashParams.get('type');
-          
-          console.log('ResetPassword: Hash params found:', { 
-            hasAccessToken: !!accessToken, 
-            hasRefreshToken: !!refreshToken, 
-            type 
-          });
-        }
+        // Method 2: Check query parameters first (this is the format you're receiving)
+        const searchParams = new URLSearchParams(window.location.search);
+        accessToken = searchParams.get('access_token');
+        refreshToken = searchParams.get('refresh_token');
+        type = searchParams.get('type');
+        
+        console.log('ResetPassword: Query params found:', { 
+          hasAccessToken: !!accessToken, 
+          hasRefreshToken: !!refreshToken, 
+          type 
+        });
 
-        // Method 3: Check query parameters if hash didn't work
+        // Method 3: Check URL fragments (hash) as fallback
         if (!accessToken) {
-          const searchParams = new URLSearchParams(window.location.search);
-          accessToken = searchParams.get('access_token');
-          refreshToken = searchParams.get('refresh_token');
-          type = searchParams.get('type');
+          const hashFragment = window.location.hash.substring(1);
+          console.log('ResetPassword: Hash fragment:', hashFragment);
           
-          console.log('ResetPassword: Query params found:', { 
-            hasAccessToken: !!accessToken, 
-            hasRefreshToken: !!refreshToken, 
-            type 
-          });
+          if (hashFragment) {
+            const hashParams = new URLSearchParams(hashFragment);
+            accessToken = hashParams.get('access_token');
+            refreshToken = hashParams.get('refresh_token');
+            type = hashParams.get('type');
+            
+            console.log('ResetPassword: Hash params found:', { 
+              hasAccessToken: !!accessToken, 
+              hasRefreshToken: !!refreshToken, 
+              type 
+            });
+          }
         }
 
         if (accessToken && type === 'recovery') {
