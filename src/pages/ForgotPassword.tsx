@@ -23,6 +23,7 @@ const ForgotPassword = () => {
 
     try {
       console.log('ForgotPassword: Sending reset email for:', email);
+      console.log('ForgotPassword: Redirect URL will be:', `${window.location.origin}/reset-password`);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`

@@ -18,7 +18,6 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import UpdatePassword from "./pages/UpdatePassword";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +33,6 @@ const App = () => (
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/update-password" element={<UpdatePassword />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/browse" element={<Browse />} />
