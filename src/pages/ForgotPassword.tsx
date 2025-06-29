@@ -22,11 +22,11 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // Construire l'URL de redirection de manière plus robuste
+      // CORRECTION: Rediriger vers /reset-password au lieu de /forgot-password
       const redirectUrl = `${window.location.origin}/reset-password`;
       
       console.log('ForgotPassword: Envoi de l\'email de réinitialisation pour:', email);
-      console.log('ForgotPassword: URL de redirection:', redirectUrl);
+      console.log('ForgotPassword: URL de redirection CORRIGÉE:', redirectUrl);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl
