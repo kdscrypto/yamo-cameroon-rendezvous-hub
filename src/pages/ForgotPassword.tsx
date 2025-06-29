@@ -22,38 +22,55 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      console.log('ForgotPassword: Sending reset email for:', email);
-      console.log('ForgotPassword: Redirect URL will be:', `${window.location.origin}/reset-password`);
+      // Construire l'URL de redirection de manière plus robuste
+      const redirectUrl = `${window.location.origin}/reset-password`;
+      
+      console.log('ForgotPassword: Envoi de l\'email de réinitialisation pour:', email);
+      console.log('ForgotPassword: URL de redirection:', redirectUrl);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`
+        redirectTo: redirectUrl
       });
 
       if (error) {
-        console.error('ForgotPassword: Error sending reset email:', error);
+        console.error('ForgotPassword: Erreur lors de l\'envoi de l\'email:', error);
+        
+        // Messages d'erreur plus spécifiques
+        let errorMessage = error.message;
+        if (error.message.includes('email not found') || error.message.includes('user not found')) {
+          errorMessage = "Aucun compte associé à cette adresse email n'a été trouvé.";
+        } else if (error.message.includes('rate limit')) {
+          errorMessage = "Trop de tentatives. Veuillez attendre avant de réessayer.";
+        }
+        
         toast({
           title: "Erreur",
-          description: error.message,
+          description: errorMessage,
           variant: "destructive"
         });
       } else {
-        console.log('ForgotPassword: Reset email sent successfully');
+        console.log('ForgotPassword: Email de réinitialisation envoyé avec succès');
         setIsEmailSent(true);
         toast({
           title: "Email envoyé",
           description: "Vérifiez votre boîte email pour réinitialiser votre mot de passe."
         });
       }
-    } catch (error) {
-      console.error('ForgotPassword: Error sending reset email:', error);
+    } catch (error: any) {
+      console.error('ForgotPassword: Erreur lors de l\'envoi de l\'email:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        description: "Une erreur inattendue s'est produite. Veuillez réessayer.",
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleResendEmail = async () => {
+    setIsEmailSent(false);
+    setEmail('');
   };
 
   return (
@@ -99,21 +116,28 @@ const ForgotPassword = () => {
                 <Button 
                   type="submit" 
                   className="w-full gradient-gold text-black hover:opacity-90" 
-                  disabled={isLoading}
+                  disabled={isLoading || !email.trim()}
                 >
                   {isLoading ? 'Envoi en cours...' : 'Envoyer le lien de réinitialisation'}
                 </Button>
               </form>
             ) : (
               <div className="text-center space-y-4">
-                <p className="text-sm text-muted-foreground">
+                <div className="p-4 bg-muted rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    📧 Un email a été envoyé à <strong>{email}</strong>
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Cliquez sur le lien dans l'email pour réinitialiser votre mot de passe.
+                  </p>
+                </div>
+                
+                <p className="text-xs text-muted-foreground">
                   Si vous ne recevez pas l'email dans les prochaines minutes, vérifiez votre dossier spam.
                 </p>
+                
                 <Button 
-                  onClick={() => {
-                    setIsEmailSent(false);
-                    setEmail('');
-                  }}
+                  onClick={handleResendEmail}
                   variant="outline"
                   className="w-full"
                 >

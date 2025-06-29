@@ -19,11 +19,11 @@ export const usePasswordReset = () => {
       console.log('ResetPassword: Hash:', window.location.hash);
       
       try {
-        // Method 1: Check for existing valid session first
+        // Vérifier d'abord s'il y a déjà une session valide
         const { data: { session: existingSession }, error: sessionError } = await supabase.auth.getSession();
         
         if (existingSession && !sessionError) {
-          console.log('ResetPassword: Found existing valid session');
+          console.log('ResetPassword: Session existante trouvée');
           setIsValidSession(true);
           setIsCheckingSession(false);
           return;
@@ -33,30 +33,36 @@ export const usePasswordReset = () => {
         let refreshToken = null;
         let type = null;
 
-        // Method 2: Check query parameters first (this is the format you're receiving)
-        const searchParams = new URLSearchParams(window.location.search);
-        accessToken = searchParams.get('access_token');
-        refreshToken = searchParams.get('refresh_token');
-        type = searchParams.get('type');
+        // Méthode 1: Vérifier les fragments d'URL (hash) - format principal de Supabase
+        const hashFragment = window.location.hash.substring(1);
+        console.log('ResetPassword: Hash fragment:', hashFragment);
         
-        console.log('ResetPassword: Query params found:', { 
-          hasAccessToken: !!accessToken, 
-          hasRefreshToken: !!refreshToken, 
-          type 
-        });
-
-        // Method 3: Check URL fragments (hash) as fallback
-        if (!accessToken) {
-          const hashFragment = window.location.hash.substring(1);
-          console.log('ResetPassword: Hash fragment:', hashFragment);
+        if (hashFragment) {
+          const hashParams = new URLSearchParams(hashFragment);
+          accessToken = hashParams.get('access_token');
+          refreshToken = hashParams.get('refresh_token');
+          type = hashParams.get('type');
           
-          if (hashFragment) {
-            const hashParams = new URLSearchParams(hashFragment);
-            accessToken = hashParams.get('access_token');
-            refreshToken = hashParams.get('refresh_token');
-            type = hashParams.get('type');
+          console.log('ResetPassword: Tokens trouvés dans le hash:', { 
+            hasAccessToken: !!accessToken, 
+            hasRefreshToken: !!refreshToken, 
+            type 
+          });
+        }
+
+        // Méthode 2: Vérifier les paramètres de requête si pas de hash
+        if (!accessToken || !type) {
+          const searchParams = new URLSearchParams(window.location.search);
+          const queryAccessToken = searchParams.get('access_token');
+          const queryRefreshToken = searchParams.get('refresh_token');
+          const queryType = searchParams.get('type');
+          
+          if (queryAccessToken && queryType) {
+            accessToken = queryAccessToken;
+            refreshToken = queryRefreshToken;
+            type = queryType;
             
-            console.log('ResetPassword: Hash params found:', { 
+            console.log('ResetPassword: Tokens trouvés dans les query params:', { 
               hasAccessToken: !!accessToken, 
               hasRefreshToken: !!refreshToken, 
               type 
@@ -64,47 +70,77 @@ export const usePasswordReset = () => {
           }
         }
 
-        if (accessToken && type === 'recovery') {
-          console.log('ResetPassword: Setting session with recovery tokens...');
-          
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || ''
-          });
-
-          if (error) {
-            console.error('ResetPassword: Session error:', error);
-            throw new Error(`Erreur de session: ${error.message}`);
-          }
-
-          console.log('ResetPassword: Session set successfully:', data);
-          setIsValidSession(true);
-          
-          // Clean up the URL to remove tokens
-          const cleanUrl = new URL(window.location.href);
-          cleanUrl.hash = '';
-          cleanUrl.search = '';
-          window.history.replaceState({}, document.title, cleanUrl.pathname);
-          
-        } else {
-          console.log('ResetPassword: No valid recovery tokens found');
-          console.log('ResetPassword: Access token present:', !!accessToken);
-          console.log('ResetPassword: Type:', type);
-          
-          throw new Error('Lien de réinitialisation invalide ou expiré');
+        // Validation des tokens
+        if (!accessToken) {
+          console.log('ResetPassword: Aucun access_token trouvé');
+          throw new Error('Aucun token d\'accès trouvé dans l\'URL');
         }
 
-      } catch (error) {
-        console.error('ResetPassword: Error during validation:', error);
+        if (type !== 'recovery') {
+          console.log('ResetPassword: Type incorrect:', type);
+          throw new Error(`Type de token incorrect: ${type}. Attendu: recovery`);
+        }
+
+        console.log('ResetPassword: Tentative de définition de la session avec les tokens...');
+        
+        // Définir la session avec les tokens
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
+        });
+
+        if (error) {
+          console.error('ResetPassword: Erreur lors de la définition de la session:', error);
+          throw new Error(`Erreur de session: ${error.message}`);
+        }
+
+        if (!data.session) {
+          console.error('ResetPassword: Aucune session créée');
+          throw new Error('Impossible de créer une session avec les tokens fournis');
+        }
+
+        console.log('ResetPassword: Session définie avec succès:', data);
+        setIsValidSession(true);
+        
+        // Nettoyer l'URL pour retirer les tokens sensibles
+        const cleanUrl = new URL(window.location.href);
+        cleanUrl.hash = '';
+        cleanUrl.searchParams.delete('access_token');
+        cleanUrl.searchParams.delete('refresh_token');
+        cleanUrl.searchParams.delete('type');
+        
+        // Garder les autres paramètres s'il y en a
+        const cleanSearch = cleanUrl.searchParams.toString();
+        const finalUrl = cleanUrl.pathname + (cleanSearch ? '?' + cleanSearch : '');
+        
+        window.history.replaceState({}, document.title, finalUrl);
+        
+      } catch (error: any) {
+        console.error('ResetPassword: Erreur pendant la validation:', error);
         setIsValidSession(false);
         
+        // Messages d'erreur plus spécifiques
+        let errorMessage = "Le lien de réinitialisation est invalide ou a expiré.";
+        let errorTitle = "Lien invalide";
+        
+        if (error.message.includes('expired')) {
+          errorMessage = "Le lien de réinitialisation a expiré. Veuillez demander un nouveau lien.";
+          errorTitle = "Lien expiré";
+        } else if (error.message.includes('invalid')) {
+          errorMessage = "Le lien de réinitialisation est invalide. Veuillez demander un nouveau lien.";
+          errorTitle = "Lien invalide";
+        } else if (error.message.includes('Token')) {
+          errorMessage = "Les informations de sécurité sont manquantes ou incorrectes.";
+          errorTitle = "Erreur de sécurité";
+        }
+        
         toast({
-          title: "Lien invalide",
-          description: "Le lien de réinitialisation est invalide ou a expiré. Veuillez demander un nouveau lien.",
+          title: errorTitle,
+          description: errorMessage,
           variant: "destructive"
         });
         
-        // Redirect after showing the error
+        // Redirection après l'erreur
         setTimeout(() => {
           navigate('/forgot-password');
         }, 3000);
@@ -138,36 +174,43 @@ export const usePasswordReset = () => {
     setIsLoading(true);
 
     try {
-      console.log('ResetPassword: Updating password...');
+      console.log('ResetPassword: Mise à jour du mot de passe...');
+      
+      // Vérifier que nous avons toujours une session valide
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        throw new Error('Session expirée. Veuillez cliquer à nouveau sur le lien de réinitialisation.');
+      }
+      
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
       if (error) {
-        console.error('ResetPassword: Error updating password:', error);
-        toast({
-          title: "Erreur",
-          description: error.message,
-          variant: "destructive"
-        });
-        return false;
-      } else {
-        console.log('ResetPassword: Password updated successfully');
-        toast({
-          title: "Mot de passe modifié",
-          description: "Votre mot de passe a été mis à jour avec succès."
-        });
-        
-        // Sign out the user so they can log in with their new password
-        await supabase.auth.signOut();
-        navigate('/login');
-        return true;
+        console.error('ResetPassword: Erreur lors de la mise à jour du mot de passe:', error);
+        throw error;
       }
-    } catch (error) {
-      console.error('ResetPassword: Unexpected error:', error);
+
+      console.log('ResetPassword: Mot de passe mis à jour avec succès');
+      toast({
+        title: "Mot de passe modifié",
+        description: "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter."
+      });
+      
+      // Déconnecter l'utilisateur pour qu'il puisse se connecter avec son nouveau mot de passe
+      await supabase.auth.signOut();
+      
+      // Redirection vers la page de connexion
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
+      
+      return true;
+    } catch (error: any) {
+      console.error('ResetPassword: Erreur inattendue:', error);
       toast({
         title: "Erreur",
-        description: "Une erreur inattendue s'est produite.",
+        description: error.message || "Une erreur inattendue s'est produite.",
         variant: "destructive"
       });
       return false;
