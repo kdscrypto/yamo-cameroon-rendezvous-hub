@@ -40,16 +40,10 @@ export const usePasswordUpdate = () => {
       if (!tokenValidation.isValid) {
         console.error('PasswordUpdate: Tokens invalides:', tokenValidation.error);
         toast({
-          title: "Lien invalide ou expiré",
-          description: "Le lien de réinitialisation n'est plus valide. Veuillez demander un nouveau lien.",
+          title: "Erreur",
+          description: "La mise à jour a échoué. Veuillez vérifier votre mot de passe et réessayer.",
           variant: "destructive"
         });
-        
-        // Rediriger vers la page de demande de réinitialisation
-        setTimeout(() => {
-          navigate('/forgot-password');
-        }, 3000);
-        
         return false;
       }
       
@@ -66,13 +60,18 @@ export const usePasswordUpdate = () => {
 
       if (error) {
         console.error('PasswordUpdate: Erreur lors de la mise à jour:', error);
-        throw error;
+        toast({
+          title: "Erreur",
+          description: "La mise à jour a échoué. Veuillez vérifier votre mot de passe et réessayer.",
+          variant: "destructive"
+        });
+        return false;
       }
 
       console.log('PasswordUpdate: Mot de passe mis à jour avec succès');
       toast({
-        title: "Mot de passe modifié",
-        description: "Votre mot de passe a été mis à jour avec succès. Vous pouvez maintenant vous connecter."
+        title: "Succès",
+        description: "Votre mot de passe a été mis à jour."
       });
       
       // Déconnecter l'utilisateur pour qu'il puisse se connecter avec le nouveau mot de passe
@@ -88,7 +87,7 @@ export const usePasswordUpdate = () => {
       console.error('PasswordUpdate: Erreur inattendue:', error);
       toast({
         title: "Erreur",
-        description: error.message || "Une erreur inattendue s'est produite.",
+        description: "La mise à jour a échoué. Veuillez vérifier votre mot de passe et réessayer.",
         variant: "destructive"
       });
       return false;

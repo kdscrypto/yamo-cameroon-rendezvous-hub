@@ -16,7 +16,15 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await onSubmit(password, confirmPassword);
+    
+    // Call the onSubmit function which handles all the logic
+    const success = await onSubmit(password, confirmPassword);
+    
+    // Clear form only if successful
+    if (success) {
+      setPassword('');
+      setConfirmPassword('');
+    }
   };
 
   return (
