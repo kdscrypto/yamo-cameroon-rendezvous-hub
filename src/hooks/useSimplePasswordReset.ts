@@ -12,94 +12,31 @@ export const useSimplePasswordReset = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('SimplePasswordReset: Initializing...');
+    // La seule source de vérité est l'écouteur d'état d'authentification de Supabase.
+    // Il se déclenche automatiquement lorsque la page se charge avec des tokens dans l'URL.
     
-    // Donner du temps à Supabase pour traiter les tokens naturellement
-    const initTimeout = setTimeout(() => {
-      checkTokensAndSession();
-    }, 1000); // Attendre 1 seconde pour laisser Supabase traiter
-    
-    // Configurer l'écoute des changements d'état d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
-        console.log('SimplePasswordReset: Auth state change:', event, session);
-        
-        if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
-          console.log('SimplePasswordReset: Password recovery session active!');
+        console.log('Auth state change detected:', event);
+
+        // Si l'événement est PASSWORD_RECOVERY, cela signifie que le token est valide
+        // et qu'une session temporaire a été créée. Nous sommes prêts.
+        if (event === 'PASSWORD_RECOVERY') {
+          console.log('Password recovery mode activated. Ready for update.');
           setIsReadyForUpdate(true);
+          setIsCheckingTokens(false);
+        } else {
+          // Pour tous les autres cas au chargement initial, on considère que ce n'est pas prêt.
           setIsCheckingTokens(false);
         }
       }
     );
 
-    const checkTokensAndSession = async () => {
-      try {
-        console.log('SimplePasswordReset: Checking for valid session...');
-        
-        // Vérifier s'il y a des tokens dans l'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        
-        const accessToken = urlParams.get('access_token') || hashParams.get('access_token');
-        const type = urlParams.get('type') || hashParams.get('type');
-        
-        console.log('SimplePasswordReset: URL tokens check:', { 
-          hasAccessToken: !!accessToken, 
-          type,
-          fullURL: window.location.href
-        });
-        
-        // Si on a des tokens de récupération dans l'URL, attendre que Supabase les traite
-        if (accessToken && type === 'recovery') {
-          console.log('SimplePasswordReset: Recovery tokens found, waiting for Supabase to process...');
-          setIsCheckingTokens(false);
-          setIsReadyForUpdate(true);
-          return;
-        }
-        
-        // Sinon, vérifier s'il y a déjà une session active
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (session && session.user) {
-          console.log('SimplePasswordReset: Active session found, ready for password update!');
-          setIsReadyForUpdate(true);
-          setIsCheckingTokens(false);
-        } else {
-          console.log('SimplePasswordReset: No valid session or tokens found');
-          setIsCheckingTokens(false);
-          
-          toast({
-            title: "Lien manquant",
-            description: "Aucun lien de réinitialisation valide détecté.",
-            variant: "destructive"
-          });
-          
-          setTimeout(() => {
-            navigate('/forgot-password');
-          }, 3000);
-        }
-      } catch (error) {
-        console.error('SimplePasswordReset: Error during session check:', error);
-        setIsCheckingTokens(false);
-        
-        toast({
-          title: "Erreur",
-          description: "Erreur lors de la validation du lien.",
-          variant: "destructive"
-        });
-        
-        setTimeout(() => {
-          navigate('/forgot-password');
-        }, 3000);
-      }
-    };
-
+    // La fonction de nettoyage qui s'exécute lorsque le composant est démonté.
     return () => {
-      console.log('SimplePasswordReset: Cleaning up...');
-      clearTimeout(initTimeout);
       subscription.unsubscribe();
     };
-  }, [navigate, toast]);
+  }, []); // Le tableau de dépendances est vide car nous n'avons besoin de l'exécuter qu'une seule fois.
 
   const updatePassword = async (password: string, confirmPassword: string): Promise<boolean> => {
     console.log('SimplePasswordReset: Starting password update...');
