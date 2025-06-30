@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -13,30 +12,29 @@ export const useSimplePasswordReset = () => {
 
   useEffect(() => {
     // La seule source de vérité est l'écouteur d'état d'authentification de Supabase.
-    // Il se déclenche automatiquement lorsque la page se charge avec des tokens dans l'URL.
     
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state change detected:', event);
 
-        // Si l'événement est PASSWORD_RECOVERY, cela signifie que le token est valide
-        // et qu'une session temporaire a été créée. Nous sommes prêts.
-        if (event === 'PASSWORD_RECOVERY') {
-          console.log('Password recovery mode activated. Ready for update.');
-          setIsReadyForUpdate(true);
+        // LIGNE CORRIGÉE : Accepter SIGNED_IN comme un événement valide pour la récupération.
+        // Lorsque l'utilisateur clique sur le lien, Supabase crée une session temporaire valide.
+        if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
+          console.log('Valid recovery session detected. Ready for update.');
+          setIsReadyForUpdate(true); // Autoriser la mise à jour
           setIsCheckingTokens(false);
         } else {
-          // Pour tous les autres cas au chargement initial, on considère que ce n'est pas prêt.
+          // Si un autre événement se produit, nous restons en état non prêt.
           setIsCheckingTokens(false);
         }
       }
     );
 
-    // La fonction de nettoyage qui s'exécute lorsque le composant est démonté.
+    // La fonction de nettoyage.
     return () => {
       subscription.unsubscribe();
     };
-  }, []); // Le tableau de dépendances est vide car nous n'avons besoin de l'exécuter qu'une seule fois.
+  }, []); // Le tableau de dépendances est vide.
 
   const updatePassword = async (password: string, confirmPassword: string): Promise<boolean> => {
     console.log('SimplePasswordReset: Starting password update...');
