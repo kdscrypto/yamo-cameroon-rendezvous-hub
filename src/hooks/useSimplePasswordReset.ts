@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -12,28 +11,26 @@ export const useSimplePasswordReset = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // --- Début du correctif : Forcer le bon format d'URL ---
+    // --- Début du correctif : Forcer le bon format d'URL SANS RECHARGEMENT ---
     const searchParams = new URLSearchParams(window.location.search);
     const accessToken = searchParams.get('access_token');
     const type = searchParams.get('type');
 
     // Si l'URL est au mauvais format (?type=recovery)
     if (accessToken && type === 'recovery') {
-      // On la reconstruit avec le bon format (#) que Supabase peut lire.
       const fragment = new URLSearchParams({
         access_token: accessToken,
         type: type,
       }).toString();
       
-      // On remplace l'URL et on recharge la page.
-      // Le rechargement est crucial pour que Supabase s'initialise correctement.
+      // On remplace l'URL. Le client Supabase détectera ce changement grâce à onAuthStateChange.
       window.history.replaceState(null, '', '#' + fragment);
-      window.location.reload();
-      return; // On arrête l'exécution ici, le reste s'exécutera après le rechargement.
+      // LIGNE CRUCIALE SUPPRIMÉE : window.location.reload();
+      // En ne rechargeant pas, on casse la boucle et on laisse l'écouteur faire son travail.
     }
     // --- Fin du correctif ---
 
-    // Ce code s'exécutera seulement après que l'URL ait été corrigée.
+    // Ce code s'exécutera maintenant sans rechargement
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state change detected:', event);
