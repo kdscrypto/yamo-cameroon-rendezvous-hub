@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,14 +16,26 @@ const ForgotPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
   const { toast } = useToast();
+  const location = useLocation();
+
+  // Afficher les erreurs venant de la page de callback
+  React.useEffect(() => {
+    if (location.state?.error) {
+      toast({
+        title: "Erreur",
+        description: location.state.error,
+        variant: "destructive"
+      });
+    }
+  }, [location.state, toast]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      // CORRECTION : Utiliser l'URL complète et exacte pour la redirection
-      const redirectUrl = `${window.location.origin}/reset-password`;
+      // CORRECTION : Utiliser la nouvelle URL de callback
+      const redirectUrl = `${window.location.origin}/auth/callback`;
       
       console.log('ForgotPassword: Sending password reset email for:', email);
       console.log('ForgotPassword: Redirect URL:', redirectUrl);
