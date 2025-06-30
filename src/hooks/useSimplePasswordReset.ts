@@ -18,6 +18,7 @@ export const useSimplePasswordReset = () => {
       // On s'assure de gérer aussi le format avec '?' au cas où.
       const params = new URLSearchParams(window.location.hash.substring(1) || window.location.search);
       const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
 
       // Si aucun token n'est trouvé, le lien est invalide.
       if (!accessToken) {
@@ -27,30 +28,30 @@ export const useSimplePasswordReset = () => {
         return;
       }
       
-      console.log('Token found, attempting manual verification...');
+      console.log('Token found, attempting session recovery...');
 
       try {
-        // Étape 2 : Envoyer manuellement le token à Supabase pour vérification.
-        const { data, error } = await supabase.auth.verifyOtp({
-          token: accessToken,
-          type: 'recovery',
+        // Étape 2 : Utiliser setSession pour établir la session de récupération
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
         });
 
         // Étape 3 : Gérer la réponse de Supabase.
         if (error) {
           // Si Supabase retourne une erreur, le token est vraiment invalide ou expiré.
-          console.error('Supabase token verification failed:', error.message);
+          console.error('Supabase session recovery failed:', error.message);
           setIsReadyForUpdate(false);
           setIsCheckingTokens(false);
         } else {
           // Si aucune erreur n'est retournée, le token est bon !
           // Supabase a créé une session valide. Nous sommes prêts.
-          console.log('Token successfully verified! Ready for password update.');
+          console.log('Session successfully recovered! Ready for password update.');
           setIsReadyForUpdate(true); // Autoriser la mise à jour !
           setIsCheckingTokens(false);
         }
       } catch (e) {
-        console.error('An unexpected error occurred during verification:', e);
+        console.error('An unexpected error occurred during session recovery:', e);
         setIsReadyForUpdate(false);
         setIsCheckingTokens(false);
       }
