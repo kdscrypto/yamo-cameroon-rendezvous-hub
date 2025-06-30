@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -11,17 +12,37 @@ export const useSimplePasswordReset = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // La seule source de vérité est l'écouteur d'état d'authentification de Supabase.
-    
+    // --- Début du correctif : Forcer le bon format d'URL ---
+    const searchParams = new URLSearchParams(window.location.search);
+    const accessToken = searchParams.get('access_token');
+    const type = searchParams.get('type');
+
+    // Si l'URL est au mauvais format (?type=recovery)
+    if (accessToken && type === 'recovery') {
+      // On la reconstruit avec le bon format (#) que Supabase peut lire.
+      const fragment = new URLSearchParams({
+        access_token: accessToken,
+        type: type,
+      }).toString();
+      
+      // On remplace l'URL et on recharge la page.
+      // Le rechargement est crucial pour que Supabase s'initialise correctement.
+      window.history.replaceState(null, '', '#' + fragment);
+      window.location.reload();
+      return; // On arrête l'exécution ici, le reste s'exécutera après le rechargement.
+    }
+    // --- Fin du correctif ---
+
+    // Ce code s'exécutera seulement après que l'URL ait été corrigée.
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log('Auth state change detected:', event);
 
-        // LIGNE CORRIGÉE : Accepter SIGNED_IN comme un événement valide pour la récupération.
-        // Lorsque l'utilisateur clique sur le lien, Supabase crée une session temporaire valide.
+        // Une fois l'URL correcte, Supabase enverra un de ces signaux.
         if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
           console.log('Valid recovery session detected. Ready for update.');
-          setIsReadyForUpdate(true); // Autoriser la mise à jour
+          // On autorise la mise à jour !
+          setIsReadyForUpdate(true);
           setIsCheckingTokens(false);
         } else {
           // Si un autre événement se produit, nous restons en état non prêt.
