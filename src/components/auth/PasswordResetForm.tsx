@@ -17,7 +17,11 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Call the onSubmit function which handles all the logic
+    console.log('PasswordResetForm: Form submitted');
+    console.log('PasswordResetForm: Password length:', password.length);
+    console.log('PasswordResetForm: Passwords match:', password === confirmPassword);
+    
+    // Call the simplified onSubmit function
     const success = await onSubmit(password, confirmPassword);
     
     // Clear form only if successful
@@ -37,7 +41,7 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
         </div>
         <CardTitle className="text-2xl text-foreground">Nouveau mot de passe</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Choisissez un nouveau mot de passe sécurisé
+          Choisissez un nouveau mot de passe
         </CardDescription>
       </CardHeader>
       
@@ -54,7 +58,6 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
               required
               disabled={isLoading}
               className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
-              minLength={6}
             />
           </div>
           
@@ -69,7 +72,6 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
               required
               disabled={isLoading}
               className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
-              minLength={6}
             />
           </div>
           
