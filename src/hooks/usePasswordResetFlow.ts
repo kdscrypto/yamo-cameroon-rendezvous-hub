@@ -13,26 +13,28 @@ export const usePasswordResetFlow = () => {
 
   useEffect(() => {
     const validateResetLink = async () => {
-      console.log('PasswordResetFlow: Starting manual token validation');
+      console.log('PasswordResetFlow: Starting link validation');
       console.log('PasswordResetFlow: Current URL:', window.location.href);
       console.log('PasswordResetFlow: Hash:', window.location.hash);
 
       try {
-        // Étape 1 : Extraire le token manuellement depuis le fragment (#) de l'URL
+        // Extract parameters from URL hash
         const hashParams = new URLSearchParams(window.location.hash.substring(1));
         const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
         const tokenType = hashParams.get('type');
         const errorParam = hashParams.get('error');
         const errorDescription = hashParams.get('error_description');
 
-        console.log('PasswordResetFlow: Manual token extraction:', { 
-          hasAccessToken: !!accessToken, 
+        console.log('PasswordResetFlow: URL parameters:', { 
+          hasAccessToken: !!accessToken,
+          hasRefreshToken: !!refreshToken, 
           type: tokenType,
           error: errorParam,
           errorDescription: errorDescription
         });
 
-        // Vérifier s'il y a une erreur dans l'URL
+        // Check for errors in URL
         if (errorParam) {
           console.error('PasswordResetFlow: Error in URL:', errorParam, errorDescription);
           setIsValidLink(false);
@@ -40,38 +42,38 @@ export const usePasswordResetFlow = () => {
           return;
         }
 
-        // Si aucun token d'accès n'est trouvé, le lien est invalide
-        if (!accessToken) {
-          console.log('PasswordResetFlow: No access token found in URL fragment');
+        // Validate that we have the required tokens
+        if (!accessToken || !refreshToken) {
+          console.log('PasswordResetFlow: Missing required tokens in URL');
           setIsValidLink(false);
           setIsCheckingLink(false);
           return;
         }
 
-        // Étape 2 : Validation manuelle du token avec verifyOtp
-        console.log('PasswordResetFlow: Attempting manual token verification with verifyOtp');
-        const { data, error } = await supabase.auth.verifyOtp({
-          token: accessToken,
-          type: 'recovery'
+        // Set the session with the tokens
+        console.log('PasswordResetFlow: Setting session with tokens');
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken
         });
 
         if (error) {
-          console.error('PasswordResetFlow: Token verification failed:', error);
+          console.error('PasswordResetFlow: Session setup failed:', error);
           setIsValidLink(false);
-        } else if (data?.user && data?.session) {
-          console.log('PasswordResetFlow: Token verified successfully');
+        } else if (data?.session && data?.user) {
+          console.log('PasswordResetFlow: Session established successfully');
           console.log('PasswordResetFlow: User:', data.user.email);
           setIsValidLink(true);
           
-          // Nettoyer l'URL pour améliorer l'UX
+          // Clean up URL for better UX
           const cleanUrl = window.location.pathname;
           window.history.replaceState({}, '', cleanUrl);
         } else {
-          console.log('PasswordResetFlow: Token verification returned no valid session');
+          console.log('PasswordResetFlow: Session setup returned no valid session');
           setIsValidLink(false);
         }
       } catch (error) {
-        console.error('PasswordResetFlow: Unexpected error during manual validation:', error);
+        console.error('PasswordResetFlow: Unexpected error during validation:', error);
         setIsValidLink(false);
       } finally {
         setIsCheckingLink(false);
@@ -84,7 +86,7 @@ export const usePasswordResetFlow = () => {
   const updatePassword = async (newPassword: string, confirmPassword: string): Promise<boolean> => {
     console.log('PasswordResetFlow: Starting password update');
     
-    // Validation côté client
+    // Client-side validation
     if (newPassword !== confirmPassword) {
       toast({
         title: "Erreur",
@@ -106,7 +108,7 @@ export const usePasswordResetFlow = () => {
     setIsLoading(true);
 
     try {
-      // Vérifier qu'on a une session active
+      // Verify we have a valid session
       const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
       if (sessionError || !session) {
@@ -122,7 +124,7 @@ export const usePasswordResetFlow = () => {
 
       console.log('PasswordResetFlow: Valid session found, updating password');
       
-      // Mettre à jour le mot de passe
+      // Update the password
       const { error } = await supabase.auth.updateUser({
         password: newPassword
       });
@@ -143,10 +145,10 @@ export const usePasswordResetFlow = () => {
         description: "Votre mot de passe a été mis à jour avec succès."
       });
 
-      // Déconnecter l'utilisateur pour sécurité
+      // Sign out for security
       await supabase.auth.signOut();
       
-      // Rediriger vers la page de connexion
+      // Redirect to login page
       setTimeout(() => {
         navigate('/login');
       }, 2000);
