@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -22,11 +21,11 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // CORRECTION: Rediriger vers /reset-password au lieu de /forgot-password
+      // CORRECTION CRITIQUE: Utiliser la bonne URL de redirection
       const redirectUrl = `${window.location.origin}/reset-password`;
       
       console.log('ForgotPassword: Envoi de l\'email de réinitialisation pour:', email);
-      console.log('ForgotPassword: URL de redirection CORRIGÉE:', redirectUrl);
+      console.log('ForgotPassword: URL de redirection:', redirectUrl);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl
@@ -35,7 +34,6 @@ const ForgotPassword = () => {
       if (error) {
         console.error('ForgotPassword: Erreur lors de l\'envoi de l\'email:', error);
         
-        // Messages d'erreur plus spécifiques
         let errorMessage = error.message;
         if (error.message.includes('email not found') || error.message.includes('user not found')) {
           errorMessage = "Aucun compte associé à cette adresse email n'a été trouvé.";
