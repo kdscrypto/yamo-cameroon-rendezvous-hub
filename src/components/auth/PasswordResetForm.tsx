@@ -9,9 +9,10 @@ interface PasswordResetFormProps {
   onSubmit: (password: string, confirmPassword: string) => Promise<boolean>;
   isLoading: boolean;
   isReadyForUpdate: boolean;
+  isCheckingTokens?: boolean;
 }
 
-export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate }: PasswordResetFormProps) => {
+export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate, isCheckingTokens }: PasswordResetFormProps) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -45,9 +46,14 @@ export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate }: Pas
         <CardDescription className="text-muted-foreground">
           Choisissez un nouveau mot de passe
         </CardDescription>
-        {!isReadyForUpdate && (
+        {isCheckingTokens && (
           <CardDescription className="text-muted-foreground text-sm">
             Validation du lien en cours...
+          </CardDescription>
+        )}
+        {!isReadyForUpdate && !isCheckingTokens && (
+          <CardDescription className="text-destructive text-sm">
+            Lien de réinitialisation invalide
           </CardDescription>
         )}
       </CardHeader>
@@ -63,7 +69,7 @@ export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate }: Pas
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={isLoading || !isReadyForUpdate}
+              disabled={isLoading || !isReadyForUpdate || isCheckingTokens}
               className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -77,7 +83,7 @@ export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate }: Pas
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              disabled={isLoading || !isReadyForUpdate}
+              disabled={isLoading || !isReadyForUpdate || isCheckingTokens}
               className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -85,10 +91,11 @@ export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate }: Pas
           <Button 
             type="submit" 
             className="w-full gradient-gold text-black hover:opacity-90"
-            disabled={isLoading || !password || !confirmPassword || !isReadyForUpdate}
+            disabled={isLoading || !password || !confirmPassword || !isReadyForUpdate || isCheckingTokens}
           >
             {isLoading ? 'Mise à jour...' : 
-             !isReadyForUpdate ? 'Validation en cours...' : 
+             isCheckingTokens ? 'Validation en cours...' :
+             !isReadyForUpdate ? 'Lien invalide' : 
              'Mettre à jour le mot de passe'}
           </Button>
         </form>

@@ -7,78 +7,17 @@ import { supabase } from '@/integrations/supabase/client';
 export const useSimplePasswordReset = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isReadyForUpdate, setIsReadyForUpdate] = useState(false);
+  const [isCheckingTokens, setIsCheckingTokens] = useState(true);
   const { toast } = useToast();
   const navigate = useNavigate();
 
   useEffect(() => {
     console.log('SimplePasswordReset: Initializing...');
     
-    const checkForPasswordResetTokens = async () => {
-      try {
-        // Vérifier s'il y a des tokens dans l'URL (hash ou query params)
-        const urlParams = new URLSearchParams(window.location.search);
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
-        
-        const accessToken = urlParams.get('access_token') || hashParams.get('access_token');
-        const refreshToken = urlParams.get('refresh_token') || hashParams.get('refresh_token');
-        const type = urlParams.get('type') || hashParams.get('type');
-        
-        console.log('SimplePasswordReset: Checking tokens...', { 
-          hasAccessToken: !!accessToken, 
-          hasRefreshToken: !!refreshToken, 
-          type 
-        });
-        
-        if (accessToken && type === 'recovery') {
-          console.log('SimplePasswordReset: Recovery tokens found, setting session...');
-          
-          // Définir la session avec les tokens
-          const { data, error } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken || ''
-          });
-          
-          if (error) {
-            console.error('SimplePasswordReset: Error setting session:', error);
-            toast({
-              title: "Erreur",
-              description: "Lien de réinitialisation invalide ou expiré.",
-              variant: "destructive"
-            });
-            setTimeout(() => {
-              navigate('/forgot-password');
-            }, 3000);
-            return;
-          }
-          
-          console.log('SimplePasswordReset: Session set successfully, ready for password update!');
-          setIsReadyForUpdate(true);
-        } else {
-          console.log('SimplePasswordReset: No valid recovery tokens found');
-          toast({
-            title: "Lien manquant",
-            description: "Aucun lien de réinitialisation valide détecté.",
-            variant: "destructive"
-          });
-          setTimeout(() => {
-            navigate('/forgot-password');
-          }, 3000);
-        }
-      } catch (error) {
-        console.error('SimplePasswordReset: Error during token check:', error);
-        toast({
-          title: "Erreur",
-          description: "Erreur lors de la validation du lien.",
-          variant: "destructive"
-        });
-        setTimeout(() => {
-          navigate('/forgot-password');
-        }, 3000);
-      }
-    };
-
-    // Vérifier immédiatement les tokens au chargement
-    checkForPasswordResetTokens();
+    // Donner du temps à Supabase pour traiter les tokens naturellement
+    const initTimeout = setTimeout(() => {
+      checkTokensAndSession();
+    }, 1000); // Attendre 1 seconde pour laisser Supabase traiter
     
     // Configurer l'écoute des changements d'état d'authentification
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -88,12 +27,76 @@ export const useSimplePasswordReset = () => {
         if (event === 'PASSWORD_RECOVERY' || (event === 'SIGNED_IN' && session)) {
           console.log('SimplePasswordReset: Password recovery session active!');
           setIsReadyForUpdate(true);
+          setIsCheckingTokens(false);
         }
       }
     );
 
+    const checkTokensAndSession = async () => {
+      try {
+        console.log('SimplePasswordReset: Checking for valid session...');
+        
+        // Vérifier s'il y a des tokens dans l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        
+        const accessToken = urlParams.get('access_token') || hashParams.get('access_token');
+        const type = urlParams.get('type') || hashParams.get('type');
+        
+        console.log('SimplePasswordReset: URL tokens check:', { 
+          hasAccessToken: !!accessToken, 
+          type,
+          fullURL: window.location.href
+        });
+        
+        // Si on a des tokens de récupération dans l'URL, attendre que Supabase les traite
+        if (accessToken && type === 'recovery') {
+          console.log('SimplePasswordReset: Recovery tokens found, waiting for Supabase to process...');
+          setIsCheckingTokens(false);
+          setIsReadyForUpdate(true);
+          return;
+        }
+        
+        // Sinon, vérifier s'il y a déjà une session active
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        if (session && session.user) {
+          console.log('SimplePasswordReset: Active session found, ready for password update!');
+          setIsReadyForUpdate(true);
+          setIsCheckingTokens(false);
+        } else {
+          console.log('SimplePasswordReset: No valid session or tokens found');
+          setIsCheckingTokens(false);
+          
+          toast({
+            title: "Lien manquant",
+            description: "Aucun lien de réinitialisation valide détecté.",
+            variant: "destructive"
+          });
+          
+          setTimeout(() => {
+            navigate('/forgot-password');
+          }, 3000);
+        }
+      } catch (error) {
+        console.error('SimplePasswordReset: Error during session check:', error);
+        setIsCheckingTokens(false);
+        
+        toast({
+          title: "Erreur",
+          description: "Erreur lors de la validation du lien.",
+          variant: "destructive"
+        });
+        
+        setTimeout(() => {
+          navigate('/forgot-password');
+        }, 3000);
+      }
+    };
+
     return () => {
-      console.log('SimplePasswordReset: Cleaning up auth listener...');
+      console.log('SimplePasswordReset: Cleaning up...');
+      clearTimeout(initTimeout);
       subscription.unsubscribe();
     };
   }, [navigate, toast]);
@@ -179,6 +182,7 @@ export const useSimplePasswordReset = () => {
   return {
     updatePassword,
     isLoading,
-    isReadyForUpdate
+    isReadyForUpdate,
+    isCheckingTokens
   };
 };

@@ -5,10 +5,11 @@ import { PasswordResetForm } from '@/components/auth/PasswordResetForm';
 import { useSimplePasswordReset } from '@/hooks/useSimplePasswordReset';
 
 const ResetPassword = () => {
-  const { updatePassword, isLoading, isReadyForUpdate } = useSimplePasswordReset();
+  const { updatePassword, isLoading, isReadyForUpdate, isCheckingTokens } = useSimplePasswordReset();
 
   console.log('ResetPassword: Page loaded, URL:', window.location.href);
   console.log('ResetPassword: isReadyForUpdate:', isReadyForUpdate);
+  console.log('ResetPassword: isCheckingTokens:', isCheckingTokens);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -19,6 +20,7 @@ const ResetPassword = () => {
           onSubmit={updatePassword} 
           isLoading={isLoading}
           isReadyForUpdate={isReadyForUpdate}
+          isCheckingTokens={isCheckingTokens}
         />
       </div>
       
