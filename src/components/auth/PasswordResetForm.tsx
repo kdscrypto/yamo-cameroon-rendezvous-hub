@@ -8,9 +8,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 interface PasswordResetFormProps {
   onSubmit: (password: string, confirmPassword: string) => Promise<boolean>;
   isLoading: boolean;
+  isReadyForUpdate: boolean;
 }
 
-export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProps) => {
+export const PasswordResetForm = ({ onSubmit, isLoading, isReadyForUpdate }: PasswordResetFormProps) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -20,6 +21,7 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
     console.log('PasswordResetForm: Form submitted');
     console.log('PasswordResetForm: Password length:', password.length);
     console.log('PasswordResetForm: Passwords match:', password === confirmPassword);
+    console.log('PasswordResetForm: isReadyForUpdate:', isReadyForUpdate);
     
     // Call the simplified onSubmit function
     const success = await onSubmit(password, confirmPassword);
@@ -43,6 +45,11 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
         <CardDescription className="text-muted-foreground">
           Choisissez un nouveau mot de passe
         </CardDescription>
+        {!isReadyForUpdate && (
+          <CardDescription className="text-muted-foreground text-sm">
+            Validation du lien en cours...
+          </CardDescription>
+        )}
       </CardHeader>
       
       <CardContent>
@@ -56,7 +63,7 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              disabled={isLoading}
+              disabled={isLoading || !isReadyForUpdate}
               className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -70,7 +77,7 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
-              disabled={isLoading}
+              disabled={isLoading || !isReadyForUpdate}
               className="bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
@@ -78,9 +85,11 @@ export const PasswordResetForm = ({ onSubmit, isLoading }: PasswordResetFormProp
           <Button 
             type="submit" 
             className="w-full gradient-gold text-black hover:opacity-90"
-            disabled={isLoading || !password || !confirmPassword}
+            disabled={isLoading || !password || !confirmPassword || !isReadyForUpdate}
           >
-            {isLoading ? 'Mise à jour...' : 'Mettre à jour le mot de passe'}
+            {isLoading ? 'Mise à jour...' : 
+             !isReadyForUpdate ? 'Validation en cours...' : 
+             'Mettre à jour le mot de passe'}
           </Button>
         </form>
       </CardContent>

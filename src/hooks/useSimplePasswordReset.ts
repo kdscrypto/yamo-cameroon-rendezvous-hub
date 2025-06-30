@@ -1,13 +1,35 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
 export const useSimplePasswordReset = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isReadyForUpdate, setIsReadyForUpdate] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('SimplePasswordReset: Setting up auth state listener...');
+    
+    // Set up auth state listener to wait for PASSWORD_RECOVERY event
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        console.log('SimplePasswordReset: Auth state change:', event, session);
+        
+        if (event === 'PASSWORD_RECOVERY') {
+          console.log('SimplePasswordReset: PASSWORD_RECOVERY event detected - ready for update!');
+          setIsReadyForUpdate(true);
+        }
+      }
+    );
+
+    return () => {
+      console.log('SimplePasswordReset: Cleaning up auth listener...');
+      subscription.unsubscribe();
+    };
+  }, []);
 
   const updatePassword = async (password: string, confirmPassword: string): Promise<boolean> => {
     console.log('SimplePasswordReset: Starting password update...');
@@ -71,6 +93,7 @@ export const useSimplePasswordReset = () => {
 
   return {
     updatePassword,
-    isLoading
+    isLoading,
+    isReadyForUpdate
   };
 };

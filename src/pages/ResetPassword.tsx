@@ -5,16 +5,21 @@ import { PasswordResetForm } from '@/components/auth/PasswordResetForm';
 import { useSimplePasswordReset } from '@/hooks/useSimplePasswordReset';
 
 const ResetPassword = () => {
-  const { updatePassword, isLoading } = useSimplePasswordReset();
+  const { updatePassword, isLoading, isReadyForUpdate } = useSimplePasswordReset();
 
   console.log('ResetPassword: Page loaded, URL:', window.location.href);
+  console.log('ResetPassword: isReadyForUpdate:', isReadyForUpdate);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
       <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <PasswordResetForm onSubmit={updatePassword} isLoading={isLoading} />
+        <PasswordResetForm 
+          onSubmit={updatePassword} 
+          isLoading={isLoading}
+          isReadyForUpdate={isReadyForUpdate}
+        />
       </div>
       
       <Footer />
