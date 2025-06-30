@@ -10,10 +10,11 @@ export const usePasswordUpdate = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const updatePassword = async (password: string, confirmPassword: string) => {
+  const updatePassword = async (password: string, confirmPassword: string): Promise<boolean> => {
+    // Validation côté client
     if (password !== confirmPassword) {
       toast({
-        title: "Erreur",
+        title: "Erreur de validation",
         description: "Les mots de passe ne correspondent pas.",
         variant: "destructive"
       });
@@ -22,7 +23,7 @@ export const usePasswordUpdate = () => {
 
     if (password.length < 6) {
       toast({
-        title: "Erreur",
+        title: "Erreur de validation",
         description: "Le mot de passe doit contenir au moins 6 caractères.",
         variant: "destructive"
       });
@@ -32,49 +33,67 @@ export const usePasswordUpdate = () => {
     setIsLoading(true);
 
     try {
-      console.log('PasswordUpdate: Tentative de mise à jour du mot de passe...');
+      console.log('PasswordUpdate: Starting password update process...');
       
-      // D'abord, essayer de valider et configurer la session avec les tokens de l'URL
+      // Valider et configurer la session avec les tokens de l'URL
       const tokenValidation = await validatePasswordResetTokens();
       
       if (!tokenValidation.isValid) {
-        console.error('PasswordUpdate: Tokens invalides:', tokenValidation.error);
+        console.error('PasswordUpdate: Token validation failed:', tokenValidation.error);
         toast({
-          title: "Erreur",
-          description: "La mise à jour a échoué. Veuillez vérifier votre mot de passe et réessayer.",
+          title: "Lien invalide",
+          description: tokenValidation.error || "Le lien de réinitialisation n'est pas valide.",
           variant: "destructive"
         });
+        
+        // Rediriger vers la page de demande de nouveau lien après 3 secondes
+        setTimeout(() => {
+          navigate('/forgot-password');
+        }, 3000);
+        
         return false;
       }
+      
+      console.log('PasswordUpdate: Token validation successful, updating password...');
       
       // Vérifier qu'on a maintenant une session valide
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
-        throw new Error('Impossible de créer une session. Veuillez cliquer à nouveau sur le lien de réinitialisation.');
+        throw new Error('Aucune session active après validation des tokens');
       }
       
-      // Maintenant on peut mettre à jour le mot de passe
+      // Mettre à jour le mot de passe
       const { error } = await supabase.auth.updateUser({
         password: password
       });
 
       if (error) {
-        console.error('PasswordUpdate: Erreur lors de la mise à jour:', error);
+        console.error('PasswordUpdate: Supabase update error:', error);
+        
+        // Gestion spécifique des erreurs Supabase
+        let errorMessage = "La mise à jour du mot de passe a échoué.";
+        
+        if (error.message.includes('password')) {
+          errorMessage = "Le mot de passe ne respecte pas les critères de sécurité.";
+        } else if (error.message.includes('session')) {
+          errorMessage = "Session expirée. Veuillez demander un nouveau lien.";
+        }
+        
         toast({
-          title: "Erreur",
-          description: "La mise à jour a échoué. Veuillez vérifier votre mot de passe et réessayer.",
+          title: "Erreur de mise à jour",
+          description: errorMessage,
           variant: "destructive"
         });
         return false;
       }
 
-      console.log('PasswordUpdate: Mot de passe mis à jour avec succès');
+      console.log('PasswordUpdate: Password updated successfully');
       toast({
-        title: "Succès",
-        description: "Votre mot de passe a été mis à jour."
+        title: "Succès !",
+        description: "Votre mot de passe a été mis à jour avec succès."
       });
       
-      // Déconnecter l'utilisateur pour qu'il puisse se connecter avec le nouveau mot de passe
+      // Déconnecter l'utilisateur pour sécurité
       await supabase.auth.signOut();
       
       // Rediriger vers la page de connexion
@@ -83,11 +102,21 @@ export const usePasswordUpdate = () => {
       }, 2000);
       
       return true;
+      
     } catch (error: any) {
-      console.error('PasswordUpdate: Erreur inattendue:', error);
+      console.error('PasswordUpdate: Unexpected error:', error);
+      
+      let errorMessage = "Une erreur inattendue s'est produite.";
+      
+      if (error.message.includes('session')) {
+        errorMessage = "Session invalide. Veuillez demander un nouveau lien de réinitialisation.";
+      } else if (error.message.includes('network')) {
+        errorMessage = "Erreur de connexion. Vérifiez votre connexion internet.";
+      }
+      
       toast({
         title: "Erreur",
-        description: "La mise à jour a échoué. Veuillez vérifier votre mot de passe et réessayer.",
+        description: errorMessage,
         variant: "destructive"
       });
       return false;

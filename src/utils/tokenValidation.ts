@@ -17,7 +17,7 @@ export const validatePasswordResetTokens = async (): Promise<TokenValidationResu
     const { data: { session: existingSession }, error: sessionError } = await supabase.auth.getSession();
     
     if (existingSession && !sessionError) {
-      console.log('TokenValidation: Existing session found');
+      console.log('TokenValidation: Existing valid session found');
       return { isValid: true };
     }
 
@@ -42,7 +42,7 @@ export const validatePasswordResetTokens = async (): Promise<TokenValidationResu
       });
     }
 
-    // Method 2: Check query parameters if no hash
+    // Method 2: Check query parameters if no hash tokens
     if (!accessToken || !type) {
       const searchParams = new URLSearchParams(window.location.search);
       const queryAccessToken = searchParams.get('access_token');
@@ -62,15 +62,21 @@ export const validatePasswordResetTokens = async (): Promise<TokenValidationResu
       }
     }
 
-    // Validate tokens
-    if (!accessToken) {
-      console.log('TokenValidation: No access_token found');
-      throw new Error('Aucun token d\'accès trouvé dans l\'URL');
+    // Validate tokens presence
+    if (!accessToken || !type) {
+      console.log('TokenValidation: Missing required tokens');
+      return { 
+        isValid: false, 
+        error: 'Tokens manquants dans l\'URL. Veuillez cliquer à nouveau sur le lien de réinitialisation.' 
+      };
     }
 
     if (type !== 'recovery') {
-      console.log('TokenValidation: Incorrect type:', type);
-      throw new Error(`Type de token incorrect: ${type}. Attendu: recovery`);
+      console.log('TokenValidation: Incorrect token type:', type);
+      return { 
+        isValid: false, 
+        error: 'Type de token incorrect. Ce lien n\'est pas valide pour la réinitialisation de mot de passe.' 
+      };
     }
 
     console.log('TokenValidation: Attempting to set session with tokens...');
@@ -83,15 +89,35 @@ export const validatePasswordResetTokens = async (): Promise<TokenValidationResu
 
     if (error) {
       console.error('TokenValidation: Error setting session:', error);
-      throw new Error(`Erreur de session: ${error.message}`);
+      
+      // Specific error handling
+      if (error.message.includes('expired')) {
+        return { 
+          isValid: false, 
+          error: 'Le lien de réinitialisation a expiré. Veuillez demander un nouveau lien.' 
+        };
+      } else if (error.message.includes('invalid')) {
+        return { 
+          isValid: false, 
+          error: 'Le lien de réinitialisation est invalide. Veuillez demander un nouveau lien.' 
+        };
+      } else {
+        return { 
+          isValid: false, 
+          error: 'Erreur lors de la validation du lien. Veuillez réessayer.' 
+        };
+      }
     }
 
     if (!data.session) {
-      console.error('TokenValidation: No session created');
-      throw new Error('Impossible de créer une session avec les tokens fournis');
+      console.error('TokenValidation: No session created despite no error');
+      return { 
+        isValid: false, 
+        error: 'Impossible de créer une session avec ce lien. Veuillez demander un nouveau lien.' 
+      };
     }
 
-    console.log('TokenValidation: Session set successfully:', data);
+    console.log('TokenValidation: Session created successfully');
     
     // Clean URL to remove sensitive tokens
     const cleanUrl = new URL(window.location.href);
@@ -108,18 +134,10 @@ export const validatePasswordResetTokens = async (): Promise<TokenValidationResu
     return { isValid: true };
     
   } catch (error: any) {
-    console.error('TokenValidation: Error during validation:', error);
-    
-    let errorMessage = "Le lien de réinitialisation est invalide ou a expiré.";
-    
-    if (error.message.includes('expired')) {
-      errorMessage = "Le lien de réinitialisation a expiré. Veuillez demander un nouveau lien.";
-    } else if (error.message.includes('invalid')) {
-      errorMessage = "Le lien de réinitialisation est invalide. Veuillez demander un nouveau lien.";
-    } else if (error.message.includes('Token')) {
-      errorMessage = "Les informations de sécurité sont manquantes ou incorrectes.";
-    }
-    
-    return { isValid: false, error: errorMessage };
+    console.error('TokenValidation: Unexpected error during validation:', error);
+    return { 
+      isValid: false, 
+      error: 'Une erreur inattendue s\'est produite lors de la validation. Veuillez réessayer.' 
+    };
   }
 };
