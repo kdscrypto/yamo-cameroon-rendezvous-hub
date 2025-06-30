@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
@@ -11,48 +12,52 @@ export const useSimplePasswordReset = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // --- Début du correctif : Forcer le bon format d'URL SANS RECHARGEMENT ---
-    const searchParams = new URLSearchParams(window.location.search);
-    const accessToken = searchParams.get('access_token');
-    const type = searchParams.get('type');
+    // Cette fonction s'exécute une seule fois au chargement de la page.
+    const handleRecovery = async () => {
+      // Étape 1 : Lire manuellement le token depuis l'URL (depuis le fragment #).
+      // On s'assure de gérer aussi le format avec '?' au cas où.
+      const params = new URLSearchParams(window.location.hash.substring(1) || window.location.search);
+      const accessToken = params.get('access_token');
 
-    // Si l'URL est au mauvais format (?type=recovery)
-    if (accessToken && type === 'recovery') {
-      const fragment = new URLSearchParams({
-        access_token: accessToken,
-        type: type,
-      }).toString();
+      // Si aucun token n'est trouvé, le lien est invalide.
+      if (!accessToken) {
+        console.error('No access token found in URL.');
+        setIsReadyForUpdate(false); // Garder le formulaire désactivé
+        setIsCheckingTokens(false);
+        return;
+      }
       
-      // On remplace l'URL. Le client Supabase détectera ce changement grâce à onAuthStateChange.
-      window.history.replaceState(null, '', '#' + fragment);
-      // LIGNE CRUCIALE SUPPRIMÉE : window.location.reload();
-      // En ne rechargeant pas, on casse la boucle et on laisse l'écouteur faire son travail.
-    }
-    // --- Fin du correctif ---
+      console.log('Token found, attempting manual verification...');
 
-    // Ce code s'exécutera maintenant sans rechargement
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state change detected:', event);
+      try {
+        // Étape 2 : Envoyer manuellement le token à Supabase pour vérification.
+        const { data, error } = await supabase.auth.verifyOtp({
+          token: accessToken,
+          type: 'recovery',
+        });
 
-        // Une fois l'URL correcte, Supabase enverra un de ces signaux.
-        if (event === 'PASSWORD_RECOVERY' || event === 'SIGNED_IN') {
-          console.log('Valid recovery session detected. Ready for update.');
-          // On autorise la mise à jour !
-          setIsReadyForUpdate(true);
+        // Étape 3 : Gérer la réponse de Supabase.
+        if (error) {
+          // Si Supabase retourne une erreur, le token est vraiment invalide ou expiré.
+          console.error('Supabase token verification failed:', error.message);
+          setIsReadyForUpdate(false);
           setIsCheckingTokens(false);
         } else {
-          // Si un autre événement se produit, nous restons en état non prêt.
+          // Si aucune erreur n'est retournée, le token est bon !
+          // Supabase a créé une session valide. Nous sommes prêts.
+          console.log('Token successfully verified! Ready for password update.');
+          setIsReadyForUpdate(true); // Autoriser la mise à jour !
           setIsCheckingTokens(false);
         }
+      } catch (e) {
+        console.error('An unexpected error occurred during verification:', e);
+        setIsReadyForUpdate(false);
+        setIsCheckingTokens(false);
       }
-    );
-
-    // La fonction de nettoyage.
-    return () => {
-      subscription.unsubscribe();
     };
-  }, []); // Le tableau de dépendances est vide.
+
+    handleRecovery();
+  }, []); // Le tableau de dépendances est vide pour ne l'exécuter qu'une fois.
 
   const updatePassword = async (password: string, confirmPassword: string): Promise<boolean> => {
     console.log('SimplePasswordReset: Starting password update...');
