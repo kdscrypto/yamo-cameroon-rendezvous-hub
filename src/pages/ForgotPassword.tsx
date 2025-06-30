@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -21,18 +22,18 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // CORRECTION CRITIQUE: Utiliser la bonne URL de redirection
+      // CORRECTION : Utiliser l'URL complète et exacte pour la redirection
       const redirectUrl = `${window.location.origin}/reset-password`;
       
-      console.log('ForgotPassword: Envoi de l\'email de réinitialisation pour:', email);
-      console.log('ForgotPassword: URL de redirection:', redirectUrl);
+      console.log('ForgotPassword: Sending password reset email for:', email);
+      console.log('ForgotPassword: Redirect URL:', redirectUrl);
       
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: redirectUrl
       });
 
       if (error) {
-        console.error('ForgotPassword: Erreur lors de l\'envoi de l\'email:', error);
+        console.error('ForgotPassword: Error sending reset email:', error);
         
         let errorMessage = error.message;
         if (error.message.includes('email not found') || error.message.includes('user not found')) {
@@ -47,7 +48,7 @@ const ForgotPassword = () => {
           variant: "destructive"
         });
       } else {
-        console.log('ForgotPassword: Email de réinitialisation envoyé avec succès');
+        console.log('ForgotPassword: Password reset email sent successfully');
         setIsEmailSent(true);
         toast({
           title: "Email envoyé",
@@ -55,7 +56,7 @@ const ForgotPassword = () => {
         });
       }
     } catch (error: any) {
-      console.error('ForgotPassword: Erreur lors de l\'envoi de l\'email:', error);
+      console.error('ForgotPassword: Unexpected error:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite. Veuillez réessayer.",
