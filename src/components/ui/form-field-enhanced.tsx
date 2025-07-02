@@ -6,10 +6,7 @@ import { Input, inputVariants } from "@/components/ui/input-enhanced"
 import { cn } from "@/lib/utils"
 
 interface FormFieldEnhancedProps extends 
-  React.InputHTMLAttributes<HTMLInputElement>,
-  VariantProps<typeof inputVariants>,
-  VariantProps<typeof formItemVariants>,
-  VariantProps<typeof formLabelVariants> {
+  Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   label?: string
   description?: string
   error?: string
