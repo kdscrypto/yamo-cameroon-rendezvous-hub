@@ -1,0 +1,33 @@
+
+/* Visual Effects - Glass morphism and patterns */
+
+@layer utilities {
+  /* Glass morphism effect */
+  .glass-morphism {
+    background: hsl(var(--card) / 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.5);
+  }
+
+  /* Text shadows */
+  .text-shadow {
+    text-shadow: 0 1px 2px hsl(var(--background) / 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 2px 4px hsl(var(--background) / 0.7);
+  }
+
+  /* Background patterns */
+  .bg-dots {
+    background-image: radial-gradient(circle, hsl(var(--muted) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .bg-grid {
+    background-image: linear-gradient(hsl(var(--muted) / 0.1) 1px, transparent 1px),
+                      linear-gradient(90deg, hsl(var(--muted) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+}
