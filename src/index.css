@@ -1,10 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import component utilities */
 @import './styles/component-utilities.css';
+@import './styles/performance-utilities.css';
 
 /* Enhanced Design System with Design Tokens */
 
