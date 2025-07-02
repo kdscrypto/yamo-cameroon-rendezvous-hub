@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -95,7 +94,7 @@ const UserAds = () => {
       case 'pending':
         return 'bg-yellow-100 text-yellow-800';
       case 'expired':
-        return 'bg-red-100 text-red-800';
+        return 'bg-gray-300 text-gray-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -119,7 +118,7 @@ const UserAds = () => {
         );
       case 'rejected':
         return (
-          <Badge className="bg-red-100 text-red-800">
+          <Badge className="bg-gray-100 text-gray-800">
             <X className="w-3 h-3 mr-1" />
             Rejetée
           </Badge>
@@ -227,7 +226,7 @@ const UserAds = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Rejetées</CardTitle>
-            <AlertCircle className="h-4 w-4 text-red-600" />
+            <AlertCircle className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{rejectedAds.length}</div>
@@ -250,13 +249,13 @@ const UserAds = () => {
           {/* Rejected ads - Show first for user attention */}
           {rejectedAds.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-red-700 flex items-center gap-2">
+              <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
                 <AlertCircle className="w-5 h-5" />
                 Annonces rejetées ({rejectedAds.length})
               </h3>
               <div className="space-y-4">
                 {rejectedAds.map((ad) => (
-                  <Card key={ad.id} className="border-red-200">
+                  <Card key={ad.id} className="border-gray-300">
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div>
@@ -284,9 +283,9 @@ const UserAds = () => {
                       )}
                       
                       {ad.moderation_notes && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                          <p className="text-sm font-medium text-red-800 mb-1">Raison du rejet :</p>
-                          <p className="text-sm text-red-700">{ad.moderation_notes}</p>
+                        <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                          <p className="text-sm font-medium text-gray-800 mb-1">Raison du rejet :</p>
+                          <p className="text-sm text-gray-700">{ad.moderation_notes}</p>
                         </div>
                       )}
 
@@ -303,7 +302,7 @@ const UserAds = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-white hover:text-gray-200"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Supprimer
@@ -367,7 +366,7 @@ const UserAds = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-white hover:text-gray-200"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Supprimer
@@ -435,7 +434,7 @@ const UserAds = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-white hover:text-gray-200"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Supprimer

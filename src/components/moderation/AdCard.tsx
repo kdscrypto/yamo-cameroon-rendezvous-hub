@@ -27,7 +27,7 @@ const AdCard = ({
     const statusConfig = {
       pending: { color: 'bg-yellow-100 text-yellow-800', label: 'En attente', icon: Clock },
       approved: { color: 'bg-green-100 text-green-800', label: 'Approuvée', icon: Check },
-      rejected: { color: 'bg-red-100 text-red-800', label: 'Rejetée', icon: X }
+      rejected: { color: 'bg-gray-100 text-gray-800', label: 'Rejetée', icon: X }
     };
     
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
@@ -95,7 +95,7 @@ const AdCard = ({
                 size="sm" 
                 onClick={() => onQuickReject(ad)}
                 disabled={isRejecting}
-                className="text-red-600 hover:text-red-700"
+                className="text-white hover:text-gray-200"
               >
                 <X className="w-4 h-4 mr-2" />
                 {isRejecting ? 'En cours...' : 'Rejeter'}

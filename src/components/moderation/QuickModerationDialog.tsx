@@ -49,7 +49,7 @@ const QuickModerationDialog = ({
               </>
             ) : (
               <>
-                <X className="w-5 h-5 text-red-600" />
+                <X className="w-5 h-5 text-white" />
                 Confirmer le rejet
               </>
             )}
@@ -72,12 +72,12 @@ const QuickModerationDialog = ({
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="p-4 border border-red-200 rounded-lg bg-red-50">
-                <div className="flex items-center gap-2 text-red-800 mb-2">
+              <div className="p-4 border border-gray-300 rounded-lg bg-gray-50">
+                <div className="flex items-center gap-2 text-gray-800 mb-2">
                   <AlertCircle className="w-4 h-4" />
                   <span className="font-medium">Cette annonce sera rejetée</span>
                 </div>
-                <p className="text-sm text-red-700">
+                <p className="text-sm text-gray-700">
                   Veuillez expliquer la raison du rejet à l'annonceur.
                 </p>
               </div>
@@ -98,7 +98,7 @@ const QuickModerationDialog = ({
               </div>
 
               {!message.trim() && (
-                <div className="text-sm text-red-600 flex items-center gap-2">
+                <div className="text-sm text-white flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
                   Un message d'explication est requis pour le rejet
                 </div>
@@ -112,7 +112,7 @@ const QuickModerationDialog = ({
               disabled={isSubmitting || (action === 'reject' && !message.trim())}
               className={action === 'approve' 
                 ? 'bg-green-600 hover:bg-green-700' 
-                : 'bg-red-600 hover:bg-red-700'
+                : 'bg-gray-600 hover:bg-gray-700'
               }
             >
               {isSubmitting ? 'Traitement...' : 
