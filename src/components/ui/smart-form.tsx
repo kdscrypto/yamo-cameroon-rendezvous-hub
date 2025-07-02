@@ -56,7 +56,7 @@ export interface FormField {
 }
 
 export interface SmartFormProps
-  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit'>,
+  extends Omit<React.FormHTMLAttributes<HTMLFormElement>, 'onSubmit' | 'autoSave'>,
     VariantProps<typeof formVariants> {
   fields: FormField[]
   onSubmit: (data: Record<string, any>) => Promise<void> | void
