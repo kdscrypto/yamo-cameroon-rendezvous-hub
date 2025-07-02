@@ -57,10 +57,10 @@ const HeroSection = () => {
           Trouvez ce que vous cherchez en toute discrétion et sécurité.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" asChild className="gradient-gold text-black hover:opacity-90 font-semibold">
+          <Button size="lg" asChild className="gradient-gold text-black hover:opacity-90 border-0">
             <Link to="/browse">Parcourir les annonces</Link>
           </Button>
-          <Button size="lg" asChild className="gradient-luxe text-black hover:opacity-90 font-semibold">
+          <Button size="lg" asChild className="gradient-gold text-black hover:opacity-90 border-0">
             <Link to="/create-ad">Publier une annonce</Link>
           </Button>
         </div>

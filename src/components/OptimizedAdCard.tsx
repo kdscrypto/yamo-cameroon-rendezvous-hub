@@ -1,9 +1,8 @@
 
 import React, { useState, useCallback } from 'react';
-import { CardOptimized, CardContent } from '@/components/ui/card-optimized';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Star, Eye } from 'lucide-react';
-import { ButtonAccessible } from '@/components/ui/button-accessible';
 
 interface OptimizedAdCardProps {
   id: string;
@@ -78,7 +77,8 @@ const OptimizedAdCard = React.memo(({
   isVip = false,
   onClick
 }: OptimizedAdCardProps) => {
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
     console.log('Card clicked for ad:', id);
     if (onClick) {
       onClick();
@@ -96,14 +96,9 @@ const OptimizedAdCard = React.memo(({
   }, [description]);
 
   return (
-    <CardOptimized 
-      variant="interactive"
-      size="sm"
-      lazyLoad={true}
-      interactive={true}
-      onInteraction={handleClick}
-      ariaLabel={`Annonce: ${truncatedTitle} - ${price || 'Prix non spécifié'} - ${location}`}
-      className="group overflow-hidden h-full flex flex-col"
+    <Card 
+      className="group card-elevated bg-card/98 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-300 hover:shadow-medium hover:shadow-primary/10 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden h-full flex flex-col"
+      onClick={handleClick}
     >
       <div className="relative aspect-square overflow-hidden rounded-t-lg flex-shrink-0">
         <LazyImage
@@ -129,6 +124,7 @@ const OptimizedAdCard = React.memo(({
           </div>
         )}
 
+        {/* Overlay gradient for better readability */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
       
@@ -156,7 +152,7 @@ const OptimizedAdCard = React.memo(({
           </Badge>
         </div>
       </CardContent>
-    </CardOptimized>
+    </Card>
   );
 });
 

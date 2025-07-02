@@ -5,58 +5,58 @@
 export const designTokens = {
   // Color System with semantic naming
   colors: {
-    // Primary Brand Colors (Orange HSL values)
+    // Primary Brand Colors
     primary: {
-      50: '30 100% 95%',    // Very light orange
-      100: '30 100% 90%',   // Light orange
-      200: '30 100% 80%',   // Lighter orange
-      300: '30 100% 70%',   // Light-medium orange
-      400: '30 100% 60%',   // Medium orange
-      500: '30 100% 50%',   // Main orange (brand primary)
-      600: '30 100% 45%',   // Medium-dark orange
-      700: '30 100% 40%',   // Dark orange
-      800: '30 100% 35%',   // Darker orange
-      900: '30 100% 30%',   // Darkest orange
+      50: '255 248 235',   // Very light orange
+      100: '255 237 213',  // Light orange
+      200: '255 214 165',  // Lighter orange
+      300: '255 179 102',  // Light-medium orange
+      400: '255 144 0',    // Main orange (brand primary)
+      500: '230 130 0',    // Medium orange
+      600: '204 115 0',    // Dark orange
+      700: '179 101 0',    // Darker orange
+      800: '153 86 0',     // Very dark orange
+      900: '128 72 0',     // Darkest orange
     },
     
-    // Neutral Colors (Dark Theme Base with proper HSL)
+    // Neutral Colors (Dark Theme Base)
     neutral: {
-      0: '0 0% 100%',       // Pure white
-      50: '0 0% 98%',       // Off white
-      100: '0 0% 96%',      // Very light gray
-      200: '0 0% 90%',      // Light gray
-      300: '0 0% 83%',      // Medium light gray
-      400: '0 0% 64%',      // Medium gray
-      500: '0 0% 45%',      // Medium gray
-      600: '0 0% 32%',      // Dark gray
-      700: '0 0% 25%',      // Darker gray
-      800: '0 0% 15%',      // Very dark gray
-      850: '0 0% 13%',      // Card background
-      900: '0 0% 10%',      // Dark background
-      950: '0 0% 6%',       // Darkest background
+      0: '255 255 255',    // Pure white
+      50: '250 250 250',   // Off white
+      100: '245 245 245',  // Very light gray
+      200: '229 229 229',  // Light gray
+      300: '212 212 212',  // Medium light gray
+      400: '163 163 163',  // Medium gray
+      500: '115 115 115',  // Medium gray
+      600: '82 82 82',     // Dark gray
+      700: '64 64 64',     // Darker gray
+      800: '38 38 38',     // Very dark gray
+      850: '32 32 32',     // Card background
+      900: '25 25 25',     // Dark background
+      950: '15 15 15',     // Darkest background
     },
     
-    // Semantic Colors (proper HSL format)
+    // Semantic Colors
     semantic: {
-      success: '142 76% 36%',   // Green
-      warning: '45 93% 58%',    // Yellow
-      error: '0 84% 60%',       // Red
-      info: '217 91% 60%',      // Blue
+      success: '34 197 94',     // Green
+      warning: '251 191 36',    // Yellow
+      error: '239 68 68',       // Red
+      info: '59 130 246',       // Blue
     },
     
     // Surface Colors
     surface: {
-      background: '0 0% 6%',
-      card: '0 0% 10%',
-      elevated: '0 0% 13%',
-      overlay: '0 0% 0%',
+      background: '15 15 15',
+      card: '25 25 25',
+      elevated: '32 32 32',
+      overlay: '0 0 0',
     },
     
     // Border Colors
     border: {
-      default: '0 0% 18%',
-      light: '0 0% 25%',
-      focus: '30 100% 50%',
+      default: '45 45 45',
+      light: '64 64 64',
+      focus: '255 144 0',
     }
   },
   
