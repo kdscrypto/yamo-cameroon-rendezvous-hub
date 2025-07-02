@@ -1,17 +1,10 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import component utilities */
 @import './styles/component-utilities.css';
-
-/* Force dark theme script - executed immediately */
-<script>
-  (function() {
-    document.documentElement.classList.add('dark');
-    localStorage.setItem('yamo-theme', 'dark');
-  })();
-</script>
 
 /* Enhanced Design System with Design Tokens */
 

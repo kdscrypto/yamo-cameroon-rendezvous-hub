@@ -5,6 +5,12 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.tsx";
 import "./index.css";
 
+// Force dark theme immediately on load
+(function() {
+  document.documentElement.classList.add('dark');
+  localStorage.setItem('yamo-theme', 'dark');
+})();
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <HelmetProvider>
