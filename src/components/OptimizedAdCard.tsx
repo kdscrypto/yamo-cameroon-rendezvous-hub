@@ -74,9 +74,15 @@ const OptimizedAdCard = React.memo(({
   isVip = false,
   onClick
 }: OptimizedAdCardProps) => {
-  const handleClick = useCallback(() => {
-    onClick?.();
-  }, [onClick]);
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log('Card clicked for ad:', id);
+    if (onClick) {
+      onClick();
+    } else {
+      console.log('No onClick handler provided for ad:', id);
+    }
+  }, [onClick, id]);
 
   const truncatedDescription = React.useMemo(() => {
     return description.length > 80 ? `${description.substring(0, 80)}...` : description;
@@ -84,7 +90,7 @@ const OptimizedAdCard = React.memo(({
 
   return (
     <Card 
-      className="group cursor-pointer hover:shadow-lg transition-all duration-200 border-border bg-card"
+      className="group cursor-pointer hover:shadow-lg transition-all duration-200 border-border bg-card hover:scale-105"
       onClick={handleClick}
     >
       <div className="relative aspect-square overflow-hidden rounded-t-lg">

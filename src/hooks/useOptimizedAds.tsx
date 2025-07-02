@@ -41,6 +41,16 @@ export const useOptimizedApprovedAds = () => {
       }
 
       console.log('Optimized approved ads fetched:', data?.length || 0);
+      // Log some sample data for debugging
+      if (data && data.length > 0) {
+        console.log('Sample ads data:', data.slice(0, 3).map(ad => ({
+          id: ad.id,
+          title: ad.title,
+          location: ad.location,
+          expires_at: ad.expires_at,
+          category: ad.category
+        })));
+      }
       return data || [];
     },
     staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes
@@ -98,27 +108,31 @@ export const useOptimizedAdsByCategory = (category?: string) => {
   return useQuery({
     queryKey: ['ads-by-category-optimized', category],
     queryFn: async (): Promise<AdData[]> => {
-      if (!category || category === 'all') return [];
-      
       console.log('Fetching optimized ads by category:', category);
       
-      const { data, error } = await supabase
+      let query = supabase
         .from('ads')
         .select('*')
         .eq('moderation_status', 'approved')
         .eq('status', 'active')
-        .eq('category', category)
         .order('created_at', { ascending: false })
         .limit(20);
+
+      if (category && category !== 'all') {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching optimized ads by category:', error);
         throw error;
       }
 
+      console.log('Ads by category fetched:', data?.length || 0, 'for category:', category);
       return data || [];
     },
-    enabled: !!category && category !== 'all',
+    enabled: !!category,
     staleTime: 15 * 60 * 1000,
     gcTime: 30 * 60 * 1000,
   });

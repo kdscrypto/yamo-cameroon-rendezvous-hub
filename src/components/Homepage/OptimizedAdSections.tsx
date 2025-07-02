@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import OptimizedAdCard from '@/components/OptimizedAdCard';
-import { useOptimizedApprovedAds, useOptimizedAdsByCategory } from '@/hooks/useOptimizedAds';
+import { useOptimizedApprovedAds } from '@/hooks/useOptimizedAds';
 
 // Composant de grille d'annonces avec virtualisation simple
 const AdGrid = React.memo(({ ads, maxItems = 6 }: { 
@@ -26,12 +26,19 @@ const AdGrid = React.memo(({ ads, maxItems = 6 }: {
     isVip: !!ad.expires_at && new Date(ad.expires_at) > new Date()
   }), []);
 
+  const handleAdClick = React.useCallback((adId: string) => {
+    console.log('Ad clicked:', adId);
+    // For now, just log - in the future this could navigate to ad detail page
+    // navigate(`/ad/${adId}`);
+  }, []);
+
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
       {displayedAds.map((ad) => (
         <OptimizedAdCard 
           key={ad.id} 
-          {...convertAdToCardProps(ad)} 
+          {...convertAdToCardProps(ad)}
+          onClick={() => handleAdClick(ad.id)}
         />
       ))}
     </div>
@@ -45,12 +52,22 @@ const FeaturedAdsSection = React.memo(() => {
   const { data: allAds = [], isLoading } = useOptimizedApprovedAds();
 
   const featuredAds = React.useMemo(() => {
-    return allAds
-      .filter(ad => ad.expires_at && new Date(ad.expires_at) > new Date())
+    console.log('Processing featured ads from', allAds.length, 'total ads');
+    const featured = allAds
+      .filter(ad => {
+        const hasExpiry = ad.expires_at && new Date(ad.expires_at) > new Date();
+        console.log('Ad', ad.id, 'has valid expiry:', hasExpiry, 'expires_at:', ad.expires_at);
+        return hasExpiry;
+      })
       .slice(0, 6);
+    console.log('Featured ads found:', featured.length);
+    return featured;
   }, [allAds]);
 
-  if (isLoading || featuredAds.length === 0) return null;
+  if (isLoading || featuredAds.length === 0) {
+    console.log('Featured ads section - Loading:', isLoading, 'Ads count:', featuredAds.length);
+    return null;
+  }
 
   return (
     <section className="py-12 px-4 bg-card/30">
@@ -73,12 +90,22 @@ const RecentAdsSection = React.memo(() => {
   const { data: allAds = [], isLoading } = useOptimizedApprovedAds();
 
   const recentAds = React.useMemo(() => {
-    return allAds
-      .filter(ad => !ad.expires_at || new Date(ad.expires_at) <= new Date())
+    console.log('Processing recent ads from', allAds.length, 'total ads');
+    const recent = allAds
+      .filter(ad => {
+        const isNotVip = !ad.expires_at || new Date(ad.expires_at) <= new Date();
+        console.log('Ad', ad.id, 'is regular (not VIP):', isNotVip, 'expires_at:', ad.expires_at);
+        return isNotVip;
+      })
       .slice(0, 8);
+    console.log('Recent ads found:', recent.length);
+    return recent;
   }, [allAds]);
 
-  if (isLoading || recentAds.length === 0) return null;
+  if (isLoading || recentAds.length === 0) {
+    console.log('Recent ads section - Loading:', isLoading, 'Ads count:', recentAds.length);
+    return null;
+  }
 
   return (
     <section className="py-12 px-4">
@@ -106,16 +133,49 @@ const LocationAdsSection = React.memo(({
   displayName: string; 
   emoji: string; 
 }) => {
-  const { data: cityAds = [], isLoading } = useOptimizedAdsByCategory();
+  const { data: allAds = [], isLoading } = useOptimizedApprovedAds();
 
-  // Simuler des annonces par ville avec le cache existant
   const locationAds = React.useMemo(() => {
-    return cityAds
-      .filter(ad => ad.location?.toLowerCase().includes(city.toLowerCase()))
-      .slice(0, 6);
-  }, [cityAds, city]);
+    console.log('Processing location ads for', city, 'from', allAds.length, 'total ads');
+    const filtered = allAds.filter(ad => {
+      const hasLocation = ad.location && ad.location.toLowerCase().includes(city.toLowerCase());
+      console.log('Ad', ad.id, 'location match for', city, ':', hasLocation, 'location:', ad.location);
+      return hasLocation;
+    });
+    console.log('Location ads found for', city, ':', filtered.length);
+    return filtered.slice(0, 6);
+  }, [allAds, city]);
 
-  if (isLoading || locationAds.length === 0) return null;
+  if (isLoading) {
+    console.log('Location ads section loading for', city);
+    return null;
+  }
+
+  if (locationAds.length === 0) {
+    console.log('No location ads found for', city);
+    return (
+      <section className="py-12 px-4 bg-card/30">
+        <div className="container mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold">{emoji} Hot à {displayName}</h2>
+            <Button variant="outline" asChild>
+              <Link to={`/browse?location=${city}`}>
+                Voir toutes les annonces {displayName}
+              </Link>
+            </Button>
+          </div>
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">
+              Aucune annonce trouvée pour {displayName} pour le moment.
+            </p>
+            <Button asChild className="mt-4">
+              <Link to="/create-ad">Publier une annonce</Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-12 px-4 bg-card/30">
@@ -138,6 +198,8 @@ LocationAdsSection.displayName = 'LocationAdsSection';
 
 const OptimizedAdSections = React.memo(() => {
   const { data: allAds = [], isLoading } = useOptimizedApprovedAds();
+
+  console.log('OptimizedAdSections - Total ads loaded:', allAds.length, 'Loading:', isLoading);
 
   if (isLoading) {
     return (
