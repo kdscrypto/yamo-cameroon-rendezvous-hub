@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import OptimizedAdCard from '@/components/OptimizedAdCard';
 
 interface AdGridProps {
@@ -8,6 +9,8 @@ interface AdGridProps {
 }
 
 const AdGrid = React.memo(({ ads, maxItems = 6 }: AdGridProps) => {
+  const navigate = useNavigate();
+  
   const displayedAds = React.useMemo(() => 
     ads.slice(0, maxItems), 
     [ads, maxItems]
@@ -25,10 +28,9 @@ const AdGrid = React.memo(({ ads, maxItems = 6 }: AdGridProps) => {
   }), []);
 
   const handleAdClick = React.useCallback((adId: string) => {
-    console.log('Ad clicked:', adId);
-    // For now, just log - in the future this could navigate to ad detail page
-    // navigate(`/ad/${adId}`);
-  }, []);
+    console.log('Navigating to ad:', adId);
+    navigate(`/ad/${adId}`);
+  }, [navigate]);
 
   return (
     <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4 md:gap-5 lg:gap-6 animate-fade-in">
