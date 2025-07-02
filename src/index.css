@@ -28,3 +28,37 @@
 @import './styles/motion-animations.css';
 @import './styles/loading-states.css';
 @import './styles/media-queries.css';
+
+/* Advanced animations and utilities for phases 5 & 6 */
+@layer utilities {
+  /* Smart form specific utilities */
+  .form-field-container {
+    @apply space-y-2;
+  }
+  
+  .form-field-error {
+    @apply animate-slide-down;
+  }
+  
+  .form-field-success {
+    @apply animate-slide-up;
+  }
+  
+  /* Notification system utilities */
+  .notification-enter {
+    @apply animate-slide-down;
+  }
+  
+  .notification-exit {
+    @apply animate-fade-out;
+  }
+  
+  /* Advanced interaction states */
+  .interactive-focus {
+    @apply focus-visible:animate-glow;
+  }
+  
+  .interactive-success {
+    @apply animate-bounce-gentle;
+  }
+}
