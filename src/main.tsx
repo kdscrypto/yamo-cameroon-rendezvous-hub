@@ -1,17 +1,24 @@
 
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
 
-const container = document.getElementById("root");
-if (!container) {
-  throw new Error("Root element not found");
-}
-
-const root = createRoot(container);
-root.render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <App />
-  </StrictMode>
+  </StrictMode>,
 );
+
+// Enregistrement du service worker pour optimiser les performances
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker enregistré avec succès:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Échec de l\'enregistrement du Service Worker:', error);
+      });
+  });
+}
