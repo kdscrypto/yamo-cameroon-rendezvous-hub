@@ -20,14 +20,14 @@ const CategoriesSection = () => {
             description="Massages relaxants, thérapeutiques et bien-être"
             icon={Heart}
             href="/massages"
-            gradient="bg-gradient-to-br from-pink-500 to-rose-400"
+            gradient="gradient-luxe"
           />
           <CategoryCard
             title="Produits adultes"
             description="Accessoires, lingerie et produits intimes"
             icon={Settings}
             href="/produits"
-            gradient="bg-gradient-to-br from-purple-500 to-indigo-400"
+            gradient="gradient-accent"
           />
           <CategoryCard
             title="Nos Événements Spéciaux"

@@ -15,6 +15,11 @@
     background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
   }
   
+  /* Missing gradient-gold class that's used throughout the app */
+  .gradient-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ff9000 100%);
+  }
+  
   .gradient-surface {
     background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
   }
