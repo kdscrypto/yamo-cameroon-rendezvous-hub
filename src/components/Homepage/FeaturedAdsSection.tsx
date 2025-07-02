@@ -27,12 +27,24 @@ const FeaturedAdsSection = React.memo(() => {
   }
 
   return (
-    <section className="py-12 px-4 bg-card/30">
+    <section className="section-spacing container-spacing bg-gradient-to-br from-card/30 via-card/20 to-background border-y border-border/30">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold">⭐ Annonces en vedette</h2>
-          <Button variant="outline" asChild>
-            <Link to="/browse?featured=true">Voir toutes les annonces premium</Link>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade-in">
+          <div className="space-y-2">
+            <h2 className="heading-lg text-gradient-luxe flex items-center gap-3">
+              <span className="animate-pulse-subtle">⭐</span>
+              Annonces en vedette
+            </h2>
+            <p className="body-md opacity-70">Découvrez nos annonces premium</p>
+          </div>
+          <Button 
+            variant="outline" 
+            asChild
+            className="btn-outline border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:scale-105"
+          >
+            <Link to="/browse?featured=true">
+              Voir toutes les annonces premium
+            </Link>
           </Button>
         </div>
         <AdGrid ads={featuredAds} maxItems={6} />

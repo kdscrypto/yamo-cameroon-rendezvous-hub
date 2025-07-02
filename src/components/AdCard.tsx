@@ -25,53 +25,57 @@ const AdCard = ({
   isVip = false 
 }: AdCardProps) => {
   return (
-    <Card className="group hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 hover:scale-105 overflow-hidden bg-card border-border">
+    <Card className="group card-elevated bg-card/98 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-300 hover:shadow-medium hover:shadow-primary/10 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
       {isVip && (
-        <div className="gradient-gold text-black text-xs font-bold px-2 py-1 text-center">
+        <div className="gradient-luxe text-black text-xs font-bold px-3 py-1.5 text-center animate-pulse-subtle">
           ⭐ VIP
         </div>
       )}
       
-      <div className="aspect-square bg-muted relative overflow-hidden">
+      <div className="aspect-square bg-muted/30 relative overflow-hidden">
         {imageUrl ? (
           <img 
             src={imageUrl} 
             alt={title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <User className="w-12 h-12 text-muted-foreground" />
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-muted/20 to-muted/40">
+            <User className="w-12 h-12 text-muted-foreground opacity-50" />
           </div>
         )}
+        
         <Button 
           size="sm" 
           variant="ghost" 
-          className="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1 h-auto"
+          className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white p-2 h-auto backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-110"
         >
-          <Heart className="w-3 h-3" />
+          <Heart className="w-3.5 h-3.5" />
         </Button>
+
+        {/* Overlay gradient for better readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       </div>
 
-      <CardContent className="p-3">
+      <CardContent className="p-4 space-y-3">
         <div className="mb-2">
-          <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full">
+          <span className="text-xs px-3 py-1.5 bg-primary/15 text-primary rounded-full font-medium border border-primary/20">
             {category}
           </span>
         </div>
         
-        <h3 className="font-semibold text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="font-semibold text-sm mb-2 line-clamp-2 group-hover:text-primary transition-colors duration-300 leading-snug">
           {title}
         </h3>
         
-        <p className="text-muted-foreground text-xs mb-2 line-clamp-2">
+        <p className="text-muted-foreground text-xs mb-3 line-clamp-2 leading-relaxed opacity-80 group-hover:opacity-100 transition-opacity duration-300">
           {description}
         </p>
         
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-muted-foreground">{location}</span>
+        <div className="flex justify-between items-center pt-2 border-t border-border/20">
+          <span className="text-xs text-muted-foreground group-hover:text-foreground transition-colors duration-300 font-medium">{location}</span>
           {price && (
-            <span className="font-bold text-primary text-sm">{price}</span>
+            <span className="font-bold text-primary text-sm animate-fade-in">{price}</span>
           )}
         </div>
       </CardContent>

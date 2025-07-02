@@ -31,13 +31,21 @@ const AdGrid = React.memo(({ ads, maxItems = 6 }: AdGridProps) => {
   }, []);
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-      {displayedAds.map((ad) => (
-        <OptimizedAdCard 
-          key={ad.id} 
-          {...convertAdToCardProps(ad)}
-          onClick={() => handleAdClick(ad.id)}
-        />
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6 animate-fade-in">
+      {displayedAds.map((ad, index) => (
+        <div 
+          key={ad.id}
+          className="animate-slide-up"
+          style={{ 
+            animationDelay: `${index * 100}ms`,
+            animationFillMode: 'both'
+          }}
+        >
+          <OptimizedAdCard 
+            {...convertAdToCardProps(ad)}
+            onClick={() => handleAdClick(ad.id)}
+          />
+        </div>
       ))}
     </div>
   );

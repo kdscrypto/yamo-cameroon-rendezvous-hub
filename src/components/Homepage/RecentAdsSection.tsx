@@ -27,11 +27,18 @@ const RecentAdsSection = React.memo(() => {
   }
 
   return (
-    <section className="py-12 px-4">
+    <section className="section-spacing container-spacing">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold">Annonces récentes</h2>
-          <Button variant="outline" asChild>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade-in">
+          <div className="space-y-2">
+            <h2 className="heading-lg">Annonces récentes</h2>
+            <p className="body-md opacity-70">Les dernières opportunités disponibles</p>
+          </div>
+          <Button 
+            variant="outline" 
+            asChild
+            className="btn-outline hover:scale-105 transition-all duration-300"
+          >
             <Link to="/browse">Voir toutes les annonces</Link>
           </Button>
         </div>
