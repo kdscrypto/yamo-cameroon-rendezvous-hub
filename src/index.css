@@ -11,5 +11,14 @@
 @import './styles/effects.css';
 @import './styles/layout-utilities.css';
 @import './styles/responsive.css';
-@import './styles/component-utilities.css';
 @import './styles/performance-utilities.css';
+
+/* Import new modular component utilities */
+@import './styles/gradient-utilities.css';
+@import './styles/interaction-utilities.css';
+@import './styles/button-utilities.css';
+@import './styles/card-utilities.css';
+@import './styles/form-utilities.css';
+@import './styles/typography-utilities.css';
+@import './styles/layout-component-utilities.css';
+@import './styles/accessibility-utilities.css';

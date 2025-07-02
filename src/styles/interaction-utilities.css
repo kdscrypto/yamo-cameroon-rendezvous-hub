@@ -1,0 +1,38 @@
+
+/* Interactive States - Hover effects and animations */
+
+@layer components {
+  /* === INTERACTIVE STATES === */
+  .interactive-hover {
+    @apply transition-all duration-300 ease-out hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .interactive-hover-scale {
+    @apply transition-transform duration-200 ease-out hover:scale-105 active:scale-95;
+  }
+
+  .interactive-press {
+    @apply transition-all duration-150 ease-out active:scale-[0.98];
+  }
+  
+  .interactive-glow {
+    @apply transition-all duration-300 ease-out hover:shadow-glow hover:shadow-primary/20;
+  }
+  
+  .interactive-lift {
+    @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  /* === ANIMATION UTILITIES === */
+  .animate-in {
+    @apply animate-fade-in;
+  }
+  
+  .animate-scale {
+    @apply animate-scale-in;
+  }
+  
+  .animate-slide {
+    @apply animate-slide-up;
+  }
+}
