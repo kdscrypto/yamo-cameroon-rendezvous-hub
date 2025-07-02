@@ -226,7 +226,7 @@ const UserAds = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Rejetées</CardTitle>
-            <AlertCircle className="h-4 w-4 text-white" />
+            <AlertCircle className="h-4 w-4 text-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{rejectedAds.length}</div>
@@ -249,13 +249,13 @@ const UserAds = () => {
           {/* Rejected ads - Show first for user attention */}
           {rejectedAds.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+              <h3 className="text-lg font-semibold mb-4 text-foreground flex items-center gap-2">
                 <AlertCircle className="w-5 h-5" />
                 Annonces rejetées ({rejectedAds.length})
               </h3>
               <div className="space-y-4">
                 {rejectedAds.map((ad) => (
-                  <Card key={ad.id} className="border-gray-300">
+                  <Card key={ad.id} className="border-muted">
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div>
@@ -283,9 +283,9 @@ const UserAds = () => {
                       )}
                       
                       {ad.moderation_notes && (
-                        <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                          <p className="text-sm font-medium text-gray-800 mb-1">Raison du rejet :</p>
-                          <p className="text-sm text-gray-700">{ad.moderation_notes}</p>
+                        <div className="mb-4 p-3 bg-muted border border-muted rounded-lg">
+                          <p className="text-sm font-medium text-foreground mb-1">Raison du rejet :</p>
+                          <p className="text-sm text-muted-foreground">{ad.moderation_notes}</p>
                         </div>
                       )}
 
@@ -302,7 +302,7 @@ const UserAds = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="text-white hover:text-gray-200"
+                          className="text-foreground hover:text-muted-foreground"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Supprimer
@@ -366,7 +366,7 @@ const UserAds = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="text-white hover:text-gray-200"
+                          className="text-foreground hover:text-muted-foreground"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Supprimer
@@ -434,7 +434,7 @@ const UserAds = () => {
                           variant="outline" 
                           size="sm" 
                           onClick={() => handleDeleteAd(ad.id)}
-                          className="text-white hover:text-gray-200"
+                          className="text-foreground hover:text-muted-foreground"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Supprimer

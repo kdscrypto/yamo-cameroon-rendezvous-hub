@@ -95,7 +95,7 @@ const AdCard = ({
                 size="sm" 
                 onClick={() => onQuickReject(ad)}
                 disabled={isRejecting}
-                className="text-white hover:text-gray-200"
+                className="text-foreground hover:text-muted-foreground"
               >
                 <X className="w-4 h-4 mr-2" />
                 {isRejecting ? 'En cours...' : 'Rejeter'}

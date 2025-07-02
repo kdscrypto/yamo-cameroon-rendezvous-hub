@@ -42,9 +42,9 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
           Cette annonce a déjà été modérée le {new Date(ad.moderated_at).toLocaleDateString('fr-FR')}.
         </p>
         {ad.moderation_status === 'rejected' && ad.moderation_notes && (
-          <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded">
-            <p className="text-sm font-medium text-red-800 mb-1">Raison du rejet :</p>
-            <p className="text-sm text-red-700">{ad.moderation_notes}</p>
+          <div className="mt-3 p-3 bg-muted/50 border border-muted rounded">
+            <p className="text-sm font-medium text-foreground mb-1">Raison du rejet :</p>
+            <p className="text-sm text-muted-foreground">{ad.moderation_notes}</p>
           </div>
         )}
       </div>
@@ -79,8 +79,8 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       </div>
 
       {moderationAction === 'reject' && (
-        <div className="space-y-4 p-4 border border-red-200 rounded-lg bg-red-50">
-          <div className="flex items-center gap-2 text-red-800 mb-2">
+        <div className="space-y-4 p-4 border border-muted rounded-lg bg-muted/20">
+          <div className="flex items-center gap-2 text-foreground mb-2">
             <AlertCircle className="w-4 h-4" />
             <span className="font-medium">Raisons du rejet</span>
           </div>
@@ -117,7 +117,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
           </div>
 
           {!selectedReason && !customNotes.trim() && (
-            <div className="text-sm text-red-600 flex items-center gap-2">
+            <div className="text-sm text-foreground flex items-center gap-2">
               <AlertCircle className="w-4 h-4" />
               Veuillez sélectionner une raison ou saisir un message explicatif
             </div>
@@ -143,7 +143,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !canSubmit()}
-              className={moderationAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-red-600 hover:bg-red-700'}
+              className={moderationAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-muted hover:bg-muted/80'}
             >
               {isSubmitting ? 'Traitement...' : 
                moderationAction === 'approve' ? 'Confirmer l\'approbation' : 'Confirmer le rejet'}
