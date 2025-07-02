@@ -69,9 +69,9 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
           Approuver
         </Button>
         <Button
-          variant={moderationAction === 'reject' ? 'destructive' : 'outline'}
+          variant={moderationAction === 'reject' ? 'outline' : 'outline'}
           onClick={() => setModerationAction('reject')}
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 text-foreground hover:text-muted-foreground border-muted hover:bg-muted"
         >
           <X className="w-4 h-4" />
           Rejeter
@@ -143,7 +143,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !canSubmit()}
-              className={moderationAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-muted hover:bg-muted/80'}
+              className={moderationAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-muted hover:bg-muted/80 text-foreground'}
             >
               {isSubmitting ? 'Traitement...' : 
                moderationAction === 'approve' ? 'Confirmer l\'approbation' : 'Confirmer le rejet'}
