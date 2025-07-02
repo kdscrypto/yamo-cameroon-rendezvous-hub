@@ -1,0 +1,22 @@
+
+/* Loading States - Content loading and lazy loading utilities */
+
+@layer utilities {
+  /* === PERFORMANCE CLASSES === */
+  
+  /* Lazy loading states */
+  .lazy-loading {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    background-size: 200% 100%;
+    animation: loading-shimmer 1.5s infinite;
+  }
+  
+  /* Content loading states */
+  .content-loading {
+    @apply animate-pulse bg-muted/20 rounded;
+  }
+  
+  .content-loaded {
+    @apply animate-fade-in;
+  }
+}

@@ -1,0 +1,27 @@
+
+/* Motion Animations - Animation keyframes and reduced motion support */
+
+@layer utilities {
+  /* === MOTION ANIMATIONS === */
+  @keyframes fade-in-static {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes loading-shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .motion-safe-only {
+      animation: none !important;
+      transition: none !important;
+    }
+    
+    .motion-reduce-fade {
+      animation: fade-in-static 0.1s ease-out;
+    }
+  }
+}
