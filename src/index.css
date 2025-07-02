@@ -166,6 +166,30 @@
   }
 }
 
+/* === OVERRIDE ALL RED TEXT COLORS === */
+@layer utilities {
+  /* Force all red text to be white/foreground color */
+  .text-red-500,
+  .text-red-600,
+  .text-red-700,
+  .text-red-800,
+  .text-red-900,
+  .text-red-400,
+  .text-red-300 {
+    @apply text-foreground !important;
+  }
+  
+  /* Override any destructive colors */
+  .text-destructive {
+    @apply text-foreground !important;
+  }
+  
+  /* Make sure muted-foreground is always visible */
+  .text-muted-foreground {
+    @apply text-slate-400 !important;
+  }
+}
+
 /* === MOTION PREFERENCES === */
 @media (prefers-reduced-motion: reduce) {
   *,

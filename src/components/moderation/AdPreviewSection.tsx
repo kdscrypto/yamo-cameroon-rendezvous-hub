@@ -12,8 +12,8 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
     switch (status) {
       case 'pending': return 'bg-yellow-100 text-yellow-800';
       case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-gray-100 text-gray-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'rejected': return 'bg-muted text-foreground border-muted';
+      default: return 'bg-muted text-foreground border-muted';
     }
   };
 
@@ -104,8 +104,8 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
       {ad.moderation_notes && (
         <div className="space-y-2">
           <Label>Notes de modération précédentes</Label>
-          <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
-            <p className="text-sm">{ad.moderation_notes}</p>
+          <div className="p-3 bg-muted border border-border rounded-md">
+            <p className="text-sm text-foreground">{ad.moderation_notes}</p>
           </div>
         </div>
       )}
