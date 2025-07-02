@@ -1,10 +1,17 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import component utilities */
 @import './styles/component-utilities.css';
+
+/* Force dark theme script - executed immediately */
+<script>
+  (function() {
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('yamo-theme', 'dark');
+  })();
+</script>
 
 /* Enhanced Design System with Design Tokens */
 
@@ -43,8 +50,9 @@
     --sidebar-ring: 255 144 0;
   }
 
+  /* Force dark theme always */
+  :root,
   .dark {
-    /* Ensure consistency in dark mode */
     --background: 15 15 15;
     --foreground: 250 250 250;
     --card: 25 25 25;
@@ -80,6 +88,11 @@
     @apply border-border;
   }
 
+  html {
+    /* Force dark theme at HTML level */
+    @apply dark;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     line-height: 1.6;
@@ -87,6 +100,10 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    
+    /* Force dark background */
+    background-color: hsl(15 15 15) !important;
+    color: hsl(250 250 250) !important;
   }
 
   /* Enhanced focus styles for accessibility */

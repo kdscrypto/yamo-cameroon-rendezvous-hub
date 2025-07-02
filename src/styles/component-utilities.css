@@ -1,4 +1,3 @@
-
 /* Component Utilities - Reusable CSS classes for consistent styling */
 
 @layer components {
@@ -15,7 +14,7 @@
     background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
   }
   
-  /* Missing gradient-gold class that's used throughout the app */
+  /* Fixed gradient-gold class that's used throughout the app */
   .gradient-gold {
     background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ff9000 100%);
   }

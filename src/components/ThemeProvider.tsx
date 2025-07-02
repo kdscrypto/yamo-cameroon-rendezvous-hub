@@ -15,7 +15,7 @@ type ThemeProviderState = {
 };
 
 const initialState: ThemeProviderState = {
-  theme: 'system',
+  theme: 'dark',
   setTheme: () => null,
 };
 
@@ -23,31 +23,48 @@ const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = 'dark', // Default to dark theme
+  defaultTheme = 'dark',
   storageKey = 'yamo-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
-  );
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Force dark theme by default
+    const stored = localStorage.getItem(storageKey) as Theme;
+    return stored || defaultTheme;
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
 
+    // Always ensure we have the dark class applied
     root.classList.remove('light', 'dark');
-
+    
     if (theme === 'system') {
       const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
         .matches
         ? 'dark'
         : 'light';
-
       root.classList.add(systemTheme);
-      return;
+    } else {
+      root.classList.add(theme);
     }
 
-    root.classList.add(theme);
+    // Force dark theme on initial load
+    if (theme === 'dark' || !theme) {
+      root.classList.add('dark');
+    }
   }, [theme]);
+
+  // Force dark theme on component mount
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.classList.add('dark');
+    
+    // Set default theme if none is set
+    if (!localStorage.getItem(storageKey)) {
+      localStorage.setItem(storageKey, 'dark');
+    }
+  }, [storageKey]);
 
   const value = {
     theme,
