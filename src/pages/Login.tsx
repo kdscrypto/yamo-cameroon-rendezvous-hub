@@ -1,10 +1,9 @@
 
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button-enhanced';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card-enhanced';
+import { FormFieldEnhanced } from '@/components/ui/form-field-enhanced';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
@@ -65,10 +64,9 @@ const Login = () => {
       
       <div className="flex-1 flex items-center justify-center container-spacing section-spacing">
         <div className="w-full max-w-md">
-          {/* Enhanced visual hierarchy and spacing */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 gradient-gold rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="w-16 h-16 gradient-luxe rounded-2xl flex items-center justify-center shadow-lg">
                 <span className="text-black font-bold text-2xl">Y</span>
               </div>
             </div>
@@ -76,73 +74,64 @@ const Login = () => {
             <p className="body-md">Connectez-vous pour accéder à votre compte</p>
           </div>
 
-          <Card className="card-elevated bg-card/95 backdrop-blur-sm border-border/50">
-            <CardHeader className="text-center pb-6">
-              <CardTitle className="heading-sm">Connexion</CardTitle>
-              <CardDescription className="body-sm">
+          <Card variant="glass" size="default">
+            <CardHeader size="default">
+              <CardTitle variant="gradient" size="default">Connexion</CardTitle>
+              <CardDescription>
                 Entrez vos identifiants pour vous connecter
               </CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="form-label flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                    Adresse email
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="votre@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isLoading}
-                    className="form-input h-12"
-                  />
-                </div>
+                <FormFieldEnhanced
+                  id="email"
+                  type="email"
+                  label="Adresse email"
+                  placeholder="votre@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  inputSize="lg"
+                  startIcon={<Mail className="w-4 h-4" />}
+                  labelVariant="required"
+                />
                 
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="form-label flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-muted-foreground" />
-                    Mot de passe
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="••••••••"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                      disabled={isLoading}
-                      className="form-input h-12 pr-12"
-                    />
+                <FormFieldEnhanced
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  label="Mot de passe"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                  inputSize="lg"
+                  startIcon={<Lock className="w-4 h-4" />}
+                  endIcon={
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      className="text-muted-foreground hover:text-foreground transition-colors"
                       disabled={isLoading}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
-                  </div>
-                </div>
+                  }
+                  labelVariant="required"
+                />
                 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 btn-primary gradient-gold text-black hover:opacity-90 font-semibold shadow-md" 
+                  variant="luxury"
+                  size="xl"
+                  animation="lift"
+                  className="w-full font-semibold" 
                   disabled={isLoading}
+                  loading={isLoading}
                 >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                      Connexion...
-                    </div>
-                  ) : (
-                    'Se connecter'
-                  )}
+                  Se connecter
                 </Button>
               </form>
               
@@ -171,7 +160,6 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          {/* Additional trust indicators */}
           <div className="text-center mt-6 space-y-2">
             <p className="text-xs text-muted-foreground">
               En vous connectant, vous acceptez nos{' '}
