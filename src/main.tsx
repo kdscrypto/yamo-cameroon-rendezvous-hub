@@ -1,12 +1,15 @@
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
   </StrictMode>,
 );
 
@@ -22,3 +25,35 @@ if ('serviceWorker' in navigator) {
       });
   });
 }
+
+// Génération du sitemap dynamique
+import { generateSitemap, generateRobotsTxt } from './utils/sitemapGenerator';
+
+// Créer le sitemap et le robots.txt
+const sitemap = generateSitemap();
+const robotsTxt = generateRobotsTxt();
+
+// Les exposer globalement pour les télécharger si nécessaire
+(window as any).downloadSitemap = () => {
+  const blob = new Blob([sitemap], { type: 'application/xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sitemap.xml';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+(window as any).downloadRobotsTxt = () => {
+  const blob = new Blob([robotsTxt], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'robots.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};

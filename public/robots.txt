@@ -1,8 +1,11 @@
+
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Twitterbot
 Allow: /
@@ -12,3 +15,30 @@ Allow: /
 
 User-agent: *
 Allow: /
+Crawl-delay: 2
+
+# Sitemap
+Sitemap: https://yamo.lovable.app/sitemap.xml
+
+# Allow important pages for SEO
+Allow: /
+Allow: /browse
+Allow: /rencontres
+Allow: /massages
+Allow: /produits
+Allow: /evenements
+Allow: /login
+Allow: /register
+Allow: /terms
+Allow: /privacy
+Allow: /contact
+
+# Block sensitive areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /dashboard/messages
+Disallow: /profile/private
+
+# Allow crawling of public content
+Allow: /dashboard$
+Allow: /profile$

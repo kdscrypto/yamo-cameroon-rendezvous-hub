@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Search, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -7,15 +6,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchResults from '@/components/SearchResults';
+import SEO from '@/components/SEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
+import { useSEO } from '@/hooks/useSEO';
 
 const Browse = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [location, setLocation] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
+  const { getSEOForPath } = useSEO();
 
   const { data: ads = [], isLoading, error } = useApprovedAds();
+  const seoConfig = getSEOForPath('/browse');
 
   // Filter and sort ads based on search criteria
   const filteredAds = useMemo(() => {
@@ -81,97 +84,105 @@ const Browse = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      
-      <div className="flex-1 px-4 py-8">
-        <div className="container mx-auto">
-          {/* Page Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-4">Parcourir les annonces</h1>
-            <p className="text-muted-foreground">
-              Trouvez l'annonce qui vous correspond parmi notre sélection d'annonces approuvées
-            </p>
-          </div>
+    <>
+      <SEO 
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
+        url="/browse"
+      />
+      <div className="min-h-screen flex flex-col bg-background">
+        <Header />
+        
+        <div className="flex-1 px-4 py-8">
+          <div className="container mx-auto">
+            {/* Page Header */}
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold mb-4">Parcourir les annonces</h1>
+              <p className="text-muted-foreground">
+                Trouvez l'annonce qui vous correspond parmi notre sélection d'annonces approuvées
+              </p>
+            </div>
 
-          {/* Filters */}
-          <div className="bg-card border border-border rounded-lg p-6 mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-              <div className="lg:col-span-2">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    type="text"
-                    placeholder="Rechercher..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
+            {/* Filters */}
+            <div className="bg-card border border-border rounded-lg p-6 mb-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div className="lg:col-span-2">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      type="text"
+                      placeholder="Rechercher..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+                </div>
+                
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Catégorie" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les catégories</SelectItem>
+                    <SelectItem value="rencontres">Rencontres</SelectItem>
+                    <SelectItem value="massages">Massages</SelectItem>
+                    <SelectItem value="produits">Produits adultes</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={location} onValueChange={setLocation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Localisation" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les villes</SelectItem>
+                    <SelectItem value="douala">Douala</SelectItem>
+                    <SelectItem value="yaounde">Yaoundé</SelectItem>
+                    <SelectItem value="bafoussam">Bafoussam</SelectItem>
+                    <SelectItem value="bamenda">Bamenda</SelectItem>
+                  </SelectContent>
+                </Select>
+                
+                <Select value={sortBy} onValueChange={setSortBy}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Trier par" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="recent">Plus récent</SelectItem>
+                    <SelectItem value="price-low">Prix croissant</SelectItem>
+                    <SelectItem value="price-high">Prix décroissant</SelectItem>
+                    <SelectItem value="popular">Popularité</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Search Results */}
+            <SearchResults
+              results={filteredAds}
+              query={searchQuery}
+              totalResults={filteredAds.length}
+              loading={isLoading}
+            />
+
+            {/* Pagination - For future implementation */}
+            {filteredAds.length > 0 && (
+              <div className="flex justify-center mt-12">
+                <div className="flex space-x-2">
+                  <Button variant="outline" disabled>Précédent</Button>
+                  <Button>1</Button>
+                  <Button variant="outline">Suivant</Button>
                 </div>
               </div>
-              
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Catégorie" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les catégories</SelectItem>
-                  <SelectItem value="rencontres">Rencontres</SelectItem>
-                  <SelectItem value="massages">Massages</SelectItem>
-                  <SelectItem value="produits">Produits adultes</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select value={location} onValueChange={setLocation}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Localisation" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Toutes les villes</SelectItem>
-                  <SelectItem value="douala">Douala</SelectItem>
-                  <SelectItem value="yaounde">Yaoundé</SelectItem>
-                  <SelectItem value="bafoussam">Bafoussam</SelectItem>
-                  <SelectItem value="bamenda">Bamenda</SelectItem>
-                </SelectContent>
-              </Select>
-              
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Trier par" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recent">Plus récent</SelectItem>
-                  <SelectItem value="price-low">Prix croissant</SelectItem>
-                  <SelectItem value="price-high">Prix décroissant</SelectItem>
-                  <SelectItem value="popular">Popularité</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            )}
           </div>
-
-          {/* Search Results */}
-          <SearchResults
-            results={filteredAds}
-            query={searchQuery}
-            totalResults={filteredAds.length}
-            loading={isLoading}
-          />
-
-          {/* Pagination - For future implementation */}
-          {filteredAds.length > 0 && (
-            <div className="flex justify-center mt-12">
-              <div className="flex space-x-2">
-                <Button variant="outline" disabled>Précédent</Button>
-                <Button>1</Button>
-                <Button variant="outline">Suivant</Button>
-              </div>
-            </div>
-          )}
         </div>
+        
+        <Footer />
       </div>
-      
-      <Footer />
-    </div>
+    </>
   );
 };
 
