@@ -13,10 +13,26 @@ export default {
 	theme: {
 		container: {
 			center: true,
-			padding: '2rem',
+			padding: {
+				DEFAULT: '1rem',
+				sm: '1.5rem',
+				lg: '2rem',
+			},
 			screens: {
+				sm: '640px',
+				md: '768px',
+				lg: '1024px',
+				xl: '1280px',
 				'2xl': '1400px'
 			}
+		},
+		screens: {
+			'xs': '475px',
+			'sm': '640px',
+			'md': '768px',
+			'lg': '1024px',
+			'xl': '1280px',
+			'2xl': '1536px',
 		},
 		extend: {
 			colors: {
@@ -151,6 +167,14 @@ export default {
 					'50%': {
 						opacity: '0.8'
 					}
+				},
+				'bounce-gentle': {
+					'0%, 100%': {
+						transform: 'translateY(0)'
+					},
+					'50%': {
+						transform: 'translateY(-2px)'
+					}
 				}
 			},
 			animation: {
@@ -160,12 +184,14 @@ export default {
 				'scale-in': 'scale-in 0.3s ease-out',
 				'slide-up': 'slide-up 0.4s ease-out',
 				'modern-shimmer': 'modern-shimmer 2s ease-in-out infinite',
-				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite'
+				'pulse-subtle': 'pulse-subtle 2s ease-in-out infinite',
+				'bounce-gentle': 'bounce-gentle 2s ease-in-out infinite'
 			},
 			boxShadow: {
 				'soft': '0 2px 8px 0 rgb(0 0 0 / 0.08)',
 				'medium': '0 4px 16px 0 rgb(0 0 0 / 0.12)',
 				'strong': '0 8px 32px 0 rgb(0 0 0 / 0.16)',
+				'luxury': '0 12px 48px 0 rgb(255 144 0 / 0.15)',
 			}
 		}
 	},

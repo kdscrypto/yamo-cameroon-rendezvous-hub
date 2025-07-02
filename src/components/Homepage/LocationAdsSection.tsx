@@ -37,21 +37,25 @@ const LocationAdsSection = React.memo(({
   if (locationAds.length === 0) {
     console.log('No location ads found for', city);
     return (
-      <section className="py-12 px-4 bg-card/30">
+      <section className="py-8 sm:py-12 px-4 bg-card/30">
         <div className="container mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold">{emoji} Hot à {displayName}</h2>
-            <Button variant="outline" asChild>
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+            <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+              <span className="animate-bounce-gentle">{emoji}</span>
+              Hot à {displayName}
+            </h2>
+            <Button variant="outline" asChild className="text-sm sm:text-base">
               <Link to={`/browse?location=${city}`}>
-                Voir toutes les annonces {displayName}
+                <span className="hidden sm:inline">Voir toutes les annonces {displayName}</span>
+                <span className="sm:hidden">Voir {displayName}</span>
               </Link>
             </Button>
           </div>
-          <div className="text-center py-8">
-            <p className="text-muted-foreground">
+          <div className="text-center py-6 sm:py-8">
+            <p className="text-muted-foreground text-sm sm:text-base mb-4">
               Aucune annonce trouvée pour {displayName} pour le moment.
             </p>
-            <Button asChild className="mt-4">
+            <Button asChild className="text-sm sm:text-base">
               <Link to="/create-ad">Publier une annonce</Link>
             </Button>
           </div>
@@ -61,13 +65,17 @@ const LocationAdsSection = React.memo(({
   }
 
   return (
-    <section className="py-12 px-4 bg-card/30">
+    <section className="py-8 sm:py-12 px-4 bg-card/30">
       <div className="container mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h2 className="text-2xl font-bold">{emoji} Hot à {displayName}</h2>
-          <Button variant="outline" asChild>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4">
+          <h2 className="text-xl sm:text-2xl font-bold flex items-center gap-2">
+            <span className="animate-bounce-gentle">{emoji}</span>
+            Hot à {displayName}
+          </h2>
+          <Button variant="outline" asChild className="text-sm sm:text-base">
             <Link to={`/browse?location=${city}`}>
-              Voir toutes les annonces {displayName}
+              <span className="hidden sm:inline">Voir toutes les annonces {displayName}</span>
+              <span className="sm:hidden">Voir {displayName}</span>
             </Link>
           </Button>
         </div>

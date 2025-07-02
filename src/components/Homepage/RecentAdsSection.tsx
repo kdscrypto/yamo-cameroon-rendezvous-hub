@@ -29,17 +29,20 @@ const RecentAdsSection = React.memo(() => {
   return (
     <section className="section-spacing container-spacing">
       <div className="container mx-auto">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 animate-fade-in">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8 gap-4 animate-fade-in">
           <div className="space-y-2">
-            <h2 className="heading-lg">Annonces récentes</h2>
-            <p className="body-md opacity-70">Les dernières opportunités disponibles</p>
+            <h2 className="heading-lg text-xl sm:text-2xl md:text-3xl">Annonces récentes</h2>
+            <p className="body-sm sm:body-md opacity-70">Les dernières opportunités disponibles</p>
           </div>
           <Button 
             variant="outline" 
             asChild
-            className="btn-outline hover:scale-105 transition-all duration-300"
+            className="btn-outline hover:scale-105 transition-all duration-300 text-sm sm:text-base"
           >
-            <Link to="/browse">Voir toutes les annonces</Link>
+            <Link to="/browse">
+              <span className="hidden sm:inline">Voir toutes les annonces</span>
+              <span className="sm:hidden">Voir tout</span>
+            </Link>
           </Button>
         </div>
         <AdGrid ads={recentAds} maxItems={8} />
