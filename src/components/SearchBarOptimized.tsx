@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import { Search, X, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input-enhanced';
 import { ButtonAccessible } from '@/components/ui/button-accessible';
@@ -31,7 +31,8 @@ const SearchBarOptimized = React.memo(({
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
 
-  const { ref: searchRef, accessibilityProps } = useAccessibility({
+  const searchRef = useRef<HTMLDivElement>(null);
+  const { accessibilityProps } = useAccessibility({
     role: 'search',
     ariaLabel: 'Barre de recherche',
     ariaDescribedBy: 'search-instructions',

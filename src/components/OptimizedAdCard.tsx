@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { CardOptimized, CardContent } from '@/components/ui/card-optimized';
 import { Badge } from '@/components/ui/badge';
@@ -77,8 +78,7 @@ const OptimizedAdCard = React.memo(({
   isVip = false,
   onClick
 }: OptimizedAdCardProps) => {
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
+  const handleClick = useCallback(() => {
     console.log('Card clicked for ad:', id);
     if (onClick) {
       onClick();
