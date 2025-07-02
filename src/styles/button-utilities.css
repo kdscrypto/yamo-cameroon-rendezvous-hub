@@ -26,4 +26,12 @@
   .btn-luxury {
     @apply btn-base gradient-luxe text-black hover:opacity-90 active:opacity-80 px-6 py-2.5 shadow-lg hover:shadow-luxury interactive-press;
   }
+  
+  .btn-gold {
+    @apply btn-base gradient-gold text-black hover:opacity-90 active:opacity-80 px-6 py-2.5 shadow-lg hover:shadow-luxury interactive-press;
+  }
+  
+  .btn-brand {
+    @apply btn-base bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 px-6 py-2.5 interactive-press;
+  }
 }
