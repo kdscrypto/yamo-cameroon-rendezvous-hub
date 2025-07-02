@@ -32,6 +32,25 @@
   }
   
   .btn-brand {
-    @apply btn-base bg-orange-500 text-white hover:bg-orange-600 active:bg-orange-700 px-6 py-2.5 interactive-press;
+    @apply btn-base bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 px-6 py-2.5 interactive-press;
+  }
+  
+  /* Force gradient application on buttons */
+  .gradient-gold.btn-base,
+  .gradient-gold {
+    background: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(30 100% 55%) 50%, hsl(30 100% 50%) 100%) !important;
+    color: black !important;
+  }
+  
+  .gradient-luxe.btn-base,
+  .gradient-luxe {
+    background: linear-gradient(135deg, hsl(30 100% 50%) 0%, hsl(30 100% 60%) 50%, hsl(30 100% 45%) 100%) !important;
+    color: black !important;
+  }
+  
+  .gradient-accent.btn-base,
+  .gradient-accent {
+    background: linear-gradient(135deg, hsl(30 100% 50%) 0%, hsl(30 100% 60%) 100%) !important;
+    color: black !important;
   }
 }

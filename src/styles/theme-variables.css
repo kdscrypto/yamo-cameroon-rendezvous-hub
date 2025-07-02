@@ -4,12 +4,12 @@
 @layer base {
   :root {
     /* Core color variables - using HSL for better manipulation */
-    --background: 15 15 15;
-    --foreground: 250 250 250;
-    --card: 25 25 25;
-    --card-foreground: 245 245 245;
-    --popover: 25 25 25;
-    --popover-foreground: 245 245 245;
+    --background: 0 0% 6%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
     --primary: 30 100% 50%;
     --primary-foreground: 0 0% 0%;
     --secondary: 0 0% 16%;
@@ -26,8 +26,8 @@
     --radius: 0.75rem;
     
     /* Sidebar variables */
-    --sidebar-background: 15 15 15;
-    --sidebar-foreground: 250 250 250;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 30 100% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 16%;
@@ -37,19 +37,19 @@
     
     /* Brand specific colors */
     --brand-orange: 30 100% 50%;
-    --brand-gold: 51 100% 50%;
+    --brand-gold: 45 100% 50%;
     --brand-dark: 0 0% 6%;
     --brand-gray: 0 0% 16%;
   }
 
   .dark {
     /* Ensure consistency in dark mode */
-    --background: 15 15 15;
-    --foreground: 250 250 250;
-    --card: 25 25 25;
-    --card-foreground: 245 245 245;
-    --popover: 25 25 25;
-    --popover-foreground: 245 245 245;
+    --background: 0 0% 6%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
     --primary: 30 100% 50%;
     --primary-foreground: 0 0% 0%;
     --secondary: 0 0% 16%;
@@ -63,8 +63,8 @@
     --border: 0 0% 18%;
     --input: 0 0% 16%;
     --ring: 30 100% 50%;
-    --sidebar-background: 15 15 15;
-    --sidebar-foreground: 250 250 250;
+    --sidebar-background: 0 0% 6%;
+    --sidebar-foreground: 0 0% 98%;
     --sidebar-primary: 30 100% 50%;
     --sidebar-primary-foreground: 0 0% 0%;
     --sidebar-accent: 0 0% 16%;
@@ -74,7 +74,7 @@
     
     /* Brand specific colors */
     --brand-orange: 30 100% 50%;
-    --brand-gold: 51 100% 50%;
+    --brand-gold: 45 100% 50%;
     --brand-dark: 0 0% 6%;
     --brand-gray: 0 0% 16%;
   }
