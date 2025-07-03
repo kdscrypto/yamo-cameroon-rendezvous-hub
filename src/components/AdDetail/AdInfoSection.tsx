@@ -1,0 +1,102 @@
+
+import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { MapPin, Calendar } from 'lucide-react';
+
+interface AdInfoSectionProps {
+  title: string;
+  category: string;
+  location: string;
+  createdAt: string;
+  price: number | null;
+  description: string | null;
+  isVip: boolean;
+}
+
+const AdInfoSection = ({ 
+  title, 
+  category, 
+  location, 
+  createdAt, 
+  price, 
+  description, 
+  isVip 
+}: AdInfoSectionProps) => {
+  const getCategoryDisplay = (category: string) => {
+    const categories: { [key: string]: string } = {
+      'rencontres': 'Rencontres',
+      'massages': 'Massages',
+      'produits': 'Produits adultes'
+    };
+    return categories[category] || category;
+  };
+
+  const getLocationDisplay = (location: string) => {
+    const locations: { [key: string]: string } = {
+      'douala': 'Douala',
+      'yaounde': 'Yaoundé',
+      'bafoussam': 'Bafoussam',
+      'bamenda': 'Bamenda',
+      'garoua': 'Garoua',
+      'maroua': 'Maroua',
+      'ngaoundere': 'Ngaoundéré',
+      'bertoua': 'Bertoua',
+      'ebolowa': 'Ebolowa',
+      'kribi': 'Kribi',
+      'limbe': 'Limbé',
+      'buea': 'Buea',
+      'edea': 'Edéa',
+      'kumba': 'Kumba',
+      'sangmelima': 'Sangmélima'
+    };
+    return locations[location] || location;
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <div className="flex flex-wrap gap-2 mb-4">
+          <Badge variant="outline" className="text-primary border-primary/30">
+            {getCategoryDisplay(category)}
+          </Badge>
+          {isVip && (
+            <Badge className="bg-gradient-to-r from-orange-500 to-yellow-500 text-black font-bold">
+              Annonce VIP
+            </Badge>
+          )}
+        </div>
+        
+        <h1 className="text-3xl font-bold mb-4">{title}</h1>
+        
+        <div className="flex items-center gap-4 text-muted-foreground mb-4">
+          <div className="flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            {getLocationDisplay(location)}
+          </div>
+          <div className="flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
+            {new Date(createdAt).toLocaleDateString('fr-FR')}
+          </div>
+        </div>
+
+        {price && (
+          <div className="text-3xl font-bold text-primary mb-6">
+            {price.toLocaleString()} FCFA
+          </div>
+        )}
+      </div>
+
+      <Card>
+        <CardContent className="p-6">
+          <h2 className="text-xl font-semibold mb-4">Description</h2>
+          <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+            {description || 'Aucune description disponible.'}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
+
+export default AdInfoSection;
