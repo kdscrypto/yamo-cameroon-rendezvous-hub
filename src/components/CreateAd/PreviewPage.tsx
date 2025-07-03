@@ -10,7 +10,7 @@ import { FormData } from '@/hooks/useCreateAdForm';
 interface PreviewPageProps {
   formData: FormData;
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (e: React.FormEvent) => void;
   getVipPrice: () => string;
   isSubmitting: boolean;
   onWhatsAppClick: (number: string) => void;
@@ -24,6 +24,11 @@ const PreviewPage = ({
   isSubmitting,
   onWhatsAppClick 
 }: PreviewPageProps) => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onSubmit(e);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -65,7 +70,7 @@ const PreviewPage = ({
               </Button>
               <Button 
                 className="gradient-gold text-black hover:opacity-90"
-                onClick={onSubmit}
+                onClick={handleSubmit}
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Publication...' : `Publier l'annonce - ${getVipPrice()}`}
