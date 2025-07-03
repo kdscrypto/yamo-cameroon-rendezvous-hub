@@ -79,19 +79,20 @@ const CreateAd = () => {
         expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
       }
 
-      // Create the ad with proper initial status
-      // All ads (including VIP) should start with 'pending' moderation status
+      // Create the ad with contact information
       const newAdData = {
         title: formData.title,
         description: formData.description,
         category: formData.category,
         location: formData.location,
         price: formData.price ? parseFloat(formData.price) : null,
+        phone: formData.phone,
+        whatsapp: formData.whatsapp || null,
         images: imageUrls,
         expires_at: expiresAt,
         user_id: user.id,
-        moderation_status: 'pending', // Force pending status for all ads
-        status: 'inactive' // Keep inactive until approved
+        moderation_status: 'pending',
+        status: 'inactive'
       };
 
       console.log('Inserting ad with data:', newAdData);

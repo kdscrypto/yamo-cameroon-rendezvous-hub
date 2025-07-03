@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -47,11 +46,9 @@ const AdDetail = () => {
     queryFn: async () => {
       if (!id || !user) return null;
       
-      // For now, we'll return the ad data since contact info isn't in a separate table
-      // In a real app, you might have a separate contacts table
       const { data, error } = await supabase
         .from('ads')
-        .select('*')
+        .select('phone, whatsapp')
         .eq('id', id)
         .single();
 

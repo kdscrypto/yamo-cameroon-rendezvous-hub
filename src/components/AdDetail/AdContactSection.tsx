@@ -9,7 +9,10 @@ import { useToast } from '@/hooks/use-toast';
 
 interface AdContactSectionProps {
   adTitle: string;
-  contactInfo: any;
+  contactInfo: {
+    phone?: string | null;
+    whatsapp?: string | null;
+  } | null;
 }
 
 const AdContactSection = ({ adTitle, contactInfo }: AdContactSectionProps) => {
@@ -37,10 +40,17 @@ const AdContactSection = ({ adTitle, contactInfo }: AdContactSectionProps) => {
       return;
     }
 
-    // For demo purposes, we'll use placeholder phone numbers
-    // In a real app, these would come from the database
-    const phoneNumber = "+237612345678"; // This should come from contactInfo
-    const whatsappNumber = "+237612345678"; // This should come from contactInfo
+    const phoneNumber = contactInfo.phone;
+    const whatsappNumber = contactInfo.whatsapp || contactInfo.phone;
+
+    if (!phoneNumber) {
+      toast({
+        title: "Erreur",
+        description: "Aucun numéro de téléphone disponible.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     switch (action) {
       case 'call':
@@ -52,6 +62,14 @@ const AdContactSection = ({ adTitle, contactInfo }: AdContactSectionProps) => {
         break;
       
       case 'whatsapp':
+        if (!whatsappNumber) {
+          toast({
+            title: "Erreur",
+            description: "Aucun numéro WhatsApp disponible.",
+            variant: "destructive",
+          });
+          return;
+        }
         const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=Bonjour, je suis intéressé(e) par votre annonce "${adTitle}"`;
         window.open(whatsappUrl, '_blank');
         toast({
@@ -61,7 +79,6 @@ const AdContactSection = ({ adTitle, contactInfo }: AdContactSectionProps) => {
         break;
       
       case 'message':
-        // For now, we'll just show a toast. In a real app, this would open a messaging interface
         toast({
           title: "Message privé",
           description: "Fonctionnalité de messagerie en cours de développement.",
@@ -89,6 +106,7 @@ const AdContactSection = ({ adTitle, contactInfo }: AdContactSectionProps) => {
               size="lg" 
               className="w-full bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-black font-semibold"
               onClick={() => handleContactAction('call')}
+              disabled={!contactInfo?.phone}
             >
               <Phone className="w-5 h-5 mr-2" />
               Appeler
@@ -99,6 +117,7 @@ const AdContactSection = ({ adTitle, contactInfo }: AdContactSectionProps) => {
               variant="outline" 
               className="w-full"
               onClick={() => handleContactAction('whatsapp')}
+              disabled={!contactInfo?.phone && !contactInfo?.whatsapp}
             >
               <MessageSquare className="w-5 h-5 mr-2" />
               WhatsApp

@@ -22,11 +22,13 @@ export type Database = {
           moderated_by: string | null
           moderation_notes: string | null
           moderation_status: string | null
+          phone: string | null
           price: number | null
           status: string
           title: string
           updated_at: string
           user_id: string
+          whatsapp: string | null
         }
         Insert: {
           category: string
@@ -40,11 +42,13 @@ export type Database = {
           moderated_by?: string | null
           moderation_notes?: string | null
           moderation_status?: string | null
+          phone?: string | null
           price?: number | null
           status?: string
           title: string
           updated_at?: string
           user_id: string
+          whatsapp?: string | null
         }
         Update: {
           category?: string
@@ -58,11 +62,13 @@ export type Database = {
           moderated_by?: string | null
           moderation_notes?: string | null
           moderation_status?: string | null
+          phone?: string | null
           price?: number | null
           status?: string
           title?: string
           updated_at?: string
           user_id?: string
+          whatsapp?: string | null
         }
         Relationships: []
       }
