@@ -17,7 +17,7 @@ const ContactSection = ({ formData, onInputChange }: ContactSectionProps) => {
       <CardHeader>
         <CardTitle>Contact</CardTitle>
         <CardDescription>
-          Comment les clients peuvent vous contacter
+          Ces informations seront visibles uniquement aux utilisateurs connectés
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -38,12 +38,12 @@ const ContactSection = ({ formData, onInputChange }: ContactSectionProps) => {
           <Input
             id="whatsapp"
             type="tel"
-            placeholder="Ex: +237 6XX XXX XXX"
+            placeholder="Ex: +237 6XX XXX XXX (optionnel)"
             value={formData.whatsapp}
             onChange={(e) => onInputChange('whatsapp', e.target.value)}
           />
           <p className="text-xs text-muted-foreground">
-            Les clients pourront vous contacter directement via WhatsApp
+            Si différent du numéro de téléphone principal
           </p>
         </div>
       </CardContent>
