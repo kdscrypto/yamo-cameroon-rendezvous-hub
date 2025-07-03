@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -22,7 +21,7 @@
     --secondary: 40 40 40;
     --secondary-foreground: 240 240 240;
     --muted: 35 35 35;
-    --muted-foreground: 180 180 180;
+    --muted-foreground: 200 200 200;
     --accent: 255 144 0;
     --accent-foreground: 0 0 0;
     --destructive: 240 240 240;
@@ -57,7 +56,7 @@
     --secondary: 40 40 40;
     --secondary-foreground: 240 240 240;
     --muted: 35 35 35;
-    --muted-foreground: 180 180 180;
+    --muted-foreground: 200 200 200;
     --accent: 255 144 0;
     --accent-foreground: 0 0 0;
     --destructive: 240 240 240;
@@ -166,9 +165,9 @@
   }
 }
 
-/* === OVERRIDE ALL RED TEXT COLORS === */
+/* === IMPROVED TEXT VISIBILITY === */
 @layer utilities {
-  /* Force all red text to be white/foreground color */
+  /* Enhanced text contrast for better visibility */
   .text-red-500,
   .text-red-600,
   .text-red-700,
@@ -184,9 +183,49 @@
     @apply text-foreground !important;
   }
   
-  /* Make sure muted-foreground is always visible */
+  /* Enhanced muted text for better readability */
   .text-muted-foreground {
-    @apply text-slate-400 !important;
+    @apply text-neutral-300 !important;
+  }
+  
+  /* Better opacity levels for text hierarchy */
+  .text-foreground\/60 {
+    color: hsl(var(--foreground) / 0.75) !important;
+  }
+  
+  .text-foreground\/70 {
+    color: hsl(var(--foreground) / 0.8) !important;
+  }
+  
+  .text-foreground\/80 {
+    color: hsl(var(--foreground) / 0.85) !important;
+  }
+  
+  /* Enhanced button text visibility */
+  .btn-outline .text-primary {
+    @apply text-foreground !important;
+  }
+  
+  /* Better link visibility */
+  a {
+    @apply text-foreground hover:text-primary transition-colors;
+  }
+  
+  /* Enhanced badge text visibility */
+  .bg-yellow-100 {
+    @apply bg-yellow-900/40 text-yellow-200 !important;
+  }
+  
+  .bg-green-100 {
+    @apply bg-green-900/40 text-green-200 !important;
+  }
+  
+  .text-yellow-800 {
+    @apply text-yellow-200 !important;
+  }
+  
+  .text-green-800 {
+    @apply text-green-200 !important;
   }
 }
 

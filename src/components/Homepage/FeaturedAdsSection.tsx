@@ -35,16 +35,16 @@ const FeaturedAdsSection = React.memo(() => {
               <span className="animate-pulse-subtle text-lg sm:text-xl">⭐</span>
               <span className="text-xl sm:text-2xl md:text-3xl">Annonces en vedette</span>
             </h2>
-            <p className="body-sm sm:body-md opacity-70">Découvrez nos annonces premium</p>
+            <p className="body-sm sm:body-md text-foreground/80">Découvrez nos annonces premium</p>
           </div>
           <Button 
             variant="outline" 
             asChild
-            className="btn-outline border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 hover:scale-105 text-sm sm:text-base"
+            className="btn-outline border-primary/40 bg-background/90 text-foreground hover:bg-primary/10 hover:border-primary/60 hover:text-foreground transition-all duration-300 hover:scale-105 text-sm sm:text-base font-medium shadow-sm"
           >
             <Link to="/browse?featured=true">
-              <span className="hidden sm:inline">Voir toutes les annonces premium</span>
-              <span className="sm:hidden">Voir tout</span>
+              <span className="hidden sm:inline text-foreground">Voir toutes les annonces premium</span>
+              <span className="sm:hidden text-foreground">Voir tout</span>
             </Link>
           </Button>
         </div>
