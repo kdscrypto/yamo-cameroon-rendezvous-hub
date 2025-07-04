@@ -192,8 +192,9 @@
   .text-red-700,
   .text-red-800,
   .text-red-900,
+  .text-red-400,
   .text-red-300 {
-    color: hsl(0 84% 60%) !important;
+    @apply text-red-400 !important;
   }
   
   /* Override destructive colors */
