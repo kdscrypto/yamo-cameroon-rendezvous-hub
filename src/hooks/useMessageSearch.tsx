@@ -24,6 +24,14 @@ export const useMessageSearch = () => {
     queryFn: async () => {
       if (!user || !searchQuery.trim()) return [];
 
+      // Limit search query length to prevent abuse
+      const trimmedQuery = searchQuery.trim().substring(0, 100);
+      
+      // Add minimum search length to prevent too broad searches
+      if (trimmedQuery.length < 3) {
+        return [];
+      }
+
       const { data, error } = await supabase
         .from('messages')
         .select(`
@@ -36,9 +44,9 @@ export const useMessageSearch = () => {
           subject
         `)
         .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
-        .textSearch('content', searchQuery.trim())
+        .textSearch('content', trimmedQuery)
         .order('created_at', { ascending: false })
-        .limit(50);
+        .limit(20); // Limit results to prevent performance issues
 
       if (error) {
         console.error('Search error:', error);
@@ -47,11 +55,13 @@ export const useMessageSearch = () => {
 
       return data as SearchResult[];
     },
-    enabled: !!user && !!searchQuery.trim() && isSearchActive
+    enabled: !!user && !!searchQuery.trim() && isSearchActive && searchQuery.trim().length >= 3
   });
 
   const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
+    // Sanitize and limit search query
+    const sanitizedQuery = query.trim().substring(0, 100);
+    setSearchQuery(sanitizedQuery);
     setIsSearchActive(true);
   }, []);
 
@@ -67,6 +77,7 @@ export const useMessageSearch = () => {
     error,
     isSearchActive,
     handleSearch,
-    clearSearch
+    clearSearch,
+    minSearchLength: 3
   };
 };

@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -16,6 +15,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { validateRecipient, validateMessageContent } from './ConversationView/RecipientValidator';
+import { useMessageRateLimit } from './ConversationView/MessageRateLimiter';
 
 interface ComposeMessageModalProps {
   isOpen: boolean;
@@ -31,6 +32,7 @@ interface Ad {
 
 const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageModalProps) => {
   const { user } = useAuth();
+  const { checkRateLimit, isRateLimited } = useMessageRateLimit(user?.id || '');
   const [selectedAd, setSelectedAd] = useState<string>('');
   const [recipientId, setRecipientId] = useState<string>('');
   const [subject, setSubject] = useState<string>('');
@@ -61,6 +63,17 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
     mutationFn: async () => {
       if (!user) throw new Error('User not authenticated');
       
+      // Rate limiting check
+      if (!checkRateLimit()) {
+        throw new Error('Limite de messages atteinte. Veuillez attendre.');
+      }
+
+      // Validate message content
+      const contentValidation = validateMessageContent(content);
+      if (!contentValidation.isValid) {
+        throw new Error(contentValidation.error);
+      }
+      
       let finalRecipientId = recipientId;
       let adId = selectedAd || null;
 
@@ -73,11 +86,13 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
       }
 
       if (!finalRecipientId) {
-        throw new Error('Recipient not specified');
+        throw new Error('Destinataire non spécifié');
       }
 
-      if (!content.trim()) {
-        throw new Error('Message content is required');
+      // Validate recipient before proceeding
+      const recipientValidation = await validateRecipient(finalRecipientId, user.id);
+      if (!recipientValidation.isValid) {
+        throw new Error(recipientValidation.error);
       }
 
       // Check if conversation already exists
@@ -133,7 +148,7 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
     },
     onError: (error) => {
       console.error('Error sending message:', error);
-      toast.error('Erreur lors de l\'envoi du message');
+      toast.error(error.message || 'Erreur lors de l\'envoi du message');
     }
   });
 
@@ -203,9 +218,9 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
             />
           </div>
 
-          {/* Message Content */}
+          {/* Message Content with character counter */}
           <div className="space-y-2">
-            <Label htmlFor="content">Message *</Label>
+            <Label htmlFor="content">Message * ({content.length}/2000)</Label>
             <Textarea
               id="content"
               value={content}
@@ -213,8 +228,23 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
               placeholder="Tapez votre message ici..."
               required
               className="min-h-[120px]"
+              maxLength={2000}
             />
+            {content.length > 1800 && (
+              <p className="text-sm text-orange-600">
+                Attention: vous approchez de la limite de caractères
+              </p>
+            )}
           </div>
+
+          {/* Rate limit warning */}
+          {isRateLimited && (
+            <div className="p-3 bg-orange-50 border border-orange-200 rounded-md">
+              <p className="text-sm text-orange-800">
+                ⚠️ Limite de messages atteinte. Veuillez attendre avant d'envoyer un autre message.
+              </p>
+            </div>
+          )}
 
           {/* Actions */}
           <div className="flex justify-end gap-2">
@@ -223,7 +253,13 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
             </Button>
             <Button 
               type="submit" 
-              disabled={sendMessageMutation.isPending || (!selectedAd && !recipientId) || !content.trim()}
+              disabled={
+                sendMessageMutation.isPending || 
+                isRateLimited ||
+                (!selectedAd && !recipientId) || 
+                !content.trim() ||
+                content.length > 2000
+              }
             >
               {sendMessageMutation.isPending ? 'Envoi...' : 'Envoyer'}
             </Button>

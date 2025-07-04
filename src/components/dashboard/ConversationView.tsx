@@ -16,7 +16,8 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
     sendMessage,
     isSendingMessage,
     getOtherParticipant,
-    getOtherParticipantId
+    getOtherParticipantId,
+    isRateLimited
   } = useConversationData(conversationId);
 
   if (isLoading) {
@@ -41,7 +42,8 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
         <MessageInput 
           conversationId={conversationId}
           onSendMessage={sendMessage} 
-          isLoading={isSendingMessage} 
+          isLoading={isSendingMessage}
+          isRateLimited={isRateLimited}
         />
       </div>
     </div>

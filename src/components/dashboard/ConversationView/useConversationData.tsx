@@ -1,14 +1,16 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { Message } from './types';
+import { useMessageRateLimit } from './MessageRateLimiter';
+import { validateRecipient, validateMessageContent } from './RecipientValidator';
 
 export const useConversationData = (conversationId: string) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { checkRateLimit, isRateLimited } = useMessageRateLimit(user?.id || '');
 
   const { data: conversation } = useQuery({
     queryKey: ['conversation', conversationId],
@@ -85,6 +87,17 @@ export const useConversationData = (conversationId: string) => {
     mutationFn: async (content: string) => {
       if (!user || !conversation) throw new Error('User or conversation not found');
 
+      // Rate limiting check
+      if (!checkRateLimit()) {
+        throw new Error('Rate limit exceeded');
+      }
+
+      // Validate message content
+      const contentValidation = validateMessageContent(content);
+      if (!contentValidation.isValid) {
+        throw new Error(contentValidation.error);
+      }
+
       // Safely handle participants as Json type and convert to string array
       const participants = Array.isArray(conversation.participants) 
         ? conversation.participants as string[]
@@ -92,6 +105,12 @@ export const useConversationData = (conversationId: string) => {
       
       const otherParticipant = participants.find((p: string) => p !== user.id);
       if (!otherParticipant) throw new Error('Other participant not found');
+
+      // Validate recipient
+      const recipientValidation = await validateRecipient(otherParticipant, user.id);
+      if (!recipientValidation.isValid) {
+        throw new Error(recipientValidation.error);
+      }
 
       const { data, error } = await supabase
         .from('messages')
@@ -114,7 +133,7 @@ export const useConversationData = (conversationId: string) => {
     },
     onError: (error) => {
       console.error('Error sending message:', error);
-      toast.error('Erreur lors de l\'envoi du message');
+      toast.error(error.message || 'Erreur lors de l\'envoi du message');
     }
   });
 
@@ -210,9 +229,10 @@ export const useConversationData = (conversationId: string) => {
     messages,
     isLoading,
     sendMessage: sendMessageMutation.mutate,
-    isSendingMessage: sendMessageMutation.isPending,
+    isSendingMessage: sendMessageMutation.isPending || isRateLimited,
     getOtherParticipant,
     getOtherParticipantId,
-    otherParticipantProfile
+    otherParticipantProfile,
+    isRateLimited
   };
 };
