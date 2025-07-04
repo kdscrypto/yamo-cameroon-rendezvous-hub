@@ -11,28 +11,28 @@ const CategoriesSection = () => {
           <CategoryCard
             title="Rencontres"
             description="Rencontres discrètes, escorts, accompagnatrices"
-            icon={Users}
+            imageUrl="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop&crop=center"
             href="/rencontres"
             gradient="gradient-gold"
           />
           <CategoryCard
             title="Massages"
             description="Massages relaxants, thérapeutiques et bien-être"
-            icon={Heart}
+            imageUrl="https://images.unsplash.com/photo-1721322800607-8c38375eef04?w=400&h=400&fit=crop&crop=center"
             href="/massages"
             gradient="gradient-luxe"
           />
           <CategoryCard
             title="Produits adultes"
             description="Accessoires, lingerie et produits intimes"
-            icon={Settings}
+            imageUrl="https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&h=400&fit=crop&crop=center"
             href="/produits"
             gradient="gradient-accent"
           />
           <CategoryCard
             title="Nos Événements Spéciaux"
             description="Événements exclusifs et occasions spéciales"
-            icon={Calendar}
+            imageUrl="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=400&fit=crop&crop=center"
             href="/events"
             gradient="bg-gradient-to-br from-red-500 to-orange-400"
           />
