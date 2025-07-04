@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -186,20 +187,20 @@
     @apply text-neutral-400;
   }
   
-  /* Override any problematic text colors */
+  /* Override problematic red text colors with direct color values */
+  .text-red-300,
+  .text-red-400,
   .text-red-500,
   .text-red-600,
   .text-red-700,
   .text-red-800,
-  .text-red-900,
-  .text-red-400,
-  .text-red-300 {
-    @apply text-red-400 !important;
+  .text-red-900 {
+    color: rgb(248 113 113) !important;
   }
   
   /* Override destructive colors */
   .text-destructive {
-    @apply text-red-400 !important;
+    color: rgb(248 113 113) !important;
   }
   
   /* Make sure muted-foreground is always visible */
