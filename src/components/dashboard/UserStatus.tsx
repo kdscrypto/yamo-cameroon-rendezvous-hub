@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 
 interface UserStatusProps {
   userId: string;
@@ -10,63 +11,97 @@ interface UserStatusProps {
 
 const UserStatus = ({ userId, showText = false }: UserStatusProps) => {
   const [status, setStatus] = useState<'online' | 'away' | 'offline'>('offline');
+  const { user: currentUser } = useAuth();
 
   useEffect(() => {
     if (!userId) return;
 
-    const channel = supabase.channel(`user-${userId}-presence`);
+    let presenceChannel: any;
 
-    // Track user presence
-    const trackPresence = async () => {
-      await channel.track({
-        user_id: userId,
+    const setupPresence = async () => {
+      presenceChannel = supabase.channel(`presence-${userId}`, {
+        config: {
+          presence: {
+            key: userId,
+          },
+        },
+      });
+
+      presenceChannel
+        .on('presence', { event: 'sync' }, () => {
+          const presenceState = presenceChannel.presenceState();
+          const userPresences = presenceState[userId];
+          
+          if (userPresences && userPresences.length > 0) {
+            setStatus('online');
+          } else {
+            setStatus('offline');
+          }
+        })
+        .on('presence', { event: 'join' }, ({ key, newPresences }: any) => {
+          if (key === userId) {
+            setStatus('online');
+          }
+        })
+        .on('presence', { event: 'leave' }, ({ key, leftPresences }: any) => {
+          if (key === userId) {
+            setStatus('offline');
+          }
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            // Si c'est l'utilisateur connecté, on track sa présence
+            if (currentUser && currentUser.id === userId) {
+              await presenceChannel.track({
+                user_id: userId,
+                online_at: new Date().toISOString(),
+                status: 'online'
+              });
+            }
+          }
+        });
+    };
+
+    setupPresence();
+
+    return () => {
+      if (presenceChannel) {
+        supabase.removeChannel(presenceChannel);
+      }
+    };
+  }, [userId, currentUser]);
+
+  // Track current user's presence globally
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const globalPresenceChannel = supabase.channel('global-presence');
+    
+    globalPresenceChannel
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await globalPresenceChannel.track({
+            user_id: currentUser.id,
+            online_at: new Date().toISOString(),
+            status: 'online'
+          });
+        }
+      });
+
+    // Heartbeat to maintain presence
+    const heartbeat = setInterval(async () => {
+      await globalPresenceChannel.track({
+        user_id: currentUser.id,
         online_at: new Date().toISOString(),
         status: 'online'
       });
-    };
-
-    // Listen for presence changes
-    channel
-      .on('presence', { event: 'sync' }, () => {
-        const presenceState = channel.presenceState();
-        const userPresence = presenceState[`user-${userId}`];
-        
-        if (userPresence && userPresence.length > 0) {
-          // Access the actual presence data from the presence object
-          const latestPresence = userPresence[0];
-          const presenceData = latestPresence as any; // Supabase presence object
-          const presenceStatus = presenceData?.status || 'online';
-          setStatus(presenceStatus);
-        } else {
-          setStatus('offline');
-        }
-      })
-      .on('presence', { event: 'join' }, ({ newPresences }) => {
-        const userJoined = newPresences.find((presence: any) => {
-          return presence.user_id === userId;
-        });
-        if (userJoined) {
-          setStatus('online');
-        }
-      })
-      .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-        const userLeft = leftPresences.find((presence: any) => {
-          return presence.user_id === userId;
-        });
-        if (userLeft) {
-          setStatus('offline');
-        }
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await trackPresence();
-        }
-      });
+    }, 30000); // Every 30 seconds
 
     return () => {
-      supabase.removeChannel(channel);
+      clearInterval(heartbeat);
+      supabase.removeChannel(globalPresenceChannel);
     };
-  }, [userId]);
+  }, [currentUser]);
 
   const getStatusColor = () => {
     switch (status) {

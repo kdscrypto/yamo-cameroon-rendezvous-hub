@@ -78,11 +78,13 @@ export const useConversationData = (conversationId: string) => {
       }
       
       return data as Message[];
-    }
+    },
+    refetchInterval: false, // Désactiver le polling car on utilise le temps réel
   });
 
   const { sendMessage, isSendingMessage, isRateLimited } = useMessageManagement(conversationId, conversation);
 
+  // Marquer les messages comme lus
   useEffect(() => {
     if (!user || !messages) return;
 
@@ -99,20 +101,24 @@ export const useConversationData = (conversationId: string) => {
         
         if (error) {
           console.error('Error marking messages as read:', error);
+        } else {
+          // Invalidate queries to refresh the data
+          queryClient.invalidateQueries({ queryKey: ['conversation-messages', conversationId] });
         }
       };
 
       markAsRead();
     }
-  }, [messages, user]);
+  }, [messages, user, queryClient, conversationId]);
 
+  // Configuration du temps réel
   useEffect(() => {
     if (!conversationId) return;
 
     console.log('Setting up real-time subscription for conversation:', conversationId);
 
-    const channel = supabase
-      .channel(`conversation-${conversationId}`)
+    const messagesChannel = supabase
+      .channel(`messages-${conversationId}`)
       .on(
         'postgres_changes',
         {
@@ -122,18 +128,51 @@ export const useConversationData = (conversationId: string) => {
           filter: `conversation_id=eq.${conversationId}`
         },
         (payload) => {
-          console.log('New message in conversation:', payload);
-          queryClient.invalidateQueries({ queryKey: ['conversation-messages', conversationId] });
+          console.log('New message received:', payload);
           
+          // Immédiatement ajouter le message à la liste locale
+          queryClient.setQueryData(['conversation-messages', conversationId], (oldData: Message[] | undefined) => {
+            if (!oldData) return [payload.new as Message];
+            
+            // Vérifier si le message existe déjà pour éviter les doublons
+            const messageExists = oldData.some(msg => msg.id === payload.new.id);
+            if (messageExists) return oldData;
+            
+            return [...oldData, payload.new as Message];
+          });
+
+          // Afficher une notification si ce n'est pas notre message
           if (payload.new.sender_id !== user?.id) {
             toast.success('Nouveau message reçu');
           }
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: `conversation_id=eq.${conversationId}`
+        },
+        (payload) => {
+          console.log('Message updated:', payload);
+          
+          // Mettre à jour le message dans la liste locale
+          queryClient.setQueryData(['conversation-messages', conversationId], (oldData: Message[] | undefined) => {
+            if (!oldData) return [];
+            
+            return oldData.map(msg => 
+              msg.id === payload.new.id ? { ...msg, ...payload.new } : msg
+            );
+          });
+        }
+      )
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel);
+      console.log('Cleaning up real-time subscription');
+      supabase.removeChannel(messagesChannel);
     };
   }, [conversationId, user, queryClient]);
 
