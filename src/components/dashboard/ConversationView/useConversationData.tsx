@@ -56,9 +56,9 @@ export const useConversationData = (conversationId: string) => {
     mutationFn: async (content: string) => {
       if (!user || !conversation) throw new Error('User or conversation not found');
 
-      // Safely handle participants as Json type
+      // Safely handle participants as Json type and convert to string array
       const participants = Array.isArray(conversation.participants) 
-        ? conversation.participants 
+        ? conversation.participants as string[]
         : [];
       
       const otherParticipant = participants.find((p: string) => p !== user.id);
@@ -71,7 +71,7 @@ export const useConversationData = (conversationId: string) => {
           recipient_id: otherParticipant,
           conversation_id: conversationId,
           content: content.trim(),
-          ad_id: conversation.ad_id
+          ad_id: conversation.ad_id || null
         })
         .select()
         .single();
@@ -146,12 +146,12 @@ export const useConversationData = (conversationId: string) => {
     };
   }, [conversationId, user, queryClient]);
 
-  const getOtherParticipant = () => {
+  const getOtherParticipant = (): string => {
     if (!conversation) return 'Utilisateur inconnu';
     
-    // Safely handle participants as Json type
+    // Safely handle participants as Json type and convert to string array
     const participants = Array.isArray(conversation.participants) 
-      ? conversation.participants 
+      ? conversation.participants as string[]
       : [];
     
     const otherParticipantId = participants.find((p: string) => p !== user?.id);
