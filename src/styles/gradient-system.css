@@ -1,55 +1,46 @@
 
-/* Gradient System - Centralized gradient utilities */
+/* Gradient System - Reusable gradient utilities */
 
 @layer components {
-  /* === GRADIENT SYSTEM === */
+  /* === GRADIENT BACKGROUNDS === */
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+    @apply bg-gradient-to-r from-primary to-primary/80;
+  }
+  
+  .gradient-secondary {
+    @apply bg-gradient-to-r from-secondary to-secondary/80;
   }
   
   .gradient-luxe {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 50%, #e6820e 100%);
+    @apply bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500;
   }
   
-  .gradient-accent {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
+  .gradient-premium {
+    @apply bg-gradient-to-br from-primary/90 to-accent/90;
   }
   
-  /* Fixed gradient-gold class that's used throughout the app */
-  .gradient-gold {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ff9000 100%);
+  .gradient-dark {
+    @apply bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900;
   }
   
-  .gradient-surface {
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  .gradient-glass {
+    @apply bg-gradient-to-br from-card/60 to-card/30 backdrop-blur-xl;
   }
   
-  .gradient-overlay {
-    background: linear-gradient(135deg, hsl(var(--background) / 0.8) 0%, hsl(var(--card) / 0.4) 100%);
+  /* === GRADIENT TEXT === */
+  .text-gradient-primary {
+    @apply bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent;
   }
   
-  /* Text Gradients */
   .text-gradient-luxe {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 50%, #e6820e 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
+    @apply bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-500 bg-clip-text text-transparent;
   }
   
-  .text-gradient-accent {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  .text-gradient-gold {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
+  /* === GRADIENT BORDERS === */
+  .border-gradient-primary {
+    border: 1px solid transparent;
+    background: 
+      linear-gradient(hsl(var(--background)), hsl(var(--background))) padding-box,
+      linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent))) border-box;
   }
 }

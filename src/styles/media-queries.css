@@ -1,7 +1,69 @@
 
-/* Media Queries and Responsive Utilities */
+/* Media Queries - Responsive design utilities */
 
-/* === MOTION PREFERENCES === */
+@layer components {
+  /* === RESPONSIVE VISIBILITY === */
+  .mobile-only {
+    @apply block sm:hidden;
+  }
+  
+  .tablet-only {
+    @apply hidden sm:block lg:hidden;
+  }
+  
+  .desktop-only {
+    @apply hidden lg:block;
+  }
+  
+  .mobile-hidden {
+    @apply hidden sm:block;
+  }
+  
+  .desktop-hidden {
+    @apply block lg:hidden;
+  }
+}
+
+/* === CUSTOM MEDIA QUERIES === */
+@media (max-width: 480px) {
+  .responsive-text {
+    font-size: 14px;
+  }
+  
+  .container-spacing {
+    @apply px-2;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .tablet-optimized {
+    @apply px-6 py-4;
+  }
+}
+
+@media (min-width: 1440px) {
+  .large-screen {
+    @apply max-w-7xl mx-auto;
+  }
+}
+
+/* === PRINT STYLES === */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .print-only {
+    display: block !important;
+  }
+  
+  body {
+    -webkit-print-color-adjust: exact;
+    color-adjust: exact;
+  }
+}
+
+/* === REDUCED MOTION === */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -11,42 +73,12 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-  
-  /* Still allow some essential animations for UX */
-  .animate-accordion-down,
-  .animate-accordion-up {
-    animation-duration: 0.2s !important;
-  }
 }
 
-/* === HIGH CONTRAST MODE === */
+/* === HIGH CONTRAST === */
 @media (prefers-contrast: high) {
   :root {
-    --border: 100 100 100;
-    --foreground: 255 255 255;
-    --muted-foreground: 200 200 200;
-  }
-}
-
-/* === PRINT STYLES === */
-@media print {
-  :root {
-    --background: 255 255 255;
-    --foreground: 0 0 0;
-    --card: 255 255 255;
-    --card-foreground: 0 0 0;
-    --border: 0 0 0;
-  }
-  
-  * {
-    @apply shadow-none;
-  }
-  
-  .no-print {
-    display: none !important;
-  }
-  
-  .print-only {
-    display: block !important;
+    --border: 0 0% 20%;
+    --ring: 0 0% 30%;
   }
 }
