@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import UserAds from '@/components/dashboard/UserAds';
-import UserMessages from '@/components/dashboard/UserMessages';
+import RealTimeMessages from '@/components/dashboard/RealTimeMessages';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const Dashboard = () => {
@@ -55,7 +55,7 @@ const Dashboard = () => {
             </TabsContent>
             
             <TabsContent value="messages" className="mt-6">
-              <UserMessages />
+              <RealTimeMessages />
             </TabsContent>
           </Tabs>
         </div>

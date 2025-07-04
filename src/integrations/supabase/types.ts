@@ -72,6 +72,41 @@ export type Database = {
         }
         Relationships: []
       }
+      conversations: {
+        Row: {
+          ad_id: string | null
+          created_at: string
+          id: string
+          last_message_at: string | null
+          participants: Json
+          updated_at: string
+        }
+        Insert: {
+          ad_id?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          participants: Json
+          updated_at?: string
+        }
+        Update: {
+          ad_id?: string | null
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          participants?: Json
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_waitlist: {
         Row: {
           created_at: string
@@ -96,10 +131,49 @@ export type Database = {
         }
         Relationships: []
       }
+      message_attachments: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_size: number | null
+          file_type: string
+          file_url: string
+          id: string
+          message_id: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_size?: number | null
+          file_type: string
+          file_url: string
+          id?: string
+          message_id: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          id?: string
+          message_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_attachments_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       messages: {
         Row: {
           ad_id: string | null
           content: string
+          conversation_id: string | null
           created_at: string
           id: string
           is_read: boolean
@@ -110,6 +184,7 @@ export type Database = {
         Insert: {
           ad_id?: string | null
           content: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_read?: boolean
@@ -120,6 +195,7 @@ export type Database = {
         Update: {
           ad_id?: string | null
           content?: string
+          conversation_id?: string | null
           created_at?: string
           id?: string
           is_read?: boolean
@@ -133,6 +209,13 @@ export type Database = {
             columns: ["ad_id"]
             isOneToOne: false
             referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
             referencedColumns: ["id"]
           },
         ]
