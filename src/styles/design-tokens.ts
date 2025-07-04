@@ -1,39 +1,38 @@
-
-// Design Tokens System for Yamo Platform
+// Design Tokens System for Yamo Platform - Original Style Restored
 // This centralizes all design decisions and ensures consistency
 
 export const designTokens = {
-  // Color System with semantic naming
+  // Color System with semantic naming - Original brown/gold theme
   colors: {
-    // Primary Brand Colors
+    // Primary Brand Colors - Original gold/yellow palette
     primary: {
-      50: '255 248 235',   // Very light orange
-      100: '255 237 213',  // Light orange
-      200: '255 214 165',  // Lighter orange
-      300: '255 179 102',  // Light-medium orange
-      400: '255 144 0',    // Main orange (brand primary)
-      500: '230 130 0',    // Medium orange
-      600: '204 115 0',    // Dark orange
-      700: '179 101 0',    // Darker orange
-      800: '153 86 0',     // Very dark orange
-      900: '128 72 0',     // Darkest orange
+      50: '255 250 205',   // Very light gold
+      100: '255 248 220',  // Light gold
+      200: '255 235 205',  // Lighter gold
+      300: '255 215 0',    // Main gold (brand primary)
+      400: '255 215 0',    // Main gold
+      500: '218 165 32',   // Medium gold
+      600: '184 134 11',   // Dark gold
+      700: '161 120 10',   // Darker gold
+      800: '133 99 8',     // Very dark gold
+      900: '113 84 7',     // Darkest gold
     },
     
-    // Neutral Colors (Dark Theme Base)
+    // Neutral Colors - Original brown theme
     neutral: {
       0: '255 255 255',    // Pure white
-      50: '250 250 250',   // Off white
-      100: '245 245 245',  // Very light gray
-      200: '229 229 229',  // Light gray
-      300: '212 212 212',  // Medium light gray
-      400: '163 163 163',  // Medium gray
-      500: '115 115 115',  // Medium gray
-      600: '82 82 82',     // Dark gray
-      700: '64 64 64',     // Darker gray
-      800: '38 38 38',     // Very dark gray
-      850: '32 32 32',     // Card background
-      900: '25 25 25',     // Dark background
-      950: '15 15 15',     // Darkest background
+      50: '250 245 235',   // Off white with brown tint
+      100: '245 235 215',  // Very light brown
+      200: '229 219 199',  // Light brown
+      300: '212 192 162',  // Medium light brown
+      400: '163 143 113',  // Medium brown
+      500: '115 95 75',    // Medium brown
+      600: '82 72 52',     // Dark brown
+      700: '64 54 34',     // Darker brown
+      800: '50 35 18',     // Very dark brown
+      850: '40 28 16',     // Card background
+      900: '32 20 8',      // Dark background
+      950: '24 15 6',      // Darkest background
     },
     
     // Semantic Colors
@@ -44,19 +43,19 @@ export const designTokens = {
       info: '59 130 246',       // Blue
     },
     
-    // Surface Colors
+    // Surface Colors - Original brown theme
     surface: {
-      background: '15 15 15',
-      card: '25 25 25',
-      elevated: '32 32 32',
+      background: '32 20 8',
+      card: '40 28 16',
+      elevated: '50 35 18',
       overlay: '0 0 0',
     },
     
     // Border Colors
     border: {
-      default: '45 45 45',
-      light: '64 64 64',
-      focus: '255 144 0',
+      default: '80 60 30',
+      light: '100 80 50';
+      focus: '255 215 0',
     }
   },
   
@@ -120,7 +119,7 @@ export const designTokens = {
     full: '9999px',
   },
   
-  // Shadows
+  // Shadows - Updated for original theme
   boxShadow: {
     sm: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
     DEFAULT: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
@@ -129,8 +128,8 @@ export const designTokens = {
     xl: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
     '2xl': '0 25px 50px -12px rgb(0 0 0 / 0.25)',
     inner: 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
-    luxury: '0 12px 48px 0 rgb(255 144 0 / 0.15)',
-    glow: '0 0 20px rgb(255 144 0 / 0.3)',
+    luxury: '0 12px 48px 0 rgb(255 215 0 / 0.15)',
+    glow: '0 0 20px rgb(255 215 0 / 0.3)',
   },
   
   // Animation Durations

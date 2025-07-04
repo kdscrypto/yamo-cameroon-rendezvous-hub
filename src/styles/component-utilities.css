@@ -1,35 +1,36 @@
-/* Component Utilities - Reusable CSS classes for consistent styling */
+
+/* Component Utilities - Reusable CSS classes for consistent styling - Original Style */
 
 @layer components {
-  /* === GRADIENT SYSTEM === */
+  /* === GRADIENT SYSTEM - Original gold gradients === */
   .gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+    background: linear-gradient(135deg, hsl(255 215 0) 0%, hsl(218 165 32) 100%);
   }
   
   .gradient-luxe {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 50%, #e6820e 100%);
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 50%, #b8860b 100%);
   }
   
   .gradient-accent {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
   }
   
   /* Fixed gradient-gold class that's used throughout the app */
   .gradient-gold {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ff9000 100%);
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 50%, #b8860b 100%);
   }
   
   .gradient-surface {
-    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+    background: linear-gradient(135deg, hsl(40 28 16) 0%, hsl(32 20 8) 100%);
   }
   
   .gradient-overlay {
-    background: linear-gradient(135deg, hsl(var(--background) / 0.8) 0%, hsl(var(--card) / 0.4) 100%);
+    background: linear-gradient(135deg, hsl(32 20 8 / 0.8) 0%, hsl(40 28 16 / 0.4) 100%);
   }
   
-  /* Text Gradients */
+  /* Text Gradients - Original gold theme */
   .text-gradient-luxe {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 50%, #e6820e 100%);
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 50%, #b8860b 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -37,7 +38,7 @@
   }
   
   .text-gradient-accent {
-    background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -45,7 +46,7 @@
   }
   
   .text-gradient-gold {
-    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    background: linear-gradient(135deg, #ffd700 0%, #daa520 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -73,7 +74,7 @@
     @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-lg;
   }
 
-  /* === LAYOUT UTILITIES === */
+  /* ... keep existing code (layout utilities) the same ... */
   .section-spacing {
     @apply py-16 md:py-20 lg:py-24;
   }
@@ -98,9 +99,11 @@
     @apply flex items-center justify-between;
   }
 
-  /* === CARD STYLES === */
+  /* === CARD STYLES - Original brown theme === */
   .card-base {
     @apply bg-card border border-border rounded-xl shadow-sm;
+    background-color: hsl(40 28 16);
+    border-color: hsl(80 60 30);
   }
   
   .card-elevated {
@@ -116,41 +119,58 @@
   }
   
   .card-glass {
-    @apply bg-card/80 backdrop-blur-lg border border-border/50 rounded-xl shadow-lg;
+    background: rgba(40, 28, 16, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 215, 0, 0.5);
+    @apply rounded-xl shadow-lg;
   }
 
-  /* === BUTTON STYLES === */
+  /* === BUTTON STYLES - Original gold theme === */
   .btn-base {
     @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
   }
   
   .btn-primary {
     @apply btn-base bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 px-6 py-2.5 interactive-press;
+    background-color: hsl(255 215 0);
+    color: hsl(32 20 8);
   }
 
   .btn-secondary {
     @apply btn-base bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70 px-6 py-2.5 interactive-press;
+    background-color: hsl(60 40 20);
+    color: hsl(255 215 0);
   }
 
   .btn-outline {
     @apply btn-base border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent/80 px-6 py-2.5 interactive-press;
+    border-color: hsl(80 60 30);
+    background-color: hsl(32 20 8);
+    color: hsl(255 215 0);
   }
   
   .btn-ghost {
     @apply btn-base text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent/80 px-4 py-2;
+    color: hsl(255 215 0);
   }
   
   .btn-luxury {
     @apply btn-base gradient-luxe text-black hover:opacity-90 active:opacity-80 px-6 py-2.5 shadow-lg hover:shadow-luxury interactive-press;
   }
 
+  /* ... keep existing code (form elements, typography, utilities, etc.) the same ... */
+  
   /* === FORM ELEMENTS === */
   .form-input {
     @apply bg-input border border-border text-foreground placeholder:text-muted-foreground rounded-lg px-4 py-2.5 transition-colors duration-200 focus:ring-2 focus:ring-ring focus:border-ring/50 focus-visible:outline-none;
+    background-color: hsl(60 40 20);
+    border-color: hsl(80 60 30);
+    color: hsl(255 215 0);
   }
 
   .form-label {
     @apply text-foreground font-medium text-sm mb-2 block;
+    color: hsl(255 215 0);
   }
   
   .form-error {
@@ -159,43 +179,53 @@
   
   .form-helper {
     @apply text-muted-foreground text-sm mt-1;
+    color: hsl(218 165 32);
   }
 
   /* === TYPOGRAPHY HIERARCHY === */
   .heading-xl {
     @apply text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight tracking-tight;
+    color: hsl(255 215 0);
   }
 
   .heading-lg {
     @apply text-3xl md:text-4xl font-bold text-foreground leading-tight tracking-tight;
+    color: hsl(255 215 0);
   }
 
   .heading-md {
     @apply text-2xl md:text-3xl font-semibold text-foreground leading-tight tracking-tight;
+    color: hsl(255 215 0);
   }
 
   .heading-sm {
     @apply text-xl md:text-2xl font-semibold text-foreground leading-tight tracking-tight;
+    color: hsl(255 215 0);
   }
   
   .heading-xs {
     @apply text-lg md:text-xl font-semibold text-foreground leading-tight tracking-tight;
+    color: hsl(255 215 0);
   }
 
   .body-lg {
     @apply text-lg text-muted-foreground leading-relaxed;
+    color: hsl(218 165 32);
   }
 
   .body-md {
     @apply text-base text-muted-foreground leading-relaxed;
+    color: hsl(218 165 32);
   }
 
   .body-sm {
     @apply text-sm text-muted-foreground leading-relaxed;
+    color: hsl(218 165 32);
   }
   
   .body-xs {
     @apply text-xs text-muted-foreground leading-relaxed;
+    color: hsl(218 165 32);
   }
 
   /* === UTILITY CLASSES === */
