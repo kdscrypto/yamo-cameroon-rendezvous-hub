@@ -18,6 +18,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [identifierError, setIdentifierError] = useState('');
+  const [showTestPanel, setShowTestPanel] = useState(false);
   const { signIn, user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -155,9 +156,31 @@ const Login = () => {
               <CardDescription className="text-neutral-400 text-base">
                 Utilisez votre email ou votre numéro de téléphone
               </CardDescription>
+              
+              {/* Bouton pour afficher le panneau de test */}
+              <button
+                onClick={() => setShowTestPanel(!showTestPanel)}
+                className="text-xs text-neutral-500 hover:text-amber-400 transition-colors mt-2"
+              >
+                {showTestPanel ? 'Masquer' : 'Afficher'} le panneau de test
+              </button>
             </CardHeader>
             
             <CardContent className="space-y-6">
+              {/* Panneau de test conditionnel */}
+              {showTestPanel && (
+                <div className="mb-6 p-4 border border-neutral-600 rounded-lg bg-neutral-700/30">
+                  <div className="text-sm text-neutral-200 mb-2 font-medium">
+                    🧪 Mode Test - Connexion par téléphone
+                  </div>
+                  <div className="text-xs text-neutral-400 space-y-1">
+                    <div>• Formats acceptés: +33123456789, 0123456789, 01 23 45 67 89</div>
+                    <div>• La validation se fait automatiquement</div>
+                    <div>• Les erreurs sont affichées en temps réel</div>
+                  </div>
+                </div>
+              )}
+
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="identifier" className="text-neutral-200 font-medium flex items-center gap-2">

@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { User, Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -27,10 +27,30 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [phoneError, setPhoneError] = useState('');
   
   const { signUp } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Fonction de validation du numéro de téléphone
+  const validatePhoneNumber = (phone: string): boolean => {
+    if (!phone.trim()) return true; // Le téléphone est optionnel
+
+    // Formats acceptés : +33123456789, 0123456789, 01 23 45 67 89, +33 1 23 45 67 89
+    const phoneRegex = /^(\+33|0)[1-9](\d{8}|\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2})$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData(prev => ({ ...prev, phone: value }));
+    
+    if (value.trim() && !validatePhoneNumber(value)) {
+      setPhoneError('Format invalide. Ex: +33123456789 ou 0123456789');
+    } else {
+      setPhoneError('');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,25 +73,44 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       return;
     }
 
+    // Validation finale du téléphone
+    if (formData.phone.trim() && !validatePhoneNumber(formData.phone)) {
+      toast({
+        title: "Erreur",
+        description: "Le format du numéro de téléphone n'est pas valide.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(formData.email, formData.password, formData.fullName, formData.phone);
+      const { error } = await signUp(
+        formData.email, 
+        formData.password, 
+        formData.fullName, 
+        formData.phone.trim() || undefined
+      );
 
       if (error) {
+        let errorMessage = "Une erreur s'est produite lors de l'inscription.";
+        
         if (error.message.includes('already registered')) {
-          toast({
-            title: "Compte existant",
-            description: "Cette adresse email est déjà utilisée. Essayez de vous connecter.",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Erreur d'inscription",
-            description: error.message,
-            variant: "destructive"
-          });
+          errorMessage = "Cette adresse email est déjà utilisée. Essayez de vous connecter.";
+        } else if (error.message.includes('déjà utilisé')) {
+          errorMessage = "Ce numéro de téléphone est déjà utilisé par un autre compte.";
+        } else if (error.message.includes('format')) {
+          errorMessage = error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
         }
+
+        toast({
+          title: "Erreur d'inscription",
+          description: errorMessage,
+          variant: "destructive"
+        });
       } else {
         toast({
           title: "Inscription réussie",
@@ -80,6 +119,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         navigate('/login');
       }
     } catch (error) {
+      console.error('Erreur inattendue lors de l\'inscription:', error);
       toast({
         title: "Erreur",
         description: "Une erreur inattendue s'est produite.",
@@ -91,7 +131,11 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   };
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    if (field === 'phone') {
+      handlePhoneChange(value as string);
+    } else {
+      setFormData(prev => ({ ...prev, [field]: value }));
+    }
   };
 
   return (
@@ -137,12 +181,23 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         <Input
           id="phone"
           type="tel"
-          placeholder="+33 6 12 34 56 78"
+          placeholder="+33 6 12 34 56 78 ou 06 12 34 56 78"
           value={formData.phone}
           onChange={(e) => handleInputChange('phone', e.target.value)}
           disabled={isLoading}
-          className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200"
+          className={`h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200 ${
+            phoneError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+          }`}
         />
+        {phoneError && (
+          <div className="flex items-center gap-2 text-red-400 text-sm">
+            <AlertCircle className="w-4 h-4" />
+            {phoneError}
+          </div>
+        )}
+        <div className="text-xs text-neutral-500">
+          Permet la connexion par téléphone et les notifications par SMS
+        </div>
       </div>
       
       <div className="space-y-2">
@@ -237,7 +292,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       <Button 
         type="submit" 
         className="w-full h-14 text-lg font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-0 rounded-xl mt-6"
-        disabled={!formData.acceptTerms || !formData.isAdult || isLoading}
+        disabled={!formData.acceptTerms || !formData.isAdult || isLoading || !!phoneError}
       >
         {isLoading ? (
           <div className="flex items-center gap-3">
