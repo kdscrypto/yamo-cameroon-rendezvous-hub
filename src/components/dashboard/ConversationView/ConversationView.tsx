@@ -1,19 +1,19 @@
 
 import { useAuth } from '@/hooks/useAuth';
-import ConversationHeader from './ConversationView/ConversationHeader';
-import MessagesList from './ConversationView/MessagesList';
-import MessageInput from './ConversationView/MessageInput';
-import ConversationViewLoading from './ConversationView/ConversationViewLoading';
-import ConversationPagination from './ConversationView/ConversationPagination';
-import ConversationActions from './ConversationView/ConversationActions';
-import { useConversationData } from './ConversationView/useConversationData';
-import { ConversationViewProps } from './ConversationView/types';
-import { useState, useEffect, useMemo } from 'react';
-import { Message } from './ConversationView/types';
+import ConversationHeader from './ConversationHeader';
+import MessagesList from './MessagesList';
+import MessageInput from './MessageInput';
+import ConversationViewLoading from './ConversationViewLoading';
+import ConversationPagination from './ConversationPagination';
+import ConversationActions from './ConversationActions';
+import { useConversationData } from './useConversationData';
+import { ConversationViewProps } from './types';
+import { useState, useEffect } from 'react';
+import { Message } from './types';
 
 const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => {
   const { user } = useAuth();
-  const [paginatedMessages, setPaginatedMessages] = useState<Message[]>([]);
+  const [allMessages, setAllMessages] = useState<Message[]>([]);
   const {
     conversation,
     messages,
@@ -25,38 +25,24 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
     isRateLimited
   } = useConversationData(conversationId);
 
-  // Memoize the sorted messages to avoid unnecessary re-renders
-  const sortedMessages = useMemo(() => {
-    if (!messages) return [];
-    return [...messages].sort((a, b) => 
-      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-    );
+  // Update allMessages when messages change
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      console.log('Messages received:', messages.length);
+      setAllMessages(messages);
+    }
   }, [messages]);
 
-  // Update paginated messages when main messages change
-  useEffect(() => {
-    if (sortedMessages && sortedMessages.length > 0) {
-      console.log('Updating paginated messages:', sortedMessages.length);
-      setPaginatedMessages(sortedMessages);
-    }
-  }, [sortedMessages]);
-
   const handleLoadMore = (newMessages: Message[], direction: 'up' | 'down') => {
-    setPaginatedMessages(prev => {
+    setAllMessages(prev => {
       const existingIds = new Set(prev.map(msg => msg.id));
       const uniqueNewMessages = newMessages.filter(msg => !existingIds.has(msg.id));
       
-      let updatedMessages;
       if (direction === 'up') {
-        updatedMessages = [...uniqueNewMessages, ...prev];
+        return [...uniqueNewMessages, ...prev];
       } else {
-        updatedMessages = [...prev, ...uniqueNewMessages];
+        return [...prev, ...uniqueNewMessages];
       }
-      
-      // Sort messages by creation time to maintain order
-      return updatedMessages.sort((a, b) => 
-        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-      );
     });
   };
 
@@ -102,14 +88,14 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
       <div className="flex flex-col">
         <ConversationPagination
           conversationId={conversationId}
-          messages={paginatedMessages}
+          messages={allMessages}
           onLoadMore={handleLoadMore}
           currentUserId={user?.id}
         />
         
         <MessagesList 
           conversationId={conversationId}
-          messages={paginatedMessages} 
+          messages={allMessages} 
           currentUserId={user?.id} 
         />
         
