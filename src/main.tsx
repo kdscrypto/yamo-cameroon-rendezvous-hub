@@ -4,6 +4,10 @@ import { createRoot } from "react-dom/client";
 import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.tsx";
 import "./index.css";
+import { optimizeForProduction } from './utils/environmentUtils';
+
+// Optimiser pour la production
+optimizeForProduction();
 
 // Ensure we have a root element before rendering
 const rootElement = document.getElementById("root");
@@ -19,12 +23,17 @@ createRoot(rootElement).render(
   </StrictMode>,
 );
 
-// Service worker registration
+// Service worker registration avec gestion d'erreur améliorée
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
         console.log('Service Worker registered successfully:', registration.scope);
+        
+        // Écouter les mises à jour du service worker
+        registration.addEventListener('updatefound', () => {
+          console.log('Service Worker update found');
+        });
       })
       .catch((error) => {
         console.log('Service Worker registration failed:', error);
@@ -32,7 +41,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
-// Sitemap generation utilities
+// Sitemap generation utilities (conservé pour compatibilité)
 import { generateSitemap, generateRobotsTxt } from './utils/sitemapGenerator';
 
 const sitemap = generateSitemap();
