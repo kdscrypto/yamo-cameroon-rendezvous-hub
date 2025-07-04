@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -172,6 +173,8 @@ const AdDetail = () => {
                 {/* Contact actions */}
                 <AdContactSection
                   adTitle={ad.title}
+                  adId={ad.id}
+                  adOwnerId={ad.user_id}
                   contactInfo={contactInfo}
                 />
               </div>
