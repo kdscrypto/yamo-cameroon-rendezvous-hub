@@ -18,8 +18,8 @@
     --muted-foreground: 200 200 200;
     --accent: 255 144 0;
     --accent-foreground: 0 0 0;
-    --destructive: 240 240 240;
-    --destructive-foreground: 15 15 15;
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
     --border: 45 45 45;
     --input: 40 40 40;
     --ring: 255 144 0;
@@ -53,8 +53,8 @@
     --muted-foreground: 200 200 200;
     --accent: 255 144 0;
     --accent-foreground: 0 0 0;
-    --destructive: 240 240 240;
-    --destructive-foreground: 15 15 15;
+    --destructive: 239 68 68;
+    --destructive-foreground: 248 250 252;
     --border: 45 45 45;
     --input: 40 40 40;
     --ring: 255 144 0;

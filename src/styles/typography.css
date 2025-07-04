@@ -33,22 +33,37 @@
     @apply text-neutral-400;
   }
   
-  /* Override any problematic text colors */
-  .text-red-500,
-  .text-red-600,
-  .text-red-700,
-  .text-red-800,
-  .text-red-900,
+  /* Restore original red color classes without circular dependency */
+  .text-red-500 {
+    color: #ef4444 !important;
+  }
+  
+  .text-red-600 {
+    color: #dc2626 !important;
+  }
+  
+  .text-red-700 {
+    color: #b91c1c !important;
+  }
+  
+  .text-red-800 {
+    color: #991b1b !important;
+  }
+  
+  .text-red-900 {
+    color: #7f1d1d !important;
+  }
+  
   .text-red-300 {
-    @apply text-red-400 !important;
+    color: #fca5a5 !important;
   }
   
-  /* Override destructive colors */
+  /* Override destructive colors to maintain original appearance */
   .text-destructive {
-    @apply text-red-400 !important;
+    color: #ef4444 !important;
   }
   
-  /* Make sure muted-foreground is always visible */
+  /* Make sure muted-foreground maintains original appearance */
   .text-muted-foreground {
     @apply text-neutral-400 !important;
   }
