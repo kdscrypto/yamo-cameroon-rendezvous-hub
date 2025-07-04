@@ -1,6 +1,6 @@
 
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -83,12 +83,30 @@ export const useConversationData = (conversationId: string) => {
       return data as Message[];
     },
     refetchInterval: false,
-    staleTime: 0, // Ensure fresh data
+    staleTime: 0,
   });
 
   const { sendMessage, isSendingMessage, isRateLimited } = useMessageManagement(conversationId, conversation);
 
-  // Marquer les messages comme lus
+  // Optimized function to add new message to cache
+  const addMessageToCache = useCallback((newMessage: Message) => {
+    queryClient.setQueryData(['conversation-messages', conversationId], (oldData: Message[] | undefined) => {
+      if (!oldData) return [newMessage];
+      
+      // Check if message already exists to prevent duplicates
+      const messageExists = oldData.some(msg => msg.id === newMessage.id);
+      if (messageExists) return oldData;
+      
+      // Insert message in chronological order
+      const updatedMessages = [...oldData, newMessage].sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      
+      return updatedMessages;
+    });
+  }, [queryClient, conversationId]);
+
+  // Mark messages as read
   useEffect(() => {
     if (!user || !messages || messages.length === 0) return;
 
@@ -105,24 +123,21 @@ export const useConversationData = (conversationId: string) => {
         
         if (error) {
           console.error('Error marking messages as read:', error);
-        } else {
-          // Invalidate queries to refresh the data
-          queryClient.invalidateQueries({ queryKey: ['conversation-messages', conversationId] });
         }
       };
 
       markAsRead();
     }
-  }, [messages, user, queryClient, conversationId]);
+  }, [messages, user]);
 
-  // Configuration du temps réel
+  // Enhanced real-time configuration
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId || !user) return;
 
-    console.log('Setting up real-time subscription for conversation:', conversationId);
+    console.log('Setting up enhanced real-time subscription for conversation:', conversationId);
 
     const messagesChannel = supabase
-      .channel(`messages-${conversationId}`)
+      .channel(`conversation-${conversationId}-messages`)
       .on(
         'postgres_changes',
         {
@@ -131,23 +146,35 @@ export const useConversationData = (conversationId: string) => {
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`
         },
-        (payload) => {
-          console.log('New message received:', payload);
+        async (payload) => {
+          console.log('New message received via real-time:', payload);
           
-          // Immédiatement ajouter le message à la liste locale
-          queryClient.setQueryData(['conversation-messages', conversationId], (oldData: Message[] | undefined) => {
-            if (!oldData) return [payload.new as Message];
-            
-            // Vérifier si le message existe déjà pour éviter les doublons
-            const messageExists = oldData.some(msg => msg.id === payload.new.id);
-            if (messageExists) return oldData;
-            
-            return [...oldData, payload.new as Message];
-          });
+          try {
+            // Fetch the complete message with attachments
+            const { data: completeMessage, error } = await supabase
+              .from('messages')
+              .select(`
+                *,
+                message_attachments(*)
+              `)
+              .eq('id', payload.new.id)
+              .single();
 
-          // Afficher une notification si ce n'est pas notre message
-          if (payload.new.sender_id !== user?.id) {
-            toast.success('Nouveau message reçu');
+            if (error) {
+              console.error('Error fetching complete message:', error);
+              return;
+            }
+
+            if (completeMessage) {
+              addMessageToCache(completeMessage as Message);
+              
+              // Show notification only for messages from other users
+              if (completeMessage.sender_id !== user.id) {
+                toast.success('Nouveau message reçu');
+              }
+            }
+          } catch (error) {
+            console.error('Error processing new message:', error);
           }
         }
       )
@@ -159,26 +186,48 @@ export const useConversationData = (conversationId: string) => {
           table: 'messages',
           filter: `conversation_id=eq.${conversationId}`
         },
-        (payload) => {
-          console.log('Message updated:', payload);
+        async (payload) => {
+          console.log('Message updated via real-time:', payload);
           
-          // Mettre à jour le message dans la liste locale
-          queryClient.setQueryData(['conversation-messages', conversationId], (oldData: Message[] | undefined) => {
-            if (!oldData) return [];
-            
-            return oldData.map(msg => 
-              msg.id === payload.new.id ? { ...msg, ...payload.new } : msg
-            );
-          });
+          try {
+            // Fetch the complete updated message
+            const { data: updatedMessage, error } = await supabase
+              .from('messages')
+              .select(`
+                *,
+                message_attachments(*)
+              `)
+              .eq('id', payload.new.id)
+              .single();
+
+            if (error) {
+              console.error('Error fetching updated message:', error);
+              return;
+            }
+
+            if (updatedMessage) {
+              queryClient.setQueryData(['conversation-messages', conversationId], (oldData: Message[] | undefined) => {
+                if (!oldData) return [updatedMessage as Message];
+                
+                return oldData.map(msg => 
+                  msg.id === updatedMessage.id ? { ...msg, ...updatedMessage } : msg
+                );
+              });
+            }
+          } catch (error) {
+            console.error('Error processing updated message:', error);
+          }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log('Real-time subscription status:', status);
+      });
 
     return () => {
       console.log('Cleaning up real-time subscription');
       supabase.removeChannel(messagesChannel);
     };
-  }, [conversationId, user, queryClient]);
+  }, [conversationId, user, addMessageToCache, queryClient]);
 
   const getOtherParticipant = (): string => {
     if (otherParticipantProfile?.full_name) {
