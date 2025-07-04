@@ -2,17 +2,19 @@
 /* Typography and text styles */
 
 @layer base {
-  /* Heading styles with improved contrast */
+  /* Heading styles with original yellow/orange colors */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-neutral-100;
+    @apply font-semibold;
+    color: hsl(35, 91%, 65%) !important;
     text-wrap: balance;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
   
-  /* Paragraph styles with improved readability */
+  /* Paragraph styles with light text */
   p {
     text-wrap: pretty;
-    @apply text-neutral-200 leading-relaxed;
+    color: rgb(245, 245, 245) !important;
+    @apply leading-relaxed;
   }
 }
 
@@ -20,20 +22,20 @@
 @layer utilities {
   /* Enhanced text colors for better visibility */
   .text-enhanced {
-    @apply text-neutral-100;
+    color: rgb(250, 250, 250) !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
   
   .text-enhanced-muted {
-    @apply text-neutral-300;
+    color: rgb(200, 200, 200) !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
   }
   
   .text-enhanced-subtle {
-    @apply text-neutral-400;
+    color: rgb(160, 160, 160) !important;
   }
   
-  /* Restore original red color classes without circular dependency */
+  /* Restore original red color classes */
   .text-red-500 {
     color: #ef4444 !important;
   }
@@ -65,21 +67,21 @@
   
   /* Make sure muted-foreground maintains original appearance */
   .text-muted-foreground {
-    @apply text-neutral-400 !important;
+    color: rgb(160, 160, 160) !important;
   }
   
-  /* Primary text variants */
+  /* Primary text variants with original orange/yellow */
   .text-primary-enhanced {
-    @apply text-primary-400;
-    text-shadow: 0 0 20px rgba(255, 144, 0, 0.3);
+    color: hsl(35, 91%, 65%) !important;
+    text-shadow: 0 0 20px rgba(255, 180, 71, 0.3);
   }
   
   /* TEXT UTILITIES */
   .text-shadow {
-    text-shadow: 0 1px 2px hsl(var(--background) / 0.5);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   }
 
   .text-shadow-lg {
-    text-shadow: 0 2px 4px hsl(var(--background) / 0.7);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
   }
 }
