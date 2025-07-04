@@ -8,12 +8,6 @@ interface UserStatusProps {
   showText?: boolean;
 }
 
-interface UserPresenceData {
-  user_id: string;
-  online_at: string;
-  status: 'online' | 'away' | 'offline';
-}
-
 const UserStatus = ({ userId, showText = false }: UserStatusProps) => {
   const [status, setStatus] = useState<'online' | 'away' | 'offline'>('offline');
 
@@ -38,21 +32,27 @@ const UserStatus = ({ userId, showText = false }: UserStatusProps) => {
         const userPresence = presenceState[`user-${userId}`];
         
         if (userPresence && userPresence.length > 0) {
-          const latestPresence = userPresence[0] as UserPresenceData;
-          const presenceStatus = latestPresence?.status || 'online';
+          // Access the actual presence data from the presence object
+          const latestPresence = userPresence[0];
+          const presenceData = latestPresence as any; // Supabase presence object
+          const presenceStatus = presenceData?.status || 'online';
           setStatus(presenceStatus);
         } else {
           setStatus('offline');
         }
       })
       .on('presence', { event: 'join' }, ({ newPresences }) => {
-        const userJoined = newPresences.find((presence: UserPresenceData) => presence.user_id === userId);
+        const userJoined = newPresences.find((presence: any) => {
+          return presence.user_id === userId;
+        });
         if (userJoined) {
           setStatus('online');
         }
       })
       .on('presence', { event: 'leave' }, ({ leftPresences }) => {
-        const userLeft = leftPresences.find((presence: UserPresenceData) => presence.user_id === userId);
+        const userLeft = leftPresences.find((presence: any) => {
+          return presence.user_id === userId;
+        });
         if (userLeft) {
           setStatus('offline');
         }
