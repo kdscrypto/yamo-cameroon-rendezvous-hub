@@ -72,6 +72,30 @@ export type Database = {
         }
         Relationships: []
       }
+      event_waitlist: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          notified: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id?: string
+          notified?: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          notified?: boolean
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           ad_id: string | null

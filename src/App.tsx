@@ -21,6 +21,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AuthCallback from "./pages/AuthCallback";
 import AdDetail from "./pages/AdDetail";
+import Events from "./pages/Events";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,8 @@ const App = () => (
             <Route path="/rencontres" element={<Browse />} />
             <Route path="/massages" element={<Browse />} />
             <Route path="/produits" element={<Browse />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/evenements" element={<Events />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/contact" element={<Contact />} />
