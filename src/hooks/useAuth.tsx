@@ -2,43 +2,13 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { normalizePhoneNumber, isValidPhoneNumber, isPhoneNumberFormat } from '@/utils/phoneUtils';
 
 export interface AuthState {
   user: User | null;
   session: Session | null;
   loading: boolean;
 }
-
-// Fonction utilitaire pour normaliser les numéros de téléphone
-const normalizePhoneNumber = (phone: string): string => {
-  // Supprime tous les espaces, tirets et parenthèses
-  let normalized = phone.replace(/[\s\-\(\)]/g, '');
-  
-  // Si le numéro commence par 0, le remplace par +33
-  if (normalized.startsWith('0')) {
-    normalized = '+33' + normalized.substring(1);
-  }
-  
-  // Si le numéro commence par 33 sans +, ajoute le +
-  if (normalized.startsWith('33') && !normalized.startsWith('+33')) {
-    normalized = '+' + normalized;
-  }
-  
-  // Si le numéro ne commence pas par +, ajoute +33 par défaut (pour la France)
-  if (!normalized.startsWith('+')) {
-    normalized = '+33' + normalized;
-  }
-  
-  return normalized;
-};
-
-// Validation stricte des numéros de téléphone
-const isValidPhoneNumber = (phone: string): boolean => {
-  const normalized = normalizePhoneNumber(phone);
-  // Format international: +[code pays][numéro] (8 à 15 chiffres après le code pays)
-  const phoneRegex = /^\+[1-9]\d{7,14}$/;
-  return phoneRegex.test(normalized);
-};
 
 export const useAuth = () => {
   const [authState, setAuthState] = useState<AuthState>({
@@ -134,13 +104,11 @@ export const useAuth = () => {
         
         if (profileError) {
           console.error('Erreur lors de la mise à jour du profil avec le téléphone:', profileError);
-          // On ne retourne pas d'erreur car l'inscription a réussi
         } else {
           console.log('Profil mis à jour avec le numéro de téléphone:', normalizedPhone);
         }
       } catch (profileUpdateError) {
         console.error('Erreur inattendue lors de la mise à jour du profil:', profileUpdateError);
-        // On ne retourne pas d'erreur car l'inscription a réussi
       }
     }
     
@@ -150,17 +118,13 @@ export const useAuth = () => {
   const signIn = async (identifier: string, password: string) => {
     const cleanIdentifier = identifier.trim();
     
-    // Détection améliorée des numéros de téléphone
-    const isPhoneNumber = /^[\+0-9\s\-\(\)]{8,}$/.test(cleanIdentifier) && 
-                         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanIdentifier);
-    
     console.log('Tentative de connexion:', { 
       identifier: cleanIdentifier, 
-      isPhoneNumber,
+      isPhoneNumber: isPhoneNumberFormat(cleanIdentifier),
       length: cleanIdentifier.length 
     });
     
-    if (isPhoneNumber) {
+    if (isPhoneNumberFormat(cleanIdentifier)) {
       try {
         const normalizedPhone = normalizePhoneNumber(cleanIdentifier);
         console.log('Recherche du numéro de téléphone normalisé:', normalizedPhone);

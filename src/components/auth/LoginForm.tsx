@@ -1,19 +1,19 @@
 
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { Eye, EyeOff, Mail, Lock, Phone, AlertCircle } from 'lucide-react';
+import { isPhoneNumberFormat } from '@/utils/phoneUtils';
 import LoginTestPanel from './LoginTestPanel';
+import IdentifierField from './IdentifierField';
+import PasswordField from './PasswordField';
+import LoginSubmitButton from './LoginSubmitButton';
+import LoginFormLinks from './LoginFormLinks';
 
 const LoginForm = () => {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [identifierError, setIdentifierError] = useState('');
   const [showTestPanel, setShowTestPanel] = useState(false);
@@ -40,19 +40,13 @@ const LoginForm = () => {
     return true;
   };
 
-  const handleIdentifierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
+  const handleIdentifierChange = (value: string) => {
     setIdentifier(value);
     
     // Clear error when user starts typing
     if (identifierError) {
       setIdentifierError('');
     }
-  };
-
-  const getIdentifierType = (value: string) => {
-    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
-    return phoneRegex.test(value.trim()) ? 'phone' : 'email';
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,7 +70,7 @@ const LoginForm = () => {
     try {
       console.log('Attempting login with:', { 
         identifier: identifier.trim(), 
-        type: getIdentifierType(identifier.trim())
+        type: isPhoneNumberFormat(identifier.trim()) ? 'phone' : 'email'
       });
 
       const { error } = await signIn(identifier.trim(), password);
@@ -143,109 +137,23 @@ const LoginForm = () => {
         <LoginTestPanel showTestPanel={showTestPanel} />
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-2">
-            <Label htmlFor="identifier" className="text-neutral-200 font-medium flex items-center gap-2">
-              {getIdentifierType(identifier) === 'phone' ? (
-                <Phone className="w-4 h-4 text-amber-500" />
-              ) : (
-                <Mail className="w-4 h-4 text-amber-500" />
-              )}
-              Email ou téléphone
-            </Label>
-            <Input
-              id="identifier"
-              type="text"
-              placeholder="exemple@email.com ou +33 6 12 34 56 78"
-              value={identifier}
-              onChange={handleIdentifierChange}
-              required
-              disabled={isLoading}
-              className={`h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200 ${
-                identifierError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
-              }`}
-            />
-            {identifierError && (
-              <div className="flex items-center gap-2 text-red-400 text-sm">
-                <AlertCircle className="w-4 h-4" />
-                {identifierError}
-              </div>
-            )}
-            <div className="text-xs text-neutral-500 mt-1">
-              {identifier && getIdentifierType(identifier) === 'phone' ? (
-                <span className="text-amber-400">📱 Mode téléphone détecté</span>
-              ) : identifier && getIdentifierType(identifier) === 'email' ? (
-                <span className="text-blue-400">📧 Mode email détecté</span>
-              ) : (
-                <span>Saisissez votre email ou numéro de téléphone</span>
-              )}
-            </div>
-          </div>
+          <IdentifierField
+            identifier={identifier}
+            onIdentifierChange={handleIdentifierChange}
+            error={identifierError}
+            isLoading={isLoading}
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-neutral-200 font-medium flex items-center gap-2">
-              <Lock className="w-4 h-4 text-amber-500" />
-              Mot de passe
-            </Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={isLoading}
-                className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 pr-12 transition-all duration-200"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-amber-400 transition-colors"
-                disabled={isLoading}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
+          <PasswordField
+            password={password}
+            onPasswordChange={setPassword}
+            isLoading={isLoading}
+          />
           
-          <Button 
-            type="submit" 
-            className="w-full h-14 text-lg font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-0 rounded-xl"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-3">
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Connexion en cours...
-              </div>
-            ) : (
-              <span className="drop-shadow-sm">SE CONNECTER</span>
-            )}
-          </Button>
+          <LoginSubmitButton isLoading={isLoading} />
         </form>
         
-        <div className="space-y-4 pt-4 border-t border-neutral-700/50">
-          <div className="text-center">
-            <Link 
-              to="/forgot-password" 
-              className="text-sm text-amber-400 hover:text-amber-300 transition-colors font-medium hover:underline"
-            >
-              Mot de passe oublié ?
-            </Link>
-          </div>
-          
-          <div className="text-center">
-            <span className="text-sm text-neutral-400">
-              Pas encore de compte ?{' '}
-            </span>
-            <Link 
-              to="/register" 
-              className="text-sm text-amber-400 hover:text-amber-300 transition-colors font-semibold hover:underline"
-            >
-              Créer un compte
-            </Link>
-          </div>
-        </div>
+        <LoginFormLinks />
       </CardContent>
     </Card>
   );
