@@ -64,9 +64,7 @@ const WaitlistTable = ({
             <Checkbox
               checked={isAllSelected}
               onCheckedChange={handleSelectAll}
-              ref={(el) => {
-                if (el) el.indeterminate = isPartiallySelected;
-              }}
+              className={isPartiallySelected ? "data-[state=checked]:bg-primary/50" : ""}
             />
           </TableHead>
           <TableHead>Email</TableHead>

@@ -141,11 +141,11 @@ const WaitlistManagement = () => {
       
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_, deletedEmail) => {
       toast.success('Inscription supprimée');
       queryClient.invalidateQueries({ queryKey: ['event-waitlist'] });
       queryClient.invalidateQueries({ queryKey: ['waitlist-detailed-stats'] });
-      setSelectedEmails(prev => prev.filter(email => email !== arguments[0]));
+      setSelectedEmails(prev => prev.filter(email => email !== deletedEmail));
     },
     onError: (error) => {
       console.error('Error deleting entry:', error);
