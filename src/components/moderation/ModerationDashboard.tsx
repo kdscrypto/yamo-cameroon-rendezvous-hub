@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -7,6 +8,7 @@ import AdModerationModal from './AdModerationModal';
 import ModerationHeader from './ModerationHeader';
 import AdsList from './AdsList';
 import QuickModerationDialog from './QuickModerationDialog';
+import WaitlistManagement from './WaitlistManagement';
 import { useModerationMutations } from './useModerationMutations';
 
 interface ModerationDashboardProps {
@@ -143,12 +145,15 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
       <ModerationHeader userRole={userRole} stats={moderationStats} />
 
       <Tabs defaultValue="pending" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="pending">
             En attente ({pendingAds?.length || 0})
           </TabsTrigger>
           <TabsTrigger value="moderated">
             Modérées
+          </TabsTrigger>
+          <TabsTrigger value="waitlist">
+            Liste d'attente
           </TabsTrigger>
         </TabsList>
         
@@ -173,6 +178,10 @@ const ModerationDashboard = ({ userRole }: ModerationDashboardProps) => {
             onViewAd={handleViewAd}
             emptyMessage="Aucune annonce modérée récemment."
           />
+        </TabsContent>
+
+        <TabsContent value="waitlist" className="mt-6">
+          <WaitlistManagement />
         </TabsContent>
       </Tabs>
 
