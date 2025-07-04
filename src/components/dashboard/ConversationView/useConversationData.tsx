@@ -63,6 +63,8 @@ export const useConversationData = (conversationId: string) => {
   const { data: messages, isLoading } = useQuery({
     queryKey: ['conversation-messages', conversationId],
     queryFn: async () => {
+      console.log('Fetching messages for conversation:', conversationId);
+      
       const { data, error } = await supabase
         .from('messages')
         .select(`
@@ -77,16 +79,18 @@ export const useConversationData = (conversationId: string) => {
         return [];
       }
       
+      console.log('Fetched messages:', data?.length || 0);
       return data as Message[];
     },
-    refetchInterval: false, // Désactiver le polling car on utilise le temps réel
+    refetchInterval: false,
+    staleTime: 0, // Ensure fresh data
   });
 
   const { sendMessage, isSendingMessage, isRateLimited } = useMessageManagement(conversationId, conversation);
 
   // Marquer les messages comme lus
   useEffect(() => {
-    if (!user || !messages) return;
+    if (!user || !messages || messages.length === 0) return;
 
     const unreadMessages = messages.filter(
       msg => msg.recipient_id === user.id && !msg.is_read

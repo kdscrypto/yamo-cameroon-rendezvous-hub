@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronUp, ChevronDown } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Message } from './types';
 
@@ -21,7 +20,7 @@ const ConversationPagination = ({
   onLoadMore,
   currentUserId 
 }: ConversationPaginationProps) => {
-  const [hasOlderMessages, setHasOlderMessages] = useState(true);
+  const [hasOlderMessages, setHasOlderMessages] = useState(false);
   const [hasNewerMessages, setHasNewerMessages] = useState(false);
   const [isLoadingOlder, setIsLoadingOlder] = useState(false);
   const [isLoadingNewer, setIsLoadingNewer] = useState(false);
@@ -70,13 +69,15 @@ const ConversationPagination = ({
         `)
         .eq('conversation_id', conversationId)
         .lt('created_at', oldestMessage.created_at)
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: false })
         .limit(MESSAGES_PER_PAGE);
 
       if (error) throw error;
 
       if (data && data.length > 0) {
-        onLoadMore(data as Message[], 'up');
+        // Reverse the data to maintain chronological order
+        const reversedData = data.reverse();
+        onLoadMore(reversedData as Message[], 'up');
         
         // Check if there are still more older messages
         const hasMore = await checkOlderMessages();
@@ -132,17 +133,21 @@ const ConversationPagination = ({
     const initializePagination = async () => {
       if (messages.length === 0) return;
       
-      const [hasOlder, hasNewer] = await Promise.all([
-        checkOlderMessages(),
-        checkNewerMessages()
-      ]);
-      
-      setHasOlderMessages(hasOlder);
-      setHasNewerMessages(hasNewer);
+      try {
+        const [hasOlder, hasNewer] = await Promise.all([
+          checkOlderMessages(),
+          checkNewerMessages()
+        ]);
+        
+        setHasOlderMessages(hasOlder);
+        setHasNewerMessages(hasNewer);
+      } catch (error) {
+        console.error('Error initializing pagination:', error);
+      }
     };
 
     initializePagination();
-  }, [conversationId, messages.length]);
+  }, [conversationId, oldestMessage?.id, newestMessage?.id]);
 
   if (!hasOlderMessages && !hasNewerMessages) return null;
 

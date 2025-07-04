@@ -8,7 +8,7 @@ import ConversationPagination from './ConversationView/ConversationPagination';
 import ConversationActions from './ConversationView/ConversationActions';
 import { useConversationData } from './ConversationView/useConversationData';
 import { ConversationViewProps } from './ConversationView/types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Message } from './ConversationView/types';
 
 const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => {
@@ -26,18 +26,22 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
   } = useConversationData(conversationId);
 
   // Update allMessages when messages change
-  useState(() => {
-    if (messages) {
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      console.log('Messages received:', messages.length);
       setAllMessages(messages);
     }
-  });
+  }, [messages]);
 
   const handleLoadMore = (newMessages: Message[], direction: 'up' | 'down') => {
     setAllMessages(prev => {
+      const existingIds = new Set(prev.map(msg => msg.id));
+      const uniqueNewMessages = newMessages.filter(msg => !existingIds.has(msg.id));
+      
       if (direction === 'up') {
-        return [...newMessages, ...prev];
+        return [...uniqueNewMessages, ...prev];
       } else {
-        return [...prev, ...newMessages];
+        return [...prev, ...uniqueNewMessages];
       }
     });
   };
