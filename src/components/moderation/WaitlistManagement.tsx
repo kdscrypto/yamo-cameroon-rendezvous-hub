@@ -1,13 +1,27 @@
 
-import { useQuery } from '@tanstack/react-query';
+import { useState, useMemo, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Mail, Calendar, User } from 'lucide-react';
-import { useEffect } from 'react';
+import { User } from 'lucide-react';
+import { toast } from 'sonner';
+import WaitlistStats from './WaitlistStats';
+import WaitlistFilters from './WaitlistFilters';
+import WaitlistActions from './WaitlistActions';
+import WaitlistTable from './WaitlistTable';
+import WaitlistPagination from './WaitlistPagination';
+
+const ITEMS_PER_PAGE = 20;
 
 const WaitlistManagement = () => {
+  const [selectedEmails, setSelectedEmails] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'notified' | 'pending'>('all');
+  const [dateFilter, setDateFilter] = useState<{ start?: Date; end?: Date }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  
+  const queryClient = useQueryClient();
+
   const { data: waitlistEntries, isLoading, refetch } = useQuery({
     queryKey: ['event-waitlist'],
     queryFn: async () => {
@@ -37,12 +51,12 @@ const WaitlistManagement = () => {
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'event_waitlist'
         },
         (payload) => {
-          console.log('New waitlist signup:', payload);
+          console.log('Waitlist real-time update:', payload);
           refetch();
         }
       )
@@ -53,23 +67,89 @@ const WaitlistManagement = () => {
     };
   }, [refetch]);
 
-  const { data: waitlistStats } = useQuery({
-    queryKey: ['waitlist-stats'],
-    queryFn: async () => {
-      const [totalCount, todayCount, notifiedCount] = await Promise.all([
-        supabase.from('event_waitlist').select('id', { count: 'exact' }),
-        supabase
-          .from('event_waitlist')
-          .select('id', { count: 'exact' })
-          .gte('created_at', new Date().toISOString().split('T')[0]),
-        supabase.from('event_waitlist').select('id', { count: 'exact' }).eq('notified', true)
-      ]);
+  // Filter and paginate data
+  const filteredEntries = useMemo(() => {
+    if (!waitlistEntries) return [];
 
-      return {
-        total: totalCount.count || 0,
-        today: todayCount.count || 0,
-        notified: notifiedCount.count || 0
-      };
+    return waitlistEntries.filter(entry => {
+      // Search filter
+      if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        if (!entry.email.toLowerCase().includes(searchLower) && 
+            !(entry.full_name?.toLowerCase().includes(searchLower))) {
+          return false;
+        }
+      }
+
+      // Status filter
+      if (statusFilter === 'notified' && !entry.notified) return false;
+      if (statusFilter === 'pending' && entry.notified) return false;
+
+      // Date filter
+      if (dateFilter.start) {
+        const entryDate = new Date(entry.created_at);
+        if (entryDate < dateFilter.start) return false;
+      }
+      if (dateFilter.end) {
+        const entryDate = new Date(entry.created_at);
+        const endDate = new Date(dateFilter.end);
+        endDate.setHours(23, 59, 59, 999); // End of day
+        if (entryDate > endDate) return false;
+      }
+
+      return true;
+    });
+  }, [waitlistEntries, searchTerm, statusFilter, dateFilter]);
+
+  const totalPages = Math.ceil(filteredEntries.length / ITEMS_PER_PAGE);
+  const paginatedEntries = filteredEntries.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, statusFilter, dateFilter]);
+
+  const markAsNotifiedMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const { error } = await supabase
+        .from('event_waitlist')
+        .update({ notified: true })
+        .eq('email', email);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Personne marquée comme notifiée');
+      queryClient.invalidateQueries({ queryKey: ['event-waitlist'] });
+      queryClient.invalidateQueries({ queryKey: ['waitlist-detailed-stats'] });
+    },
+    onError: (error) => {
+      console.error('Error marking as notified:', error);
+      toast.error('Erreur lors de la mise à jour');
+    }
+  });
+
+  const deleteEntryMutation = useMutation({
+    mutationFn: async (email: string) => {
+      const { error } = await supabase
+        .from('event_waitlist')
+        .delete()
+        .eq('email', email);
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Inscription supprimée');
+      queryClient.invalidateQueries({ queryKey: ['event-waitlist'] });
+      queryClient.invalidateQueries({ queryKey: ['waitlist-detailed-stats'] });
+      setSelectedEmails(prev => prev.filter(email => email !== arguments[0]));
+    },
+    onError: (error) => {
+      console.error('Error deleting entry:', error);
+      toast.error('Erreur lors de la suppression');
     }
   });
 
@@ -91,95 +171,63 @@ const WaitlistManagement = () => {
 
   return (
     <div className="space-y-6">
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total inscriptions</CardTitle>
-            <User className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{waitlistStats?.total || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Personnes inscrites
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Aujourd'hui</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foregreen" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{waitlistStats?.today || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Nouvelles inscriptions
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Notifiées</CardTitle>
-            <Mail className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{waitlistStats?.notified || 0}</div>
-            <p className="text-xs text-muted-foreground">
-              Personnes contactées
-            </p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Enhanced Stats */}
+      <WaitlistStats />
 
-      {/* Waitlist Table */}
+      {/* Filters and Actions */}
       <Card>
         <CardHeader>
-          <CardTitle>Liste d'attente événements</CardTitle>
-          <CardDescription>
-            Personnes inscrites pour être notifiées des événements spéciaux
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Liste d'attente événements</CardTitle>
+              <CardDescription>
+                Gestion avancée des inscriptions pour les événements spéciaux
+              </CardDescription>
+            </div>
+            <WaitlistActions 
+              selectedEmails={selectedEmails}
+              onSelectionChange={setSelectedEmails}
+            />
+          </div>
         </CardHeader>
-        <CardContent>
-          {!waitlistEntries || waitlistEntries.length === 0 ? (
+        <CardContent className="space-y-4">
+          <WaitlistFilters
+            searchTerm={searchTerm}
+            onSearchChange={setSearchTerm}
+            statusFilter={statusFilter}
+            onStatusFilterChange={setStatusFilter}
+            dateFilter={dateFilter}
+            onDateFilterChange={setDateFilter}
+          />
+
+          {filteredEntries.length === 0 ? (
             <div className="text-center py-8">
               <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">Aucune inscription à la liste d'attente</p>
+              <p className="text-muted-foreground">
+                {waitlistEntries?.length === 0 
+                  ? "Aucune inscription à la liste d'attente"
+                  : "Aucun résultat pour les filtres sélectionnés"
+                }
+              </p>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Nom complet</TableHead>
-                  <TableHead>Date d'inscription</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {waitlistEntries.map((entry) => (
-                  <TableRow key={entry.id}>
-                    <TableCell className="font-medium">{entry.email}</TableCell>
-                    <TableCell>{entry.full_name || '-'}</TableCell>
-                    <TableCell>
-                      {new Date(entry.created_at).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={entry.notified ? "default" : "secondary"}>
-                        {entry.notified ? 'Notifié' : 'En attente'}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <>
+              <WaitlistTable
+                entries={paginatedEntries}
+                selectedEmails={selectedEmails}
+                onSelectionChange={setSelectedEmails}
+                onMarkAsNotified={(email) => markAsNotifiedMutation.mutate(email)}
+                onDelete={(email) => deleteEntryMutation.mutate(email)}
+              />
+              
+              <WaitlistPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+                totalItems={filteredEntries.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+              />
+            </>
           )}
         </CardContent>
       </Card>
