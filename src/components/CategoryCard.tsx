@@ -36,7 +36,7 @@ const CategoryCard = ({ title, description, icon: Icon, href, gradient }: Catego
       <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors">
         {title}
       </h3>
-      <p className="text-muted-foreground group-hover:text-foreground/80 transition-colors">
+      <p className="text-white group-hover:text-white/90 transition-colors">
         {description}
       </p>
     </Link>
