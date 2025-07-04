@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, LogOut, Settings, BarChart3 } from 'lucide-react';
@@ -85,8 +86,12 @@ const Header = () => {
         <div className="flex items-center justify-between flex-wrap gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 gradient-gold rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-lg">Y</span>
+            <div className="w-8 h-8 gradient-gold rounded-lg flex items-center justify-center p-1">
+              <img 
+                src="/lovable-uploads/69763ec0-e661-4629-ba0e-0bfe2a747829.png" 
+                alt="Yamo Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <span className="text-2xl font-bold text-gradient-gold">Yamo</span>
           </Link>
