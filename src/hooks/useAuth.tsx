@@ -41,7 +41,7 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName?: string) => {
+  const signUp = async (email: string, password: string, fullName?: string, phone?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
     const { data, error } = await supabase.auth.signUp({
@@ -50,21 +50,60 @@ export const useAuth = () => {
       options: {
         emailRedirectTo: redirectUrl,
         data: {
-          full_name: fullName
+          full_name: fullName,
+          phone: phone
         }
       }
     });
+
+    // If signup is successful and we have a phone number, update the profile
+    if (!error && data.user && phone) {
+      setTimeout(async () => {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ phone: phone })
+          .eq('id', data.user!.id);
+        
+        if (profileError) {
+          console.error('Error updating profile with phone:', profileError);
+        }
+      }, 1000);
+    }
     
     return { data, error };
   };
 
-  const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+  const signIn = async (identifier: string, password: string) => {
+    // Check if identifier is a phone number (starts with + or contains only digits and spaces/dashes)
+    const isPhoneNumber = /^[\+]?[0-9\s\-\(\)]+$/.test(identifier.trim());
     
-    return { data, error };
+    if (isPhoneNumber) {
+      // First, try to find the email associated with this phone number
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('email')
+        .eq('phone', identifier.trim())
+        .single();
+      
+      if (profileError || !profile?.email) {
+        return { 
+          data: null, 
+          error: { message: "Aucun compte trouvé avec ce numéro de téléphone." }
+        };
+      }
+      
+      // Use the found email to sign in
+      return await supabase.auth.signInWithPassword({
+        email: profile.email,
+        password
+      });
+    } else {
+      // Sign in with email
+      return await supabase.auth.signInWithPassword({
+        email: identifier,
+        password
+      });
+    }
   };
 
   const signOut = async () => {

@@ -13,7 +13,7 @@ import { useEffect } from 'react';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +33,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signIn(email, password);
+      const { error } = await signIn(identifier, password);
 
       if (error) {
         toast({
@@ -82,23 +82,23 @@ const Login = () => {
             <CardHeader className="text-center pb-6">
               <CardTitle className="text-2xl font-bold text-white">Connexion</CardTitle>
               <CardDescription className="text-neutral-400 text-base">
-                Entrez vos identifiants pour vous connecter
+                Entrez votre email ou numéro de téléphone
               </CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-neutral-200 font-medium flex items-center gap-2">
+                  <Label htmlFor="identifier" className="text-neutral-200 font-medium flex items-center gap-2">
                     <Mail className="w-4 h-4 text-amber-500" />
-                    Adresse email
+                    Email ou téléphone
                   </Label>
                   <Input
-                    id="email"
-                    type="email"
-                    placeholder="votre@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    id="identifier"
+                    type="text"
+                    placeholder="votre@email.com ou +33 6 12 34 56 78"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
                     required
                     disabled={isLoading}
                     className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200"

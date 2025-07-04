@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Phone } from 'lucide-react';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -20,6 +20,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     password: '',
     confirmPassword: '',
     fullName: '',
+    phone: '',
     acceptTerms: false,
     isAdult: false
   });
@@ -55,7 +56,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(formData.email, formData.password, formData.fullName);
+      const { error } = await signUp(formData.email, formData.password, formData.fullName, formData.phone);
 
       if (error) {
         if (error.message.includes('already registered')) {
@@ -123,6 +124,22 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
           value={formData.email}
           onChange={(e) => handleInputChange('email', e.target.value)}
           required
+          disabled={isLoading}
+          className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="phone" className="text-neutral-200 font-medium flex items-center gap-2">
+          <Phone className="w-4 h-4 text-amber-500" />
+          Numéro de téléphone (optionnel)
+        </Label>
+        <Input
+          id="phone"
+          type="tel"
+          placeholder="+33 6 12 34 56 78"
+          value={formData.phone}
+          onChange={(e) => handleInputChange('phone', e.target.value)}
           disabled={isLoading}
           className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200"
         />
