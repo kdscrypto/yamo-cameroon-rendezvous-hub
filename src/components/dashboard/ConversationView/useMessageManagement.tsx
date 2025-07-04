@@ -88,8 +88,8 @@ export const useMessageManagement = (conversationId: string, conversation: any) 
     }
   });
 
-  const sendMessage = async (content: string, attachments?: Attachment[]) => {
-    return sendMessageMutation.mutateAsync({ content, attachments });
+  const sendMessage = async (content: string, attachments?: Attachment[]): Promise<void> => {
+    await sendMessageMutation.mutateAsync({ content, attachments });
   };
 
   return {
