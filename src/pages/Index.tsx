@@ -9,14 +9,10 @@ import OptimizedAdSections from '@/components/Homepage/OptimizedAdSections';
 import SafetySection from '@/components/Homepage/SafetySection';
 import SEO from '@/components/SEO';
 import { useSEO } from '@/hooks/useSEO';
-import { useAdSense } from '@/hooks/useAdSense';
-import LazyAdWrapper from '@/components/AdSense/LazyAdWrapper';
-import LeaderboardAd from '@/components/AdSense/LeaderboardAd';
 
 const Index = React.memo(() => {
   const [ageVerified, setAgeVerified] = useState(false);
   const { getSEOForPath } = useSEO();
-  const { isLoaded: adSenseLoaded } = useAdSense();
 
   // Vérifier si l'utilisateur a déjà confirmé son âge
   useEffect(() => {
@@ -58,14 +54,6 @@ const Index = React.memo(() => {
       />
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
-        
-        {/* Top Leaderboard Ad */}
-        {adSenseLoaded && (
-          <LazyAdWrapper className="py-4 border-b border-border/30">
-            <LeaderboardAd adSlot="1234567893" />
-          </LazyAdWrapper>
-        )}
-        
         <HeroSection />
         <CategoriesSection />
         <OptimizedAdSections />
