@@ -46,8 +46,8 @@ const Contact = () => {
       <div className="flex-1 container mx-auto px-4 py-12">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4">Contactez-nous</h1>
-            <p className="text-xl text-muted-foreground">
+            <h1 className="text-4xl font-bold mb-4 text-yellow-400">Contactez-nous</h1>
+            <p className="text-xl text-white">
               Une question ? Un problème ? Notre équipe est là pour vous aider.
             </p>
           </div>
@@ -57,7 +57,7 @@ const Contact = () => {
             <div className="space-y-8">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                  <CardTitle className="flex items-center gap-2 text-yellow-400">
                     <Mail className="w-5 h-5" />
                     Informations de contact
                   </CardTitle>
@@ -66,26 +66,26 @@ const Contact = () => {
                   <div className="flex items-start gap-3">
                     <Mail className="w-5 h-5 text-primary mt-1" />
                     <div>
-                      <h3 className="font-semibold">Email</h3>
-                      <p className="text-muted-foreground">contact@yamo.fr</p>
-                      <p className="text-sm text-muted-foreground">Support général</p>
+                      <h3 className="font-semibold text-yellow-400">Email</h3>
+                      <p className="text-white">contact@yamo.fr</p>
+                      <p className="text-sm text-white">Support général</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <Phone className="w-5 h-5 text-primary mt-1" />
                     <div>
-                      <h3 className="font-semibold">Téléphone</h3>
-                      <p className="text-muted-foreground">+237 6XX XXX XXX</p>
-                      <p className="text-sm text-muted-foreground">Lun-Ven: 9h-18h</p>
+                      <h3 className="font-semibold text-yellow-400">Téléphone</h3>
+                      <p className="text-white">+237 6XX XXX XXX</p>
+                      <p className="text-sm text-white">Lun-Ven: 9h-18h</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-primary mt-1" />
                     <div>
-                      <h3 className="font-semibold">Adresse</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="font-semibold text-yellow-400">Adresse</h3>
+                      <p className="text-white">
                         Douala, Cameroun<br />
                         Bonanjo, Rue de la République
                       </p>
@@ -95,8 +95,8 @@ const Contact = () => {
                   <div className="flex items-start gap-3">
                     <Clock className="w-5 h-5 text-primary mt-1" />
                     <div>
-                      <h3 className="font-semibold">Horaires</h3>
-                      <p className="text-muted-foreground">
+                      <h3 className="font-semibold text-yellow-400">Horaires</h3>
+                      <p className="text-white">
                         Lundi - Vendredi: 9h00 - 18h00<br />
                         Samedi: 10h00 - 16h00<br />
                         Dimanche: Fermé
@@ -108,24 +108,24 @@ const Contact = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Contacts spécialisés</CardTitle>
+                  <CardTitle className="text-yellow-400">Contacts spécialisés</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <h3 className="font-semibold">Support technique</h3>
-                    <p className="text-muted-foreground">support@yamo.fr</p>
+                    <h3 className="font-semibold text-yellow-400">Support technique</h3>
+                    <p className="text-white">support@yamo.fr</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold">Signalements</h3>
-                    <p className="text-muted-foreground">report@yamo.fr</p>
+                    <h3 className="font-semibold text-yellow-400">Signalements</h3>
+                    <p className="text-white">report@yamo.fr</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold">Données personnelles</h3>
-                    <p className="text-muted-foreground">privacy@yamo.fr</p>
+                    <h3 className="font-semibold text-yellow-400">Données personnelles</h3>
+                    <p className="text-white">privacy@yamo.fr</p>
                   </div>
                   <div>
-                    <h3 className="font-semibold">Partenariats</h3>
-                    <p className="text-muted-foreground">partners@yamo.fr</p>
+                    <h3 className="font-semibold text-yellow-400">Partenariats</h3>
+                    <p className="text-white">partners@yamo.fr</p>
                   </div>
                 </CardContent>
               </Card>
@@ -134,13 +134,13 @@ const Contact = () => {
             {/* Formulaire de contact */}
             <Card>
               <CardHeader>
-                <CardTitle>Envoyez-nous un message</CardTitle>
+                <CardTitle className="text-yellow-400">Envoyez-nous un message</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="name">Nom complet</Label>
+                      <Label htmlFor="name" className="text-white">Nom complet</Label>
                       <Input
                         id="name"
                         type="text"
@@ -149,10 +149,11 @@ const Contact = () => {
                         placeholder="Votre nom"
                         required
                         disabled={isLoading}
+                        className="text-white"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="email">Email</Label>
+                      <Label htmlFor="email" className="text-white">Email</Label>
                       <Input
                         id="email"
                         type="email"
@@ -161,12 +162,13 @@ const Contact = () => {
                         placeholder="votre@email.com"
                         required
                         disabled={isLoading}
+                        className="text-white"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <Label htmlFor="subject">Sujet</Label>
+                    <Label htmlFor="subject" className="text-white">Sujet</Label>
                     <Input
                       id="subject"
                       type="text"
@@ -175,11 +177,12 @@ const Contact = () => {
                       placeholder="Objet de votre message"
                       required
                       disabled={isLoading}
+                      className="text-white"
                     />
                   </div>
 
                   <div>
-                    <Label htmlFor="message">Message</Label>
+                    <Label htmlFor="message" className="text-white">Message</Label>
                     <Textarea
                       id="message"
                       value={formData.message}
@@ -188,6 +191,7 @@ const Contact = () => {
                       rows={6}
                       required
                       disabled={isLoading}
+                      className="text-white"
                     />
                   </div>
 
@@ -201,7 +205,7 @@ const Contact = () => {
                 </form>
 
                 <div className="mt-6 p-4 bg-muted rounded-lg">
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white">
                     <strong>Temps de réponse :</strong> Nous nous engageons à répondre à tous 
                     les messages dans les 24h ouvrées. Pour les demandes urgentes, 
                     utilisez notre ligne téléphonique.
