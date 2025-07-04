@@ -54,7 +54,7 @@ export const designTokens = {
     // Border Colors
     border: {
       default: '80 60 30',
-      light: '100 80 50';
+      light: '100 80 50',
       focus: '255 215 0',
     }
   },
