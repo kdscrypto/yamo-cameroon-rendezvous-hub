@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EventsWaitlistForm from '@/components/Events/EventsWaitlistForm';
+import BackgroundImageSlider from '@/components/Events/BackgroundImageSlider';
 import { Calendar, Clock, Users, Star } from 'lucide-react';
 
 const Events = () => {
@@ -19,15 +20,18 @@ const Events = () => {
         <Header />
         
         <main className="flex-1">
-          {/* Hero Section */}
-          <section className="py-20 px-4 bg-gradient-to-br from-primary/10 via-background to-accent/10">
-            <div className="container mx-auto text-center max-w-4xl">
+          {/* Hero Section with Background Slider */}
+          <section className="relative py-20 px-4 overflow-hidden">
+            {/* Background Image Slider */}
+            <BackgroundImageSlider />
+            
+            <div className="container mx-auto text-center max-w-4xl relative z-10">
               <div className="mb-8">
                 <Calendar className="w-16 h-16 mx-auto mb-6 text-primary" />
                 <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gradient-gold">
                   Événements Spéciaux
                 </h1>
-                <p className="text-xl md:text-2xl text-muted-foreground mb-8">
+                <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow-lg">
                   Des expériences uniques et exclusives arrivent bientôt
                 </p>
               </div>
@@ -35,9 +39,9 @@ const Events = () => {
           </section>
 
           {/* Under Development Section */}
-          <section className="py-16 px-4">
+          <section className="py-16 px-4 relative">
             <div className="container mx-auto max-w-4xl">
-              <div className="bg-card border border-border rounded-xl p-8 md:p-12 text-center">
+              <div className="bg-card/90 backdrop-blur-sm border border-border rounded-xl p-8 md:p-12 text-center">
                 <Clock className="w-12 h-12 mx-auto mb-6 text-primary" />
                 <h2 className="text-3xl font-bold mb-6">Section en développement</h2>
                 <p className="text-lg text-muted-foreground mb-8 leading-relaxed">

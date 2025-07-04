@@ -1,10 +1,10 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 /* Import component utilities */
 @import './styles/component-utilities.css';
+@import './styles/background-slider.css';
 
 /* Enhanced Design System with Design Tokens */
 

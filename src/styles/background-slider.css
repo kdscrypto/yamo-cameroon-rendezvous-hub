@@ -1,0 +1,107 @@
+
+/* Background Slider Animations */
+.slider-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.slider-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slider-image.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.slider-image.inactive {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
+/* Parallax Effect */
+.parallax-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 120%;
+  animation: parallax-drift 20s linear infinite;
+}
+
+@keyframes parallax-drift {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.02);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Smooth Fade Transition */
+.fade-transition {
+  transition: opacity 1.2s ease-in-out, transform 1.2s ease-in-out;
+}
+
+/* Gradient Overlay Animation */
+.gradient-overlay {
+  background: linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.4) 50%,
+    rgba(0, 0, 0, 0.8) 100%
+  );
+  animation: gradient-shift 8s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.7) 0%,
+      rgba(0, 0, 0, 0.4) 50%,
+      rgba(0, 0, 0, 0.8) 100%
+    );
+  }
+  50% {
+    background: linear-gradient(
+      135deg,
+      rgba(0, 0, 0, 0.8) 0%,
+      rgba(0, 0, 0, 0.3) 50%,
+      rgba(0, 0, 0, 0.7) 100%
+    );
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .parallax-layer {
+    height: 110%;
+    animation-duration: 15s;
+  }
+  
+  .slider-image {
+    background-position: center center;
+  }
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .slider-image,
+  .parallax-layer,
+  .gradient-overlay {
+    animation: none;
+    transition: opacity 0.3s ease;
+  }
+}
