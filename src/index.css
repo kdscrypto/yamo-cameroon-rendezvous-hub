@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -184,27 +185,6 @@
   
   .text-enhanced-subtle {
     @apply text-neutral-400;
-  }
-  
-  /* Override any problematic text colors */
-  .text-red-500,
-  .text-red-600,
-  .text-red-700,
-  .text-red-800,
-  .text-red-900,
-  .text-red-400,
-  .text-red-300 {
-    @apply text-red-400 !important;
-  }
-  
-  /* Override destructive colors */
-  .text-destructive {
-    @apply text-red-400 !important;
-  }
-  
-  /* Make sure muted-foreground is always visible */
-  .text-muted-foreground {
-    @apply text-neutral-400 !important;
   }
   
   /* Primary text variants */
@@ -410,4 +390,37 @@
   background-image: linear-gradient(hsl(var(--muted) / 0.1) 1px, transparent 1px),
                     linear-gradient(90deg, hsl(var(--muted) / 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
+}
+
+/* === ADSENSE SPECIFIC STYLES === */
+.adsense-container {
+  @apply w-full flex justify-center items-center;
+  min-height: 90px; /* Minimum height for ad containers */
+}
+
+.adsense-banner {
+  @apply w-full max-w-full;
+}
+
+.adsense-rectangle {
+  @apply w-full max-w-sm mx-auto;
+}
+
+.adsense-leaderboard {
+  @apply w-full max-w-4xl mx-auto;
+}
+
+.adsense-sidebar {
+  @apply w-full max-w-xs;
+}
+
+/* Responsive ad containers */
+@media (max-width: 768px) {
+  .adsense-leaderboard {
+    @apply max-w-xs;
+  }
+  
+  .adsense-rectangle {
+    @apply max-w-xs;
+  }
 }

@@ -6,9 +6,13 @@ import Footer from '@/components/Footer';
 import UserAds from '@/components/dashboard/UserAds';
 import RealTimeMessages from '@/components/dashboard/RealTimeMessages';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useAdSense } from '@/hooks/useAdSense';
+import LazyAdWrapper from '@/components/AdSense/LazyAdWrapper';
+import RectangleAd from '@/components/AdSense/RectangleAd';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
+  const { isLoaded: adSenseLoaded } = useAdSense();
 
   if (loading) {
     return (
@@ -39,25 +43,48 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold mb-2 text-gradient-luxe">Tableau de bord</h1>
             <p className="text-muted-foreground">Gérez vos annonces et messages depuis votre espace personnel</p>
           </div>
+
+          {/* Top Ad */}
+          {adSenseLoaded && (
+            <LazyAdWrapper className="mb-8">
+              <RectangleAd adSlot="1234567902" />
+            </LazyAdWrapper>
+          )}
           
-          <Tabs defaultValue="ads" className="mt-8">
-            <TabsList className="grid w-full grid-cols-2 bg-secondary">
-              <TabsTrigger value="ads" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                Mes annonces
-              </TabsTrigger>
-              <TabsTrigger value="messages" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                Messages
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="ads" className="mt-6">
-              <UserAds />
-            </TabsContent>
-            
-            <TabsContent value="messages" className="mt-6">
-              <RealTimeMessages />
-            </TabsContent>
-          </Tabs>
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-3">
+              <Tabs defaultValue="ads" className="mt-8">
+                <TabsList className="grid w-full grid-cols-2 bg-secondary">
+                  <TabsTrigger value="ads" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                    Mes annonces
+                  </TabsTrigger>
+                  <TabsTrigger value="messages" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                    Messages
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="ads" className="mt-6">
+                  <UserAds />
+                </TabsContent>
+                
+                <TabsContent value="messages" className="mt-6">
+                  <RealTimeMessages />
+                </TabsContent>
+              </Tabs>
+            </div>
+
+            {/* Sidebar with Ads */}
+            <div className="lg:col-span-1">
+              {adSenseLoaded && (
+                <div className="sticky top-4 space-y-8">
+                  <LazyAdWrapper>
+                    <RectangleAd adSlot="1234567903" />
+                  </LazyAdWrapper>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
       

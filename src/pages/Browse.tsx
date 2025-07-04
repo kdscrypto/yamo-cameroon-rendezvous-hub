@@ -11,6 +11,11 @@ import SEO from '@/components/SEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import { useSEO } from '@/hooks/useSEO';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useAdSense } from '@/hooks/useAdSense';
+import LazyAdWrapper from '@/components/AdSense/LazyAdWrapper';
+import RectangleAd from '@/components/AdSense/RectangleAd';
+import BannerAd from '@/components/AdSense/BannerAd';
+import SidebarAd from '@/components/AdSense/SidebarAd';
 
 const Browse = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,6 +25,7 @@ const Browse = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { getSEOForPath } = useSEO();
+  const { isLoaded: adSenseLoaded } = useAdSense();
 
   const { data: ads = [], isLoading, error } = useApprovedAds();
   const seoConfig = getSEOForPath('/browse');
@@ -125,79 +131,114 @@ const Browse = () => {
               </p>
             </div>
 
-            {/* Filters */}
-            <div className="bg-card border border-border rounded-lg p-6 mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                <div className="lg:col-span-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                    <Input
-                      type="text"
-                      placeholder="Rechercher..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10"
-                    />
+            {/* Top Banner Ad */}
+            {adSenseLoaded && (
+              <LazyAdWrapper className="mb-8">
+                <BannerAd adSlot="1234567894" />
+              </LazyAdWrapper>
+            )}
+
+            {/* Main Content with Sidebar Layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Main Content */}
+              <div className="lg:col-span-3">
+                {/* Filters */}
+                <div className="bg-card border border-border rounded-lg p-6 mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="lg:col-span-1">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                        <Input
+                          type="text"
+                          placeholder="Rechercher..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="pl-10"
+                        />
+                      </div>
+                    </div>
+                    
+                    <Select value={category} onValueChange={setCategory}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Catégorie" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes les catégories</SelectItem>
+                        <SelectItem value="rencontres">Rencontres</SelectItem>
+                        <SelectItem value="massages">Massages</SelectItem>
+                        <SelectItem value="produits">Produits adultes</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Select value={location} onValueChange={setLocation}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Localisation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Toutes les villes</SelectItem>
+                        <SelectItem value="douala">Douala</SelectItem>
+                        <SelectItem value="yaounde">Yaoundé</SelectItem>
+                        <SelectItem value="bafoussam">Bafoussam</SelectItem>
+                        <SelectItem value="bamenda">Bamenda</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    
+                    <Select value={sortBy} onValueChange={setSortBy}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Trier par" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="recent">Plus récent</SelectItem>
+                        <SelectItem value="price-low">Prix croissant</SelectItem>
+                        <SelectItem value="price-high">Prix décroissant</SelectItem>
+                        <SelectItem value="popular">Popularité</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
-                
-                <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Catégorie" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toutes les catégories</SelectItem>
-                    <SelectItem value="rencontres">Rencontres</SelectItem>
-                    <SelectItem value="massages">Massages</SelectItem>
-                    <SelectItem value="produits">Produits adultes</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Localisation" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toutes les villes</SelectItem>
-                    <SelectItem value="douala">Douala</SelectItem>
-                    <SelectItem value="yaounde">Yaoundé</SelectItem>
-                    <SelectItem value="bafoussam">Bafoussam</SelectItem>
-                    <SelectItem value="bamenda">Bamenda</SelectItem>
-                  </SelectContent>
-                </Select>
-                
-                <Select value={sortBy} onValueChange={setSortBy}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Trier par" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="recent">Plus récent</SelectItem>
-                    <SelectItem value="price-low">Prix croissant</SelectItem>
-                    <SelectItem value="price-high">Prix décroissant</SelectItem>
-                    <SelectItem value="popular">Popularité</SelectItem>
-                  </SelectContent>
-                </Select>
+
+                {/* Search Results */}
+                <SearchResults
+                  results={filteredAds}
+                  query={searchQuery}
+                  totalResults={filteredAds.length}
+                  loading={isLoading}
+                />
+
+                {/* Mid-content Rectangle Ad */}
+                {adSenseLoaded && filteredAds.length > 6 && (
+                  <LazyAdWrapper className="my-8">
+                    <RectangleAd adSlot="1234567895" />
+                  </LazyAdWrapper>
+                )}
+
+                {/* Pagination */}
+                {filteredAds.length > 0 && (
+                  <div className="flex justify-center mt-12">
+                    <div className="flex space-x-2">
+                      <Button variant="outline" disabled>Précédent</Button>
+                      <Button>1</Button>
+                      <Button variant="outline">Suivant</Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Sidebar with Ads */}
+              <div className="lg:col-span-1">
+                {adSenseLoaded && (
+                  <div className="sticky top-4 space-y-8">
+                    <LazyAdWrapper>
+                      <SidebarAd adSlot="1234567896" />
+                    </LazyAdWrapper>
+                    
+                    <LazyAdWrapper>
+                      <RectangleAd adSlot="1234567897" />
+                    </LazyAdWrapper>
+                  </div>
+                )}
               </div>
             </div>
-
-            {/* Search Results */}
-            <SearchResults
-              results={filteredAds}
-              query={searchQuery}
-              totalResults={filteredAds.length}
-              loading={isLoading}
-            />
-
-            {/* Pagination */}
-            {filteredAds.length > 0 && (
-              <div className="flex justify-center mt-12">
-                <div className="flex space-x-2">
-                  <Button variant="outline" disabled>Précédent</Button>
-                  <Button>1</Button>
-                  <Button variant="outline">Suivant</Button>
-                </div>
-              </div>
-            )}
           </div>
         </div>
         

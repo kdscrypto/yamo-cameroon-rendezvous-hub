@@ -12,11 +12,16 @@ import { useAuth } from '@/hooks/useAuth';
 import AdImageGallery from '@/components/AdDetail/AdImageGallery';
 import AdInfoSection from '@/components/AdDetail/AdInfoSection';
 import AdContactSection from '@/components/AdDetail/AdContactSection';
+import { useAdSense } from '@/hooks/useAdSense';
+import LazyAdWrapper from '@/components/AdSense/LazyAdWrapper';
+import RectangleAd from '@/components/AdSense/RectangleAd';
+import BannerAd from '@/components/AdSense/BannerAd';
 
 const AdDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isLoaded: adSenseLoaded } = useAdSense();
 
   const { data: ad, isLoading, error } = useQuery({
     queryKey: ['ad-detail', id],
@@ -139,7 +144,7 @@ const AdDetail = () => {
         <Header />
         
         <main className="flex-1 container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto">
+          <div className="max-w-6xl mx-auto">
             {/* Back button */}
             <Button 
               variant="outline" 
@@ -150,33 +155,67 @@ const AdDetail = () => {
               Retour
             </Button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Image section */}
-              <AdImageGallery 
-                images={ad.images}
-                title={ad.title}
-                isVip={isVip}
-              />
+            {/* Top Banner Ad */}
+            {adSenseLoaded && (
+              <LazyAdWrapper className="mb-8">
+                <BannerAd adSlot="1234567898" />
+              </LazyAdWrapper>
+            )}
 
-              {/* Details section */}
-              <div className="space-y-6">
-                <AdInfoSection
-                  title={ad.title}
-                  category={ad.category}
-                  location={ad.location}
-                  createdAt={ad.created_at}
-                  price={ad.price}
-                  description={ad.description}
-                  isVip={isVip}
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              {/* Main Content */}
+              <div className="lg:col-span-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                  {/* Image section */}
+                  <AdImageGallery 
+                    images={ad.images}
+                    title={ad.title}
+                    isVip={isVip}
+                  />
 
-                {/* Contact actions */}
-                <AdContactSection
-                  adTitle={ad.title}
-                  adId={ad.id}
-                  adOwnerId={ad.user_id}
-                  contactInfo={contactInfo}
-                />
+                  {/* Details section */}
+                  <div className="space-y-6">
+                    <AdInfoSection
+                      title={ad.title}
+                      category={ad.category}
+                      location={ad.location}
+                      createdAt={ad.created_at}
+                      price={ad.price}
+                      description={ad.description}
+                      isVip={isVip}
+                    />
+
+                    {/* Contact actions */}
+                    <AdContactSection
+                      adTitle={ad.title}
+                      adId={ad.id}
+                      adOwnerId={ad.user_id}
+                      contactInfo={contactInfo}
+                    />
+                  </div>
+                </div>
+
+                {/* Content Rectangle Ad */}
+                {adSenseLoaded && (
+                  <LazyAdWrapper className="my-8">
+                    <RectangleAd adSlot="1234567899" />
+                  </LazyAdWrapper>
+                )}
+              </div>
+
+              {/* Sidebar with Ads */}
+              <div className="lg:col-span-1">
+                {adSenseLoaded && (
+                  <div className="sticky top-4 space-y-8">
+                    <LazyAdWrapper>
+                      <RectangleAd adSlot="1234567900" />
+                    </LazyAdWrapper>
+                    
+                    <LazyAdWrapper>
+                      <RectangleAd adSlot="1234567901" />
+                    </LazyAdWrapper>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -6,6 +6,9 @@ import { useOptimizedApprovedAds } from '@/hooks/useOptimizedAds';
 import FeaturedAdsSection from './FeaturedAdsSection';
 import RecentAdsSection from './RecentAdsSection';
 import LocationAdsSection from './LocationAdsSection';
+import LazyAdWrapper from '@/components/AdSense/LazyAdWrapper';
+import RectangleAd from '@/components/AdSense/RectangleAd';
+import BannerAd from '@/components/AdSense/BannerAd';
 
 const OptimizedAdSections = React.memo(() => {
   const { data: allAds = [], isLoading } = useOptimizedApprovedAds();
@@ -52,8 +55,26 @@ const OptimizedAdSections = React.memo(() => {
   return (
     <div className="space-y-0">
       <FeaturedAdsSection />
+      
+      {/* First AdSense placement - Rectangle ad after featured section */}
+      <LazyAdWrapper className="py-8">
+        <RectangleAd adSlot="1234567890" className="mb-4" />
+      </LazyAdWrapper>
+      
       <RecentAdsSection />
+      
+      {/* Second AdSense placement - Banner ad after recent section */}
+      <LazyAdWrapper className="py-6">
+        <BannerAd adSlot="1234567891" className="mb-4" />
+      </LazyAdWrapper>
+      
       <LocationAdsSection city="douala" displayName="Douala" emoji="🔥" />
+      
+      {/* Third AdSense placement - Rectangle ad between location sections */}
+      <LazyAdWrapper className="py-8">
+        <RectangleAd adSlot="1234567892" className="mb-4" />
+      </LazyAdWrapper>
+      
       <LocationAdsSection city="yaounde" displayName="Yaoundé" emoji="🔥" />
     </div>
   );
