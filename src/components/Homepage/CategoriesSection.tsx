@@ -1,4 +1,5 @@
 
+import { Users, Heart, Settings, Calendar } from 'lucide-react';
 import CategoryCard from '@/components/CategoryCard';
 
 const CategoriesSection = () => {
@@ -10,28 +11,28 @@ const CategoriesSection = () => {
           <CategoryCard
             title="Rencontres"
             description="Rencontres discrètes, escorts, accompagnatrices"
-            imageUrl="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?w=400&h=400&fit=crop"
+            icon={Users}
             href="/rencontres"
             gradient="gradient-gold"
           />
           <CategoryCard
             title="Massages"
             description="Massages relaxants, thérapeutiques et bien-être"
-            imageUrl="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop"
+            icon={Heart}
             href="/massages"
             gradient="gradient-luxe"
           />
           <CategoryCard
             title="Produits adultes"
             description="Accessoires, lingerie et produits intimes"
-            imageUrl="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&h=400&fit=crop"
+            icon={Settings}
             href="/produits"
             gradient="gradient-accent"
           />
           <CategoryCard
             title="Nos Événements Spéciaux"
             description="Événements exclusifs et occasions spéciales"
-            imageUrl="https://images.unsplash.com/photo-1605810230434-7631ac76ec81?w=400&h=400&fit=crop"
+            icon={Calendar}
             href="/events"
             gradient="bg-gradient-to-br from-red-500 to-orange-400"
           />
