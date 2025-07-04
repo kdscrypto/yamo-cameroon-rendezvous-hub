@@ -1,0 +1,25 @@
+
+/* Card Styles - Various card variants and styles */
+
+@layer components {
+  /* === CARD STYLES === */
+  .card-base {
+    @apply bg-card border border-border rounded-xl shadow-sm;
+  }
+  
+  .card-elevated {
+    @apply card-base shadow-md hover:shadow-lg transition-shadow duration-200;
+  }
+
+  .card-interactive {
+    @apply card-elevated interactive-hover interactive-press cursor-pointer;
+  }
+  
+  .card-premium {
+    @apply card-elevated bg-gradient-to-br from-card/90 to-primary/5 border-primary/20;
+  }
+  
+  .card-glass {
+    @apply bg-card/80 backdrop-blur-lg border border-border/50 rounded-xl shadow-lg;
+  }
+}

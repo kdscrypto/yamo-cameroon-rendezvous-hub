@@ -1,0 +1,55 @@
+
+/* Gradient System - Reusable gradient utilities */
+
+@layer components {
+  /* === GRADIENT SYSTEM === */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+  }
+  
+  .gradient-luxe {
+    background: linear-gradient(135deg, #ff9000 0%, #ffb347 50%, #e6820e 100%);
+  }
+  
+  .gradient-accent {
+    background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
+  }
+  
+  /* Fixed gradient-gold class that's used throughout the app */
+  .gradient-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 50%, #ff9000 100%);
+  }
+  
+  .gradient-surface {
+    background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--background)) 100%);
+  }
+  
+  .gradient-overlay {
+    background: linear-gradient(135deg, hsl(var(--background) / 0.8) 0%, hsl(var(--card) / 0.4) 100%);
+  }
+  
+  /* Text Gradients */
+  .text-gradient-luxe {
+    background: linear-gradient(135deg, #ff9000 0%, #ffb347 50%, #e6820e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .text-gradient-accent {
+    background: linear-gradient(135deg, #ff9000 0%, #ffb347 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+  
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+  }
+}
