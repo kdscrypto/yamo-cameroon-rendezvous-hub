@@ -132,16 +132,16 @@ const Login = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 btn-primary gradient-gold text-black hover:opacity-90 font-semibold shadow-md" 
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-2 border-yellow-300 hover:border-yellow-400"
                   disabled={isLoading}
                 >
                   {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                      Connexion...
+                    <div className="flex items-center gap-3">
+                      <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      Connexion en cours...
                     </div>
                   ) : (
-                    'Se connecter'
+                    'SE CONNECTER'
                   )}
                 </Button>
               </form>
