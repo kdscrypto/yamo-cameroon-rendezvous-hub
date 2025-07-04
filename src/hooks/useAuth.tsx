@@ -66,6 +66,8 @@ export const useAuth = () => {
         
         if (profileError) {
           console.error('Error updating profile with phone:', profileError);
+        } else {
+          console.log('Profile updated with phone number:', phone);
         }
       }, 1000);
     }
@@ -74,43 +76,86 @@ export const useAuth = () => {
   };
 
   const signIn = async (identifier: string, password: string) => {
-    // Check if identifier is a phone number (starts with + or contains only digits and spaces/dashes)
-    const isPhoneNumber = /^[\+]?[0-9\s\-\(\)]+$/.test(identifier.trim());
+    const cleanIdentifier = identifier.trim();
+    
+    // Enhanced phone number detection
+    const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
+    const isPhoneNumber = phoneRegex.test(cleanIdentifier);
+    
+    console.log('SignIn attempt:', { 
+      identifier: cleanIdentifier, 
+      isPhoneNumber,
+      length: cleanIdentifier.length 
+    });
     
     if (isPhoneNumber) {
-      // First, try to find the email associated with this phone number
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('email')
-        .eq('phone', identifier.trim())
-        .single();
-      
-      if (profileError || !profile?.email) {
+      try {
+        console.log('Looking up phone number in profiles:', cleanIdentifier);
+        
+        // First, try to find the email associated with this phone number
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('phone', cleanIdentifier)
+          .maybeSingle();
+        
+        console.log('Profile lookup result:', { profile, profileError });
+        
+        if (profileError) {
+          console.error('Error looking up profile:', profileError);
+          return { 
+            data: null, 
+            error: { message: "Erreur lors de la recherche du compte." }
+          };
+        }
+        
+        if (!profile?.email) {
+          console.log('No profile found for phone number:', cleanIdentifier);
+          return { 
+            data: null, 
+            error: { message: "Aucun compte trouvé avec ce numéro de téléphone." }
+          };
+        }
+        
+        console.log('Found email for phone number:', profile.email);
+        
+        // Use the found email to sign in
+        const signInResult = await supabase.auth.signInWithPassword({
+          email: profile.email,
+          password
+        });
+        
+        console.log('Phone login result:', signInResult);
+        return signInResult;
+        
+      } catch (error) {
+        console.error('Phone login error:', error);
         return { 
           data: null, 
-          error: { message: "Aucun compte trouvé avec ce numéro de téléphone." }
+          error: { message: "Erreur lors de la connexion avec le téléphone." }
         };
       }
-      
-      // Use the found email to sign in
-      return await supabase.auth.signInWithPassword({
-        email: profile.email,
-        password
-      });
     } else {
       // Sign in with email
-      return await supabase.auth.signInWithPassword({
-        email: identifier,
+      console.log('Attempting email login with:', cleanIdentifier);
+      const signInResult = await supabase.auth.signInWithPassword({
+        email: cleanIdentifier,
         password
       });
+      
+      console.log('Email login result:', signInResult);
+      return signInResult;
     }
   };
 
   const signOut = async () => {
     try {
+      console.log('Signing out user...');
       const { error } = await supabase.auth.signOut();
       if (error) {
         console.error('Erreur lors de la déconnexion:', error);
+      } else {
+        console.log('User signed out successfully');
       }
       return { error };
     } catch (error) {
