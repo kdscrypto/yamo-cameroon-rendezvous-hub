@@ -33,7 +33,7 @@ const CategoriesSection = () => {
             title="Nos Événements Spéciaux"
             description="Événements exclusifs et occasions spéciales"
             icon={Calendar}
-            href="/evenements"
+            href="/events"
             gradient="bg-gradient-to-br from-red-500 to-orange-400"
           />
         </div>

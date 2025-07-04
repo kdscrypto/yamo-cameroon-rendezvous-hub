@@ -17,8 +17,8 @@ const CategoryCard = ({ title, description, icon: Icon, href, gradient }: Catego
       '/rencontres': '/browse?category=rencontres',
       '/massages': '/browse?category=massages', 
       '/produits': '/browse?category=produits',
-      '/evenements': '/events', // Direct route to events page
-      '/events': '/events' // Also handle /events directly
+      '/events': '/events', // Direct route to events page
+      '/evenements': '/events' // Also handle /evenements directly
     };
     return routeMap[href] || href;
   };
