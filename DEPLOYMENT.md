@@ -16,7 +16,7 @@ Assurez-vous que les variables suivantes sont configurées dans Netlify :
 ## 2. Configuration Netlify
 
 ### Paramètres de build
-- **Build command**: `npm run build`
+- **Build command**: `npx vite build`
 - **Publish directory**: `dist`
 - **Node version**: 18
 
@@ -50,12 +50,12 @@ Après le déploiement, vérifiez :
 
 ### Build local pour test
 ```bash
-npm run build
+npx vite build
 ```
 
 ### Preview local du build
 ```bash
-npm run preview
+npx vite preview
 ```
 
 ### Test du Service Worker
@@ -82,3 +82,12 @@ Ouvrir les DevTools > Application > Service Workers
 ### Service Worker ne fonctionne pas
 - Vérifiez que `sw.js` est accessible à la racine
 - Vérifiez les headers dans la configuration Netlify
+
+## 8. Déploiement sur Netlify
+
+1. Connectez votre repository GitHub à Netlify
+2. Configurez les paramètres de build comme indiqué ci-dessus
+3. Déployez votre site
+4. Une fois déployé, configurez les URL de redirection Supabase
+
+Votre application devrait maintenant être fonctionnelle sur Netlify !

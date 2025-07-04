@@ -14,9 +14,9 @@ try {
     fs.rmSync('dist', { recursive: true, force: true });
   }
 
-  // Build de l'application
+  // Build de l'application avec Vite
   console.log('📦 Build de l\'application...');
-  execSync('npm run build', { stdio: 'inherit' });
+  execSync('npx vite build', { stdio: 'inherit' });
 
   // Copier les fichiers nécessaires
   console.log('📋 Copie des fichiers de configuration...');
@@ -24,6 +24,7 @@ try {
   // Copier _redirects dans dist
   if (fs.existsSync('_redirects')) {
     fs.copyFileSync('_redirects', 'dist/_redirects');
+    console.log('✅ Fichier _redirects copié');
   }
 
   // Vérifier que le service worker est présent
@@ -32,6 +33,7 @@ try {
   
   if (fs.existsSync(publicSwPath) && !fs.existsSync(swPath)) {
     fs.copyFileSync(publicSwPath, swPath);
+    console.log('✅ Service worker copié');
   }
 
   console.log('✅ Build de production terminé avec succès !');
