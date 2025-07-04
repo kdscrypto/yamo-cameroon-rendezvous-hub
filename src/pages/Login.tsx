@@ -65,21 +65,23 @@ const Login = () => {
       
       <div className="flex-1 flex items-center justify-center container-spacing section-spacing">
         <div className="w-full max-w-md">
-          {/* Enhanced visual hierarchy and spacing */}
+          {/* Design moderne avec moins de jaune */}
           <div className="text-center mb-8">
             <div className="flex justify-center mb-6">
-              <div className="w-16 h-16 gradient-gold rounded-2xl flex items-center justify-center shadow-lg">
-                <span className="text-black font-bold text-2xl">Y</span>
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-600 via-orange-600 to-red-700 rounded-2xl flex items-center justify-center shadow-2xl border border-amber-500/20">
+                <span className="text-white font-bold text-2xl drop-shadow-lg">Y</span>
               </div>
             </div>
-            <h1 className="heading-md mb-2">Bienvenue sur Yamo</h1>
-            <p className="body-md">Connectez-vous pour accéder à votre compte</p>
+            <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
+              Bienvenue sur Yamo
+            </h1>
+            <p className="text-neutral-300 text-lg">Connectez-vous pour accéder à votre compte</p>
           </div>
 
-          <Card className="card-elevated bg-card/95 backdrop-blur-sm border-border/50">
+          <Card className="bg-neutral-800/50 backdrop-blur-xl border border-neutral-700/50 shadow-2xl">
             <CardHeader className="text-center pb-6">
-              <CardTitle className="heading-sm">Connexion</CardTitle>
-              <CardDescription className="body-sm">
+              <CardTitle className="text-2xl font-bold text-white">Connexion</CardTitle>
+              <CardDescription className="text-neutral-400 text-base">
                 Entrez vos identifiants pour vous connecter
               </CardDescription>
             </CardHeader>
@@ -87,8 +89,8 @@ const Login = () => {
             <CardContent className="space-y-6">
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="form-label flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
+                  <Label htmlFor="email" className="text-neutral-200 font-medium flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-amber-500" />
                     Adresse email
                   </Label>
                   <Input
@@ -99,13 +101,13 @@ const Login = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={isLoading}
-                    className="form-input h-12"
+                    className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="form-label flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-muted-foreground" />
+                  <Label htmlFor="password" className="text-neutral-200 font-medium flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-amber-500" />
                     Mot de passe
                   </Label>
                   <div className="relative">
@@ -117,12 +119,12 @@ const Login = () => {
                       onChange={(e) => setPassword(e.target.value)}
                       required
                       disabled={isLoading}
-                      className="form-input h-12 pr-12"
+                      className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 pr-12 transition-all duration-200"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-amber-400 transition-colors"
                       disabled={isLoading}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -132,37 +134,37 @@ const Login = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 text-black hover:from-yellow-500 hover:via-yellow-600 hover:to-yellow-700 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200 border-2 border-yellow-300 hover:border-yellow-400"
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-0 rounded-xl"
                   disabled={isLoading}
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Connexion en cours...
                     </div>
                   ) : (
-                    'SE CONNECTER'
+                    <span className="drop-shadow-sm">SE CONNECTER</span>
                   )}
                 </Button>
               </form>
               
-              <div className="space-y-4 pt-4 border-t border-border/50">
+              <div className="space-y-4 pt-4 border-t border-neutral-700/50">
                 <div className="text-center">
                   <Link 
                     to="/forgot-password" 
-                    className="text-sm text-primary hover:text-primary/80 transition-colors font-medium"
+                    className="text-sm text-amber-400 hover:text-amber-300 transition-colors font-medium hover:underline"
                   >
                     Mot de passe oublié ?
                   </Link>
                 </div>
                 
                 <div className="text-center">
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-neutral-400">
                     Pas encore de compte ?{' '}
                   </span>
                   <Link 
                     to="/register" 
-                    className="text-sm text-primary hover:text-primary/80 transition-colors font-semibold"
+                    className="text-sm text-amber-400 hover:text-amber-300 transition-colors font-semibold hover:underline"
                   >
                     Créer un compte
                   </Link>
@@ -171,11 +173,11 @@ const Login = () => {
             </CardContent>
           </Card>
           
-          {/* Additional trust indicators */}
+          {/* Trust indicators avec design moderne */}
           <div className="text-center mt-6 space-y-2">
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-neutral-500">
               En vous connectant, vous acceptez nos{' '}
-              <Link to="/terms" className="text-primary hover:underline">
+              <Link to="/terms" className="text-amber-400 hover:text-amber-300 hover:underline transition-colors">
                 conditions d'utilisation
               </Link>
             </p>
