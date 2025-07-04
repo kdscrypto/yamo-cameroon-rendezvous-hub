@@ -1,0 +1,71 @@
+
+/* Layout Utilities - Spacing, grids, and layout patterns */
+
+@layer components {
+  /* === LAYOUT UTILITIES === */
+  .section-spacing {
+    @apply py-16 md:py-20 lg:py-24;
+  }
+
+  .container-spacing {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+  
+  .content-spacing {
+    @apply space-y-6 md:space-y-8 lg:space-y-10;
+  }
+  
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+  }
+  
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+  
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  /* === RESPONSIVE UTILITIES === */
+  .responsive-text {
+    @apply text-sm sm:text-base md:text-lg;
+  }
+  
+  .responsive-padding {
+    @apply p-4 sm:p-6 md:p-8;
+  }
+  
+  .responsive-margin {
+    @apply m-4 sm:m-6 md:m-8;
+  }
+
+  /* === LAYOUT PATTERNS === */
+  .stack {
+    @apply flex flex-col gap-4;
+  }
+  
+  .stack-sm {
+    @apply flex flex-col gap-2;
+  }
+  
+  .stack-lg {
+    @apply flex flex-col gap-6;
+  }
+  
+  .cluster {
+    @apply flex flex-wrap gap-2;
+  }
+  
+  .sidebar-layout {
+    @apply grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-6;
+  }
+  
+  .two-column {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-6;
+  }
+  
+  .three-column {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
+  }
+}

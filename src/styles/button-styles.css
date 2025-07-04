@@ -1,0 +1,29 @@
+
+/* Button Styles - All button variants and utilities */
+
+@layer components {
+  /* === BUTTON STYLES === */
+  .btn-base {
+    @apply inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    @apply btn-base bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80 px-6 py-2.5 interactive-press;
+  }
+
+  .btn-secondary {
+    @apply btn-base bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70 px-6 py-2.5 interactive-press;
+  }
+
+  .btn-outline {
+    @apply btn-base border border-border bg-background text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent/80 px-6 py-2.5 interactive-press;
+  }
+  
+  .btn-ghost {
+    @apply btn-base text-foreground hover:bg-accent hover:text-accent-foreground active:bg-accent/80 px-4 py-2;
+  }
+  
+  .btn-luxury {
+    @apply btn-base gradient-luxe text-black hover:opacity-90 active:opacity-80 px-6 py-2.5 shadow-lg hover:shadow-luxury interactive-press;
+  }
+}

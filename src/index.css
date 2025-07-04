@@ -10,6 +10,17 @@
 @import './styles/animations.css';
 @import './styles/utilities.css';
 @import './styles/media-queries.css';
-@import './styles/component-utilities.css';
-@import './styles/background-slider.css';
 @import './styles/text-hierarchy.css';
+
+/* Import refactored component utilities */
+@import './styles/gradient-system.css';
+@import './styles/interactive-states.css';
+@import './styles/layout-utilities.css';
+@import './styles/card-styles.css';
+@import './styles/button-styles.css';
+@import './styles/form-elements.css';
+@import './styles/typography-hierarchy.css';
+@import './styles/accessibility-utilities.css';
+
+/* Import legacy background slider */
+@import './styles/background-slider.css';
