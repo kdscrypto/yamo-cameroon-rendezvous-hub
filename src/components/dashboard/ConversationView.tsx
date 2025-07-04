@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -146,7 +145,12 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
     mutationFn: async (content: string) => {
       if (!user || !conversation) throw new Error('User or conversation not found');
 
-      const otherParticipant = conversation.participants.find((p: string) => p !== user.id);
+      // Safely handle participants as Json type
+      const participants = Array.isArray(conversation.participants) 
+        ? conversation.participants 
+        : [];
+      
+      const otherParticipant = participants.find((p: string) => p !== user.id);
       if (!otherParticipant) throw new Error('Other participant not found');
 
       const { data, error } = await supabase
@@ -211,7 +215,13 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
 
   const getOtherParticipant = () => {
     if (!conversation) return 'Utilisateur inconnu';
-    const otherParticipantId = conversation.participants.find((p: string) => p !== user?.id);
+    
+    // Safely handle participants as Json type
+    const participants = Array.isArray(conversation.participants) 
+      ? conversation.participants 
+      : [];
+    
+    const otherParticipantId = participants.find((p: string) => p !== user?.id);
     return otherParticipantId || 'Utilisateur inconnu';
   };
 
