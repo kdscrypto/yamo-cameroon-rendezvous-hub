@@ -23,43 +23,57 @@ import AuthCallback from "./pages/AuthCallback";
 import AdDetail from "./pages/AdDetail";
 import Events from "./pages/Events";
 
-const queryClient = new QueryClient();
+// Create query client outside component to prevent recreation
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/browse" element={<Browse />} />
-            <Route path="/create-ad" element={<CreateAd />} />
-            <Route path="/moderation" element={<Moderation />} />
-            <Route path="/ad/:id" element={<AdDetail />} />
-            <Route path="/rencontres" element={<Browse />} />
-            <Route path="/massages" element={<Browse />} />
-            <Route path="/produits" element={<Browse />} />
-            <Route path="/events" element={<Events />} />
-            <Route path="/evenements" element={<Events />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/privacy" element={<Privacy />} />
-            <Route path="/contact" element={<Contact />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ThemeProvider>
-  </QueryClientProvider>
+// Separate router component to isolate routing logic
+const AppRoutes = () => (
+  <Routes>
+    <Route path="/" element={<Index />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/register" element={<Register />} />
+    <Route path="/forgot-password" element={<ForgotPassword />} />
+    <Route path="/auth/callback" element={<AuthCallback />} />
+    <Route path="/reset-password" element={<ResetPassword />} />
+    <Route path="/profile" element={<Profile />} />
+    <Route path="/dashboard" element={<Dashboard />} />
+    <Route path="/browse" element={<Browse />} />
+    <Route path="/create-ad" element={<CreateAd />} />
+    <Route path="/moderation" element={<Moderation />} />
+    <Route path="/ad/:id" element={<AdDetail />} />
+    <Route path="/rencontres" element={<Browse />} />
+    <Route path="/massages" element={<Browse />} />
+    <Route path="/produits" element={<Browse />} />
+    <Route path="/events" element={<Events />} />
+    <Route path="/evenements" element={<Events />} />
+    <Route path="/terms" element={<Terms />} />
+    <Route path="/privacy" element={<Privacy />} />
+    <Route path="/contact" element={<Contact />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
 );
+
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
+        <TooltipProvider delayDuration={0}>
+          <BrowserRouter>
+            <AppRoutes />
+            <Toaster />
+            <Sonner />
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
