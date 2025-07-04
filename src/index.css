@@ -1,26 +1,413 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Import modular CSS files */
-@import './styles/variables.css';
-@import './styles/base.css';
-@import './styles/scrollbars.css';
-@import './styles/animations.css';
-@import './styles/utilities.css';
-@import './styles/media-queries.css';
+/* Import component utilities */
+@import './styles/component-utilities.css';
+@import './styles/background-slider.css';
 @import './styles/text-hierarchy.css';
 
-/* Import refactored component utilities */
-@import './styles/gradient-system.css';
-@import './styles/interactive-states.css';
-@import './styles/layout-utilities.css';
-@import './styles/card-styles.css';
-@import './styles/button-styles.css';
-@import './styles/form-elements.css';
-@import './styles/typography-hierarchy.css';
-@import './styles/accessibility-utilities.css';
+/* Enhanced Design System with Design Tokens */
 
-/* Import legacy background slider */
-@import './styles/background-slider.css';
+@layer base {
+  :root {
+    /* Core color variables - using HSL for better manipulation */
+    --background: 15 15 15;
+    --foreground: 250 250 250;
+    --card: 25 25 25;
+    --card-foreground: 245 245 245;
+    --popover: 25 25 25;
+    --popover-foreground: 245 245 245;
+    --primary: 255 144 0;
+    --primary-foreground: 0 0 0;
+    --secondary: 40 40 40;
+    --secondary-foreground: 240 240 240;
+    --muted: 35 35 35;
+    --muted-foreground: 200 200 200;
+    --accent: 255 144 0;
+    --accent-foreground: 0 0 0;
+    --destructive: 240 240 240;
+    --destructive-foreground: 15 15 15;
+    --border: 45 45 45;
+    --input: 40 40 40;
+    --ring: 255 144 0;
+    --radius: 0.75rem;
+    
+    /* Sidebar variables */
+    --sidebar-background: 15 15 15;
+    --sidebar-foreground: 250 250 250;
+    --sidebar-primary: 255 144 0;
+    --sidebar-primary-foreground: 0 0 0;
+    --sidebar-accent: 40 40 40;
+    --sidebar-accent-foreground: 240 240 240;
+    --sidebar-border: 45 45 45;
+    --sidebar-ring: 255 144 0;
+  }
+
+  /* Force dark theme always */
+  :root,
+  .dark {
+    --background: 15 15 15;
+    --foreground: 250 250 250;
+    --card: 25 25 25;
+    --card-foreground: 245 245 245;
+    --popover: 25 25 25;
+    --popover-foreground: 245 245 245;
+    --primary: 255 144 0;
+    --primary-foreground: 0 0 0;
+    --secondary: 40 40 40;
+    --secondary-foreground: 240 240 240;
+    --muted: 35 35 35;
+    --muted-foreground: 200 200 200;
+    --accent: 255 144 0;
+    --accent-foreground: 0 0 0;
+    --destructive: 240 240 240;
+    --destructive-foreground: 15 15 15;
+    --border: 45 45 45;
+    --input: 40 40 40;
+    --ring: 255 144 0;
+    --sidebar-background: 15 15 15;
+    --sidebar-foreground: 250 250 250;
+    --sidebar-primary: 255 144 0;
+    --sidebar-primary-foreground: 0 0 0;
+    --sidebar-accent: 40 40 40;
+    --sidebar-accent-foreground: 240 240 240;
+    --sidebar-border: 45 45 45;
+    --sidebar-ring: 255 144 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    /* Force dark theme at HTML level */
+    @apply dark;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    line-height: 1.6;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    
+    /* Force dark background */
+    background-color: hsl(15 15 15) !important;
+    color: hsl(250 250 250) !important;
+  }
+
+  /* Enhanced focus styles for accessibility */
+  *:focus {
+    outline: none;
+  }
+  
+  *:focus-visible {
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
+  }
+  
+  /* Better button focus styles */
+  button:focus-visible {
+    @apply ring-2 ring-primary/50 ring-offset-2;
+  }
+  
+  /* Input focus styles */
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    @apply ring-2 ring-primary/50 ring-offset-0 border-primary/60;
+  }
+  
+  /* Link styles */
+  a {
+    @apply transition-colors duration-200;
+  }
+  
+  /* Heading styles with improved contrast */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-neutral-100;
+    text-wrap: balance;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Paragraph styles with improved readability */
+  p {
+    text-wrap: pretty;
+    @apply text-neutral-200 leading-relaxed;
+  }
+  
+  /* Selection styles */
+  ::selection {
+    @apply bg-primary/30 text-foreground;
+  }
+  
+  /* Scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-neutral-800/20;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/40 rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/60;
+  }
+  
+  /* Firefox scrollbar */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.4) hsl(var(--neutral-800) / 0.2);
+  }
+}
+
+/* === IMPROVED TEXT VISIBILITY === */
+@layer utilities {
+  /* Enhanced text colors for better visibility */
+  .text-enhanced {
+    @apply text-neutral-100;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-enhanced-muted {
+    @apply text-neutral-300;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .text-enhanced-subtle {
+    @apply text-neutral-400;
+  }
+  
+  /* Override any problematic text colors */
+  .text-red-500,
+  .text-red-600,
+  .text-red-700,
+  .text-red-800,
+  .text-red-900,
+  .text-red-400,
+  .text-red-300 {
+    @apply text-red-400 !important;
+  }
+  
+  /* Override destructive colors */
+  .text-destructive {
+    @apply text-red-400 !important;
+  }
+  
+  /* Make sure muted-foreground is always visible */
+  .text-muted-foreground {
+    @apply text-neutral-400 !important;
+  }
+  
+  /* Primary text variants */
+  .text-primary-enhanced {
+    @apply text-primary-400;
+    text-shadow: 0 0 20px rgba(255, 144, 0, 0.3);
+  }
+}
+
+/* === ENHANCED ANIMATIONS === */
+@layer utilities {
+  .animate-enhanced-fade-in {
+    animation: enhanced-fade-in 0.6s ease-out;
+  }
+  
+  .animate-enhanced-slide-up {
+    animation: enhanced-slide-up 0.8s ease-out;
+  }
+  
+  .animate-enhanced-scale {
+    animation: enhanced-scale 0.4s ease-out;
+  }
+}
+
+@keyframes enhanced-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes enhanced-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes enhanced-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* === MOTION PREFERENCES === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Still allow some essential animations for UX */
+  .animate-accordion-down,
+  .animate-accordion-up {
+    animation-duration: 0.2s !important;
+  }
+}
+
+/* === HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 100 100 100;
+    --foreground: 255 255 255;
+    --muted-foreground: 200 200 200;
+  }
+}
+
+/* === PRINT STYLES === */
+@media print {
+  :root {
+    --background: 255 255 255;
+    --foreground: 0 0 0;
+    --card: 255 255 255;
+    --card-foreground: 0 0 0;
+    --border: 0 0 0;
+  }
+  
+  * {
+    @apply shadow-none;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
+
+/* === CUSTOM SCROLLBAR FOR WEBKIT === */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  @apply bg-muted/40 rounded-full;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted/60;
+}
+
+/* === LOADING STATES === */
+.loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted) / 0.1) 0%,
+    hsl(var(--muted) / 0.3) 50%,
+    hsl(var(--muted) / 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* === GLASS MORPHISM EFFECT === */
+.glass-morphism {
+  background: hsl(var(--card) / 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid hsl(var(--border) / 0.5);
+}
+
+/* === UTILITIES FOR BETTER LAYOUTS === */
+.container-fluid {
+  width: 100%;
+  max-width: none;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.container-narrow {
+  max-width: 768px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.container-wide {
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* === ASPECT RATIO UTILITIES === */
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
+.aspect-square {
+  aspect-ratio: 1 / 1;
+}
+
+.aspect-portrait {
+  aspect-ratio: 3 / 4;
+}
+
+.aspect-landscape {
+  aspect-ratio: 4 / 3;
+}
+
+/* === TEXT UTILITIES === */
+.text-shadow {
+  text-shadow: 0 1px 2px hsl(var(--background) / 0.5);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 4px hsl(var(--background) / 0.7);
+}
+
+/* === BACKGROUND PATTERNS === */
+.bg-dots {
+  background-image: radial-gradient(circle, hsl(var(--muted) / 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+.bg-grid {
+  background-image: linear-gradient(hsl(var(--muted) / 0.1) 1px, transparent 1px),
+                    linear-gradient(90deg, hsl(var(--muted) / 0.1) 1px, transparent 1px);
+  background-size: 20px 20px;
+}
