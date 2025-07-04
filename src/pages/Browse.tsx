@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Search, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,16 +10,35 @@ import SearchResults from '@/components/SearchResults';
 import SEO from '@/components/SEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import { useSEO } from '@/hooks/useSEO';
+import { useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const Browse = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [category, setCategory] = useState('all');
   const [location, setLocation] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { getSEOForPath } = useSEO();
 
   const { data: ads = [], isLoading, error } = useApprovedAds();
   const seoConfig = getSEOForPath('/browse');
+
+  // Check if user tried to access events category and redirect
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam === 'evenements') {
+      console.log('Redirecting from Browse to Events page');
+      navigate('/events', { replace: true });
+      return;
+    }
+    
+    // Set category from URL params
+    if (categoryParam && categoryParam !== 'evenements') {
+      setCategory(categoryParam);
+    }
+  }, [searchParams, navigate]);
 
   // Filter and sort ads based on search criteria
   const filteredAds = useMemo(() => {
@@ -34,8 +54,8 @@ const Browse = () => {
       );
     }
 
-    // Filter by category
-    if (category !== 'all') {
+    // Filter by category (exclude events category)
+    if (category !== 'all' && category !== 'evenements') {
       filtered = filtered.filter(ad => ad.category.toLowerCase() === category.toLowerCase());
     }
 
