@@ -1,15 +1,16 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Mail, MailOpen, MessageSquare, Plus, Send, Users, Paperclip } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Mail, MailOpen, MessageSquare, Plus, Send, Users, Search, Archive } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import ConversationView from './ConversationView';
 import ComposeMessageModal from './ComposeMessageModal';
+import AdvancedMessageSearch from './MessageSearch/AdvancedMessageSearch';
 
 interface Conversation {
   id: string;
@@ -32,6 +33,7 @@ const RealTimeMessages = () => {
   const { user } = useAuth();
   const [selectedConversation, setSelectedConversation] = useState<string | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState('conversations');
 
   const { data: conversations, isLoading, refetch } = useQuery({
     queryKey: ['conversations', user?.id],
@@ -223,91 +225,126 @@ const RealTimeMessages = () => {
         </Card>
       </div>
 
-      {!conversations || conversations.length === 0 ? (
-        <Card>
-          <CardContent className="text-center py-12">
-            <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground mb-4">Aucune conversation pour le moment.</p>
-            <Button onClick={() => setIsComposeOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Commencer une conversation
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-4">
-          {conversations.map((conversation) => {
-            const hasUnread = (conversation.unread_count || 0) > 0;
-            
-            return (
-              <Card 
-                key={conversation.id} 
-                className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                  hasUnread ? 'border-primary bg-primary/5' : ''
-                }`}
-                onClick={() => setSelectedConversation(conversation.id)}
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        {hasUnread ? (
-                          <Mail className="w-4 h-4 text-primary" />
-                        ) : (
-                          <MailOpen className="w-4 h-4 text-muted-foreground" />
-                        )}
-                        {conversation.ads ? (
-                          `Re: ${conversation.ads.title}`
-                        ) : (
-                          'Conversation directe'
-                        )}
-                      </CardTitle>
-                      <CardDescription className="flex items-center gap-2">
-                        <span>Avec: {getOtherParticipant(conversation.participants)}</span>
-                        <span>•</span>
-                        <span>{new Date(conversation.last_message_at).toLocaleDateString('fr-FR')}</span>
-                        {conversation.ads && (
-                          <>
-                            <span>•</span>
-                            <span className="text-primary">Annonce: {conversation.ads.title}</span>
-                          </>
-                        )}
-                      </CardDescription>
-                    </div>
-                    <div className="flex flex-col items-end gap-2">
-                      {hasUnread && (
-                        <Badge variant="default" className="bg-primary">
-                          {conversation.unread_count} nouveau{(conversation.unread_count || 0) > 1 ? 'x' : ''}
-                        </Badge>
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        {new Date(conversation.last_message_at).toLocaleTimeString('fr-FR', {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                </CardHeader>
+      {/* Tabs for different views */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-3 bg-secondary">
+          <TabsTrigger value="conversations" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <MessageSquare className="w-4 h-4 mr-2" />
+            Conversations
+          </TabsTrigger>
+          <TabsTrigger value="search" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Search className="w-4 h-4 mr-2" />
+            Recherche
+          </TabsTrigger>
+          <TabsTrigger value="archived" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+            <Archive className="w-4 h-4 mr-2" />
+            Archivées
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="conversations" className="mt-6">
+          {!conversations || conversations.length === 0 ? (
+            <Card>
+              <CardContent className="text-center py-12">
+                <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <p className="text-muted-foreground mb-4">Aucune conversation pour le moment.</p>
+                <Button onClick={() => setIsComposeOpen(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Commencer une conversation
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-4">
+              {conversations.map((conversation) => {
+                const hasUnread = (conversation.unread_count || 0) > 0;
                 
-                {conversation.last_message && (
-                  <CardContent>
-                    <div className="flex justify-between items-center">
-                      <p className="text-sm text-muted-foreground truncate flex-1">
-                        {conversation.last_message.sender_id === user?.id ? 'Vous: ' : ''}
-                        {conversation.last_message.content}
-                      </p>
-                      <Button variant="ghost" size="sm" className="ml-4">
-                        <Send className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                )}
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                return (
+                  <Card 
+                    key={conversation.id} 
+                    className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                      hasUnread ? 'border-primary bg-primary/5' : ''
+                    }`}
+                    onClick={() => setSelectedConversation(conversation.id)}
+                  >
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <CardTitle className="text-lg flex items-center gap-2">
+                            {hasUnread ? (
+                              <Mail className="w-4 h-4 text-primary" />
+                            ) : (
+                              <MailOpen className="w-4 h-4 text-muted-foreground" />
+                            )}
+                            {conversation.ads ? (
+                              `Re: ${conversation.ads.title}`
+                            ) : (
+                              'Conversation directe'
+                            )}
+                          </CardTitle>
+                          <CardDescription className="flex items-center gap-2">
+                            <span>Avec: {getOtherParticipant(conversation.participants)}</span>
+                            <span>•</span>
+                            <span>{new Date(conversation.last_message_at).toLocaleDateString('fr-FR')}</span>
+                            {conversation.ads && (
+                              <>
+                                <span>•</span>
+                                <span className="text-primary">Annonce: {conversation.ads.title}</span>
+                              </>
+                            )}
+                          </CardDescription>
+                        </div>
+                        <div className="flex flex-col items-end gap-2">
+                          {hasUnread && (
+                            <Badge variant="default" className="bg-primary">
+                              {conversation.unread_count} nouveau{(conversation.unread_count || 0) > 1 ? 'x' : ''}
+                            </Badge>
+                          )}
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(conversation.last_message_at).toLocaleTimeString('fr-FR', {
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    
+                    {conversation.last_message && (
+                      <CardContent>
+                        <div className="flex justify-between items-center">
+                          <p className="text-sm text-muted-foreground truncate flex-1">
+                            {conversation.last_message.sender_id === user?.id ? 'Vous: ' : ''}
+                            {conversation.last_message.content}
+                          </p>
+                          <Button variant="ghost" size="sm" className="ml-4">
+                            <Send className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </CardContent>
+                    )}
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="search" className="mt-6">
+          <AdvancedMessageSearch 
+            onMessageSelect={(conversationId) => setSelectedConversation(conversationId)}
+          />
+        </TabsContent>
+
+        <TabsContent value="archived" className="mt-6">
+          <Card>
+            <CardContent className="text-center py-12">
+              <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">Fonctionnalité d'archivage à venir.</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
 
       {/* Compose Message Modal */}
       <ComposeMessageModal 
