@@ -30,7 +30,7 @@ const CategoriesSection = () => {
             gradient="gradient-accent"
           />
           <CategoryCard
-            title="Nos Événements Spéciaux"
+            title="Événements Spéciaux"
             description="Événements exclusifs et occasions spéciales"
             icon={Calendar}
             href="/events"
