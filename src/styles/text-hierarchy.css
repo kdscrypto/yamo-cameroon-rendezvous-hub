@@ -1,0 +1,90 @@
+
+/* Amélioration de la hiérarchie visuelle et du texte */
+
+/* Hiérarchie des titres avec contraste amélioré */
+.text-hierarchy-primary {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold text-transparent bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text;
+  text-shadow: 0 0 30px rgba(255, 144, 0, 0.3);
+}
+
+.text-hierarchy-secondary {
+  @apply text-2xl md:text-3xl font-semibold text-neutral-100;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.text-hierarchy-tertiary {
+  @apply text-xl md:text-2xl font-medium text-neutral-200;
+}
+
+.text-hierarchy-body {
+  @apply text-base md:text-lg text-neutral-300 leading-relaxed;
+}
+
+.text-hierarchy-caption {
+  @apply text-sm text-neutral-400 font-medium;
+}
+
+/* Amélioration du contraste pour les textes */
+.text-enhanced-contrast {
+  color: hsl(var(--foreground));
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.text-enhanced-contrast-light {
+  color: hsl(var(--muted-foreground));
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Amélioration des liens */
+.link-enhanced {
+  @apply text-primary-400 hover:text-primary-300 transition-all duration-300 font-medium;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 4px;
+}
+
+.link-enhanced:hover {
+  text-decoration-color: currentColor;
+}
+
+/* Boutons avec hiérarchie visuelle */
+.btn-primary-enhanced {
+  @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold px-6 py-3 rounded-lg shadow-md hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 transform hover:scale-105;
+}
+
+.btn-secondary-enhanced {
+  @apply bg-neutral-800 text-primary-400 border border-primary/30 font-medium px-6 py-3 rounded-lg hover:bg-neutral-700 hover:border-primary/50 transition-all duration-300;
+}
+
+/* Cartes avec hiérarchie améliorée */
+.card-enhanced {
+  @apply bg-neutral-850 border border-neutral-700 rounded-xl shadow-lg hover:shadow-xl hover:shadow-primary/10 transition-all duration-300;
+}
+
+.card-enhanced:hover {
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+/* Amélioration des formulaires */
+.form-enhanced input,
+.form-enhanced textarea,
+.form-enhanced select {
+  @apply bg-neutral-800 border-neutral-600 text-neutral-100 placeholder:text-neutral-400 focus:border-primary/60 focus:ring-primary/20 transition-all duration-300;
+}
+
+.form-enhanced label {
+  @apply text-neutral-200 font-medium text-sm mb-2 block;
+}
+
+/* Section avec hiérarchie visuelle */
+.section-enhanced {
+  @apply py-16 px-4;
+}
+
+.section-enhanced-dark {
+  @apply bg-neutral-900 border-t border-b border-neutral-800;
+}
+
+.section-enhanced-highlight {
+  @apply bg-gradient-to-r from-neutral-900 to-neutral-850 border-primary/10;
+}

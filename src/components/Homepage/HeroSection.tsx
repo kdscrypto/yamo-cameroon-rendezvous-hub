@@ -1,76 +1,95 @@
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import SearchBar from '@/components/SearchBar';
 
 const HeroSection = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  const backgroundImages = [
-    "https://images.unsplash.com/photo-1649972904349-6e44c42644a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80",
-    "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
-  ];
+  const [searchQuery, setSearchQuery] = useState('');
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) => 
-        (prevIndex + 1) % backgroundImages.length
-      );
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [backgroundImages.length]);
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/browse?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/browse');
+    }
+  };
 
   return (
-    <section className="relative py-20 px-4 overflow-hidden">
-      {/* Background Images */}
-      <div className="absolute inset-0">
-        {backgroundImages.map((image, index) => (
-          <div
-            key={index}
-            className={`absolute inset-0 transition-opacity duration-1000 ${
-              index === currentImageIndex ? 'opacity-100' : 'opacity-0'
-            }`}
-            style={{
-              backgroundImage: `url(${image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          />
-        ))}
-        
-        {/* Dark overlay for text readability */}
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px]" />
-        
-        {/* Gold gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-background/90" />
-      </div>
-
-      {/* Content */}
-      <div className="container mx-auto text-center relative z-10">
-        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-          Bienvenue sur <span className="text-gradient-gold">Yamo</span>
+    <section className="section-enhanced section-enhanced-highlight min-h-[600px] flex items-center justify-center relative overflow-hidden">
+      {/* Gradient overlay amélioré */}
+      <div className="absolute inset-0 bg-gradient-to-br from-neutral-900 via-neutral-850 to-neutral-900 opacity-95"></div>
+      
+      {/* Effets de lumière */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"></div>
+      
+      <div className="container mx-auto px-4 text-center relative z-10">
+        {/* Titre principal avec hiérarchie améliorée */}
+        <h1 className="text-hierarchy-primary mb-6 animate-fade-in">
+          Découvrez Yamo
         </h1>
-        <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-          La plateforme de référence pour les annonces adultes au Cameroun. 
-          Trouvez ce que vous cherchez en toute discrétion et sécurité.
+        
+        {/* Sous-titre avec contraste amélioré */}
+        <p className="text-hierarchy-body max-w-3xl mx-auto mb-8 animate-fade-in">
+          La plateforme de <span className="text-primary-400 font-semibold">rencontres</span>, 
+          <span className="text-primary-400 font-semibold"> massages</span> et 
+          <span className="text-primary-400 font-semibold"> produits</span> de qualité. 
+          Rejoignez une communauté exclusive et découvrez des expériences uniques.
         </p>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+
+        {/* Barre de recherche améliorée */}
+        <div className="max-w-2xl mx-auto mb-8 animate-fade-in">
+          <div className="relative">
+            <SearchBar
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={handleSearch}
+              placeholder="Que recherchez-vous ?"
+              className="bg-neutral-800/80 backdrop-blur-sm border-primary/30 focus:border-primary/60 text-neutral-100 placeholder:text-neutral-400 h-14 text-lg shadow-lg"
+            />
+            <Button 
+              onClick={handleSearch}
+              className="absolute right-2 top-2 h-10 px-6 bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+            >
+              <Search className="w-5 h-5 mr-2" />
+              Rechercher
+            </Button>
+          </div>
+        </div>
+
+        {/* Boutons d'action avec hiérarchie */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
           <Button 
-            size="lg" 
-            asChild 
-            className="bg-gradient-to-r from-orange-500 to-yellow-500 hover:from-orange-600 hover:to-yellow-600 text-black font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-0 min-h-[50px] px-8"
+            onClick={() => navigate('/browse')}
+            className="btn-primary-enhanced text-lg px-8 py-4"
           >
-            <Link to="/browse">Parcourir les annonces</Link>
+            Explorer les annonces
           </Button>
           <Button 
-            size="lg" 
-            asChild 
-            className="bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-black font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200 border-0 min-h-[50px] px-8"
+            onClick={() => navigate('/register')}
+            className="btn-secondary-enhanced text-lg px-8 py-4"
           >
-            <Link to="/create-ad">Publier une annonce</Link>
+            Créer un compte
           </Button>
+        </div>
+
+        {/* Statistiques avec visibilité améliorée */}
+        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+          <div className="text-center">
+            <div className="text-hierarchy-secondary text-primary-400 mb-2">1000+</div>
+            <div className="text-hierarchy-caption">Annonces actives</div>
+          </div>
+          <div className="text-center">
+            <div className="text-hierarchy-secondary text-primary-400 mb-2">500+</div>
+            <div className="text-hierarchy-caption">Utilisateurs satisfaits</div>
+          </div>
+          <div className="text-center">
+            <div className="text-hierarchy-secondary text-primary-400 mb-2">24/7</div>
+            <div className="text-hierarchy-caption">Support disponible</div>
+          </div>
         </div>
       </div>
     </section>

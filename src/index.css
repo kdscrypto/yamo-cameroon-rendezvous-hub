@@ -5,6 +5,7 @@
 /* Import component utilities */
 @import './styles/component-utilities.css';
 @import './styles/background-slider.css';
+@import './styles/text-hierarchy.css';
 
 /* Enhanced Design System with Design Tokens */
 
@@ -22,7 +23,7 @@
     --secondary: 40 40 40;
     --secondary-foreground: 240 240 240;
     --muted: 35 35 35;
-    --muted-foreground: 180 180 180;
+    --muted-foreground: 200 200 200;
     --accent: 255 144 0;
     --accent-foreground: 0 0 0;
     --destructive: 240 240 240;
@@ -57,7 +58,7 @@
     --secondary: 40 40 40;
     --secondary-foreground: 240 240 240;
     --muted: 35 35 35;
-    --muted-foreground: 180 180 180;
+    --muted-foreground: 200 200 200;
     --accent: 255 144 0;
     --accent-foreground: 0 0 0;
     --destructive: 240 240 240;
@@ -105,19 +106,19 @@
   }
   
   *:focus-visible {
-    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+    @apply outline-none ring-2 ring-primary/50 ring-offset-2 ring-offset-background;
   }
   
   /* Better button focus styles */
   button:focus-visible {
-    @apply ring-2 ring-ring ring-offset-2;
+    @apply ring-2 ring-primary/50 ring-offset-2;
   }
   
   /* Input focus styles */
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    @apply ring-2 ring-ring ring-offset-0 border-ring;
+    @apply ring-2 ring-primary/50 ring-offset-0 border-primary/60;
   }
   
   /* Link styles */
@@ -125,20 +126,22 @@
     @apply transition-colors duration-200;
   }
   
-  /* Heading styles */
+  /* Heading styles with improved contrast */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold text-foreground;
+    @apply font-semibold text-neutral-100;
     text-wrap: balance;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   }
   
-  /* Paragraph styles */
+  /* Paragraph styles with improved readability */
   p {
     text-wrap: pretty;
+    @apply text-neutral-200 leading-relaxed;
   }
   
   /* Selection styles */
   ::selection {
-    @apply bg-primary/20 text-foreground;
+    @apply bg-primary/30 text-foreground;
   }
   
   /* Scrollbar styles */
@@ -148,27 +151,42 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-muted/20;
+    @apply bg-neutral-800/20;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-muted/60 rounded-full;
+    @apply bg-primary/40 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-muted/80;
+    @apply bg-primary/60;
   }
   
   /* Firefox scrollbar */
   * {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted) / 0.6) hsl(var(--muted) / 0.2);
+    scrollbar-color: hsl(var(--primary) / 0.4) hsl(var(--neutral-800) / 0.2);
   }
 }
 
-/* === OVERRIDE ALL RED TEXT COLORS === */
+/* === IMPROVED TEXT VISIBILITY === */
 @layer utilities {
-  /* Force all red text to be white/foreground color */
+  /* Enhanced text colors for better visibility */
+  .text-enhanced {
+    @apply text-neutral-100;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-enhanced-muted {
+    @apply text-neutral-300;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .text-enhanced-subtle {
+    @apply text-neutral-400;
+  }
+  
+  /* Override any problematic text colors */
   .text-red-500,
   .text-red-600,
   .text-red-700,
@@ -176,17 +194,71 @@
   .text-red-900,
   .text-red-400,
   .text-red-300 {
-    @apply text-foreground !important;
+    @apply text-red-400 !important;
   }
   
-  /* Override any destructive colors */
+  /* Override destructive colors */
   .text-destructive {
-    @apply text-foreground !important;
+    @apply text-red-400 !important;
   }
   
   /* Make sure muted-foreground is always visible */
   .text-muted-foreground {
-    @apply text-slate-400 !important;
+    @apply text-neutral-400 !important;
+  }
+  
+  /* Primary text variants */
+  .text-primary-enhanced {
+    @apply text-primary-400;
+    text-shadow: 0 0 20px rgba(255, 144, 0, 0.3);
+  }
+}
+
+/* === ENHANCED ANIMATIONS === */
+@layer utilities {
+  .animate-enhanced-fade-in {
+    animation: enhanced-fade-in 0.6s ease-out;
+  }
+  
+  .animate-enhanced-slide-up {
+    animation: enhanced-slide-up 0.8s ease-out;
+  }
+  
+  .animate-enhanced-scale {
+    animation: enhanced-scale 0.4s ease-out;
+  }
+}
+
+@keyframes enhanced-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes enhanced-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes enhanced-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
