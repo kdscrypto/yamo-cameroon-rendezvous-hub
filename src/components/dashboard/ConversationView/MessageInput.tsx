@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,13 +6,7 @@ import { toast } from 'sonner';
 import AttachmentUpload from './AttachmentUpload';
 import MessageTypingIndicator from './MessageTypingIndicator';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
-
-interface Attachment {
-  url: string;
-  name: string;
-  type: string;
-  size: number;
-}
+import { Attachment } from './types';
 
 interface MessageInputProps {
   conversationId: string;

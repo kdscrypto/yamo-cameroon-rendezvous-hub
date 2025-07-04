@@ -19,3 +19,10 @@ export interface ConversationViewProps {
   conversationId: string;
   onBack: () => void;
 }
+
+export interface Attachment {
+  url: string;
+  name: string;
+  type: string;
+  size: number;
+}
