@@ -31,8 +31,16 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
       />
 
       <div className="flex flex-col">
-        <MessagesList messages={messages} currentUserId={user?.id} />
-        <MessageInput onSendMessage={sendMessage} isLoading={isSendingMessage} />
+        <MessagesList 
+          conversationId={conversationId}
+          messages={messages} 
+          currentUserId={user?.id} 
+        />
+        <MessageInput 
+          conversationId={conversationId}
+          onSendMessage={sendMessage} 
+          isLoading={isSendingMessage} 
+        />
       </div>
     </div>
   );

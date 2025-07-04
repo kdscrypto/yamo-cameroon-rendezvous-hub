@@ -2,14 +2,16 @@
 import { useEffect, useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import MessageBubble from './MessageBubble';
+import { TypingIndicator } from '../TypingIndicator';
 import { Message } from './types';
 
 interface MessagesListProps {
+  conversationId: string;
   messages?: Message[];
   currentUserId?: string;
 }
 
-const MessagesList = ({ messages, currentUserId }: MessagesListProps) => {
+const MessagesList = ({ conversationId, messages, currentUserId }: MessagesListProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to bottom when new messages arrive
@@ -32,6 +34,7 @@ const MessagesList = ({ messages, currentUserId }: MessagesListProps) => {
               />
             );
           })}
+          <TypingIndicator conversationId={conversationId} />
           <div ref={messagesEndRef} />
         </div>
       </CardContent>
