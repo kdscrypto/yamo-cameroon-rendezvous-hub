@@ -1,6 +1,6 @@
 
 import { useState, useMemo, useEffect } from 'react';
-import { Search, Settings } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -24,17 +24,19 @@ const Browse = () => {
   const { data: ads = [], isLoading, error } = useApprovedAds();
   const seoConfig = getSEOForPath('/browse');
 
-  // Check if user tried to access events category and redirect immediately
+  // Handle events category redirection immediately
   useEffect(() => {
     const categoryParam = searchParams.get('category');
+    console.log('Browse component - Category param:', categoryParam);
+    
     if (categoryParam === 'evenements' || categoryParam === 'events') {
-      console.log('Redirecting from Browse to Events page for category:', categoryParam);
+      console.log('Redirecting to events page for category:', categoryParam);
       navigate('/events', { replace: true });
       return;
     }
     
-    // Set category from URL params for valid categories
-    if (categoryParam && !['evenements', 'events'].includes(categoryParam)) {
+    // Set valid category from URL params
+    if (categoryParam && ['rencontres', 'massages', 'produits'].includes(categoryParam)) {
       setCategory(categoryParam);
     }
   }, [searchParams, navigate]);
@@ -53,8 +55,8 @@ const Browse = () => {
       );
     }
 
-    // Filter by category (exclude events categories)
-    if (category !== 'all' && !['evenements', 'events'].includes(category)) {
+    // Filter by category (only valid categories)
+    if (category !== 'all' && ['rencontres', 'massages', 'produits'].includes(category)) {
       filtered = filtered.filter(ad => ad.category.toLowerCase() === category.toLowerCase());
     }
 
@@ -75,7 +77,7 @@ const Browse = () => {
         filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
         break;
       case 'popular':
-        // For now, sort by recent as we don't have popularity metrics
+        // Sort by recent as we don't have popularity metrics
         filtered.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
         break;
       default:
@@ -186,7 +188,7 @@ const Browse = () => {
               loading={isLoading}
             />
 
-            {/* Pagination - For future implementation */}
+            {/* Pagination */}
             {filteredAds.length > 0 && (
               <div className="flex justify-center mt-12">
                 <div className="flex space-x-2">

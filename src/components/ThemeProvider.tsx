@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
 
@@ -28,15 +28,29 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Force dark theme by default
-    const stored = localStorage.getItem(storageKey) as Theme;
-    return stored || defaultTheme;
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      return defaultTheme;
+    }
+    
+    try {
+      const stored = localStorage.getItem(storageKey) as Theme;
+      return stored || defaultTheme;
+    } catch (error) {
+      console.warn('Failed to access localStorage:', error);
+      return defaultTheme;
+    }
   });
 
   useEffect(() => {
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const root = window.document.documentElement;
 
-    // Always ensure we have the dark class applied
+    // Clear existing theme classes
     root.classList.remove('light', 'dark');
     
     if (theme === 'system') {
@@ -48,29 +62,39 @@ export function ThemeProvider({
     } else {
       root.classList.add(theme);
     }
-
-    // Force dark theme on initial load
-    if (theme === 'dark' || !theme) {
-      root.classList.add('dark');
-    }
   }, [theme]);
 
-  // Force dark theme on component mount
+  // Set default dark theme on component mount
   useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
     const root = window.document.documentElement;
     root.classList.add('dark');
     
     // Set default theme if none is set
-    if (!localStorage.getItem(storageKey)) {
-      localStorage.setItem(storageKey, 'dark');
+    try {
+      if (!localStorage.getItem(storageKey)) {
+        localStorage.setItem(storageKey, 'dark');
+      }
+    } catch (error) {
+      console.warn('Failed to set localStorage:', error);
     }
   }, [storageKey]);
 
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
-      setTheme(theme);
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(storageKey, theme);
+        }
+        setTheme(theme);
+      } catch (error) {
+        console.warn('Failed to save theme to localStorage:', error);
+        setTheme(theme);
+      }
     },
   };
 
@@ -84,8 +108,9 @@ export function ThemeProvider({
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
+  if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
+  }
 
   return context;
 };

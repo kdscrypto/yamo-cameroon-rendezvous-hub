@@ -5,13 +5,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.tsx";
 import "./index.css";
 
-// Force dark theme immediately on load
-(function() {
-  document.documentElement.classList.add('dark');
-  localStorage.setItem('yamo-theme', 'dark');
-})();
+// Ensure we have a root element before rendering
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Root element not found");
+}
 
-createRoot(document.getElementById("root")!).render(
+createRoot(rootElement).render(
   <StrictMode>
     <HelmetProvider>
       <App />
@@ -19,27 +19,26 @@ createRoot(document.getElementById("root")!).render(
   </StrictMode>,
 );
 
-// Enregistrement du service worker pour optimiser les performances
+// Service worker registration
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')
       .then((registration) => {
-        console.log('Service Worker enregistré avec succès:', registration.scope);
+        console.log('Service Worker registered successfully:', registration.scope);
       })
       .catch((error) => {
-        console.log('Échec de l\'enregistrement du Service Worker:', error);
+        console.log('Service Worker registration failed:', error);
       });
   });
 }
 
-// Génération du sitemap dynamique
+// Sitemap generation utilities
 import { generateSitemap, generateRobotsTxt } from './utils/sitemapGenerator';
 
-// Créer le sitemap et le robots.txt
 const sitemap = generateSitemap();
 const robotsTxt = generateRobotsTxt();
 
-// Les exposer globalement pour les télécharger si nécessaire
+// Expose sitemap utilities globally
 (window as any).downloadSitemap = () => {
   const blob = new Blob([sitemap], { type: 'application/xml' });
   const url = URL.createObjectURL(blob);
