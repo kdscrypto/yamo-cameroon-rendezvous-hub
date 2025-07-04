@@ -132,12 +132,12 @@ const Login = () => {
                 
                 <Button 
                   type="submit" 
-                  className="w-full h-12 btn-primary gradient-gold text-black hover:opacity-90 font-semibold shadow-md" 
+                  className="w-full h-12 bg-gradient-to-r from-orange-500 to-yellow-500 text-white hover:from-orange-600 hover:to-yellow-600 font-bold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] border border-orange-400/50" 
                   disabled={isLoading}
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Connexion...
                     </div>
                   ) : (
@@ -189,3 +189,4 @@ const Login = () => {
 };
 
 export default Login;
+
