@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { isPhoneNumberFormat } from '@/utils/phoneUtils';
-import LoginTestPanel from './LoginTestPanel';
 import IdentifierField from './IdentifierField';
 import PasswordField from './PasswordField';
 import LoginSubmitButton from './LoginSubmitButton';
@@ -16,7 +15,6 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [identifierError, setIdentifierError] = useState('');
-  const [showTestPanel, setShowTestPanel] = useState(false);
   const { signIn } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -123,19 +121,9 @@ const LoginForm = () => {
         <CardDescription className="text-neutral-400 text-base">
           Utilisez votre email ou votre numéro de téléphone
         </CardDescription>
-        
-        {/* Bouton pour afficher le panneau de test */}
-        <button
-          onClick={() => setShowTestPanel(!showTestPanel)}
-          className="text-xs text-neutral-500 hover:text-amber-400 transition-colors mt-2"
-        >
-          {showTestPanel ? 'Masquer' : 'Afficher'} le panneau de test
-        </button>
       </CardHeader>
       
       <CardContent className="space-y-6">
-        <LoginTestPanel showTestPanel={showTestPanel} />
-
         <form onSubmit={handleSubmit} className="space-y-5">
           <IdentifierField
             identifier={identifier}
