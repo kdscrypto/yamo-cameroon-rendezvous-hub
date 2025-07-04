@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { X, Upload, File, Image, AlertCircle } from 'lucide-react';
+import { X, Upload, File, Image } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -31,19 +31,56 @@ const AttachmentUpload = ({
   const [attachments, setAttachments] = useState<AttachmentFile[]>([]);
   const [isUploading, setIsUploading] = useState(false);
 
+  const uploadFile = async (attachment: AttachmentFile): Promise<{ url: string; name: string; type: string; size: number } | null> => {
+    try {
+      const fileExt = attachment.file.name.split('.').pop();
+      const fileName = `${user!.id}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+
+      // Create a simple upload without progress tracking for now
+      const { data, error } = await supabase.storage
+        .from('message-attachments')
+        .upload(fileName, attachment.file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('message-attachments')
+        .getPublicUrl(fileName);
+
+      // Update progress to 100%
+      setAttachments(prev => 
+        prev.map(att => 
+          att.id === attachment.id 
+            ? { ...att, progress: 100, uploaded: true, url: publicUrl }
+            : att
+        )
+      );
+
+      return {
+        url: publicUrl,
+        name: attachment.file.name,
+        type: attachment.file.type,
+        size: attachment.file.size
+      };
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error(`Erreur lors de l'upload de ${attachment.file.name}`);
+      setAttachments(prev => prev.filter(att => att.id !== attachment.id));
+      return null;
+    }
+  };
+
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (!user) {
       toast.error('Vous devez être connecté pour envoyer des fichiers');
       return;
     }
 
-    // Validate file count
     if (attachments.length + acceptedFiles.length > maxFiles) {
       toast.error(`Maximum ${maxFiles} fichiers autorisés`);
       return;
     }
 
-    // Validate file sizes
     const oversizedFiles = acceptedFiles.filter(file => file.size > maxSizeInMB * 1024 * 1024);
     if (oversizedFiles.length > 0) {
       toast.error(`Fichier(s) trop volumineux. Maximum ${maxSizeInMB}MB par fichier.`);
@@ -61,56 +98,7 @@ const AttachmentUpload = ({
 
     setAttachments(prev => [...prev, ...newAttachments]);
 
-    // Upload files
-    const uploadPromises = newAttachments.map(async (attachment) => {
-      try {
-        const fileExt = attachment.file.name.split('.').pop();
-        const fileName = `${user.id}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
-
-        const { data, error } = await supabase.storage
-          .from('message-attachments')
-          .upload(fileName, attachment.file, {
-            onUploadProgress: (progress) => {
-              const percentage = (progress.loaded / progress.total) * 100;
-              setAttachments(prev => 
-                prev.map(att => 
-                  att.id === attachment.id 
-                    ? { ...att, progress: percentage }
-                    : att
-                )
-              );
-            }
-          });
-
-        if (error) throw error;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('message-attachments')
-          .getPublicUrl(fileName);
-
-        setAttachments(prev => 
-          prev.map(att => 
-            att.id === attachment.id 
-              ? { ...att, uploaded: true, url: publicUrl }
-              : att
-          )
-        );
-
-        return {
-          url: publicUrl,
-          name: attachment.file.name,
-          type: attachment.file.type,
-          size: attachment.file.size
-        };
-      } catch (error) {
-        console.error('Upload error:', error);
-        toast.error(`Erreur lors de l'upload de ${attachment.file.name}`);
-        // Remove failed attachment
-        setAttachments(prev => prev.filter(att => att.id !== attachment.id));
-        return null;
-      }
-    });
-
+    const uploadPromises = newAttachments.map(uploadFile);
     const uploadedFiles = await Promise.all(uploadPromises);
     const successfulUploads = uploadedFiles.filter(file => file !== null);
     
@@ -168,7 +156,6 @@ const AttachmentUpload = ({
 
   return (
     <div className="space-y-4">
-      {/* Upload Area */}
       <div
         {...getRootProps()}
         className={`
@@ -189,14 +176,10 @@ const AttachmentUpload = ({
             <p className="text-xs text-gray-500">
               Maximum {maxFiles} fichiers, {maxSizeInMB}MB par fichier
             </p>
-            <p className="text-xs text-gray-500">
-              Images, PDF, documents Word acceptés
-            </p>
           </div>
         )}
       </div>
 
-      {/* Attachments List */}
       {attachments.length > 0 && (
         <div className="space-y-2">
           <h4 className="text-sm font-medium">Fichiers joints ({attachments.length}/{maxFiles})</h4>
@@ -232,7 +215,6 @@ const AttachmentUpload = ({
         </div>
       )}
 
-      {/* Upload Status */}
       {isUploading && (
         <div className="flex items-center gap-2 text-sm text-blue-600">
           <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />

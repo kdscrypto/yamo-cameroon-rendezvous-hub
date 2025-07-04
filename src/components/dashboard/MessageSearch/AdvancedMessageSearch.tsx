@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { MessageSquare, Search, FileText, Calendar } from 'lucide-react';
 import SearchFilters, { SearchFilters as SearchFiltersType } from './SearchFilters';
@@ -17,6 +16,7 @@ interface SearchResult {
   created_at: string;
   conversation_id: string;
   subject?: string;
+  is_read: boolean;
   message_attachments?: Array<{
     id: string;
     file_name: string;
@@ -25,7 +25,7 @@ interface SearchResult {
   sender_profile?: {
     full_name: string | null;
     email: string | null;
-  };
+  } | null;
 }
 
 interface AdvancedMessageSearchProps {
@@ -64,7 +64,6 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
         .order('created_at', { ascending: false })
         .limit(50);
 
-      // Apply date filters
       if (filters.dateFrom) {
         query = query.gte('created_at', filters.dateFrom.toISOString());
       }
@@ -81,9 +80,8 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
         throw error;
       }
 
-      let results = data as SearchResult[];
+      let results = data as unknown as SearchResult[];
 
-      // Apply client-side filters
       if (filters.hasAttachments !== undefined) {
         results = results.filter(msg => 
           filters.hasAttachments 
@@ -95,7 +93,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
       if (filters.isUnread !== undefined) {
         results = results.filter(msg => {
           const isRecipient = msg.recipient_id === user.id;
-          if (!isRecipient) return true; // Show sent messages regardless
+          if (!isRecipient) return true;
           return filters.isUnread ? !msg.is_read : msg.is_read;
         });
       }

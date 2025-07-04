@@ -30,7 +30,7 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
     if (messages) {
       setAllMessages(messages);
     }
-  }, [messages]);
+  });
 
   const handleLoadMore = (newMessages: Message[], direction: 'up' | 'down') => {
     setAllMessages(prev => {

@@ -1,16 +1,15 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { Message } from './types';
-import { useMessageRateLimit } from './MessageRateLimiter';
-import { validateRecipient, validateMessageContent } from './RecipientValidator';
+import { useMessageManagement } from './useMessageManagement';
 
 export const useConversationData = (conversationId: string) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { checkRateLimit, isRateLimited } = useMessageRateLimit(user?.id || '');
 
   const { data: conversation } = useQuery({
     queryKey: ['conversation', conversationId],
@@ -33,7 +32,6 @@ export const useConversationData = (conversationId: string) => {
     }
   });
 
-  // New query to fetch other participant's profile
   const { data: otherParticipantProfile } = useQuery({
     queryKey: ['other-participant-profile', conversationId, conversation],
     queryFn: async () => {
@@ -83,61 +81,8 @@ export const useConversationData = (conversationId: string) => {
     }
   });
 
-  const sendMessageMutation = useMutation({
-    mutationFn: async (content: string) => {
-      if (!user || !conversation) throw new Error('User or conversation not found');
+  const { sendMessage, isSendingMessage, isRateLimited } = useMessageManagement(conversationId, conversation);
 
-      // Rate limiting check
-      if (!checkRateLimit()) {
-        throw new Error('Rate limit exceeded');
-      }
-
-      // Validate message content
-      const contentValidation = validateMessageContent(content);
-      if (!contentValidation.isValid) {
-        throw new Error(contentValidation.error);
-      }
-
-      // Safely handle participants as Json type and convert to string array
-      const participants = Array.isArray(conversation.participants) 
-        ? conversation.participants as string[]
-        : [];
-      
-      const otherParticipant = participants.find((p: string) => p !== user.id);
-      if (!otherParticipant) throw new Error('Other participant not found');
-
-      // Validate recipient
-      const recipientValidation = await validateRecipient(otherParticipant, user.id);
-      if (!recipientValidation.isValid) {
-        throw new Error(recipientValidation.error);
-      }
-
-      const { data, error } = await supabase
-        .from('messages')
-        .insert({
-          sender_id: user.id,
-          recipient_id: otherParticipant,
-          conversation_id: conversationId,
-          content: content.trim(),
-          ad_id: conversation.ad_id || null
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['conversation-messages', conversationId] });
-      toast.success('Message envoyé');
-    },
-    onError: (error) => {
-      console.error('Error sending message:', error);
-      toast.error(error.message || 'Erreur lors de l\'envoi du message');
-    }
-  });
-
-  // Mark messages as read when viewing conversation
   useEffect(() => {
     if (!user || !messages) return;
 
@@ -161,7 +106,6 @@ export const useConversationData = (conversationId: string) => {
     }
   }, [messages, user]);
 
-  // Set up real-time subscription for new messages
   useEffect(() => {
     if (!conversationId) return;
 
@@ -181,7 +125,6 @@ export const useConversationData = (conversationId: string) => {
           console.log('New message in conversation:', payload);
           queryClient.invalidateQueries({ queryKey: ['conversation-messages', conversationId] });
           
-          // Show notification for new messages from others
           if (payload.new.sender_id !== user?.id) {
             toast.success('Nouveau message reçu');
           }
@@ -205,7 +148,6 @@ export const useConversationData = (conversationId: string) => {
     
     if (!conversation) return 'Utilisateur inconnu';
     
-    // Fallback to participant ID
     const participants = Array.isArray(conversation.participants) 
       ? conversation.participants as string[]
       : [];
@@ -228,8 +170,8 @@ export const useConversationData = (conversationId: string) => {
     conversation,
     messages,
     isLoading,
-    sendMessage: sendMessageMutation.mutate,
-    isSendingMessage: sendMessageMutation.isPending || isRateLimited,
+    sendMessage,
+    isSendingMessage,
     getOtherParticipant,
     getOtherParticipantId,
     otherParticipantProfile,
