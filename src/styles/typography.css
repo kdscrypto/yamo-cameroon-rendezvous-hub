@@ -1,0 +1,70 @@
+
+/* Typography and text styles */
+
+@layer base {
+  /* Heading styles with improved contrast */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold text-neutral-100;
+    text-wrap: balance;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Paragraph styles with improved readability */
+  p {
+    text-wrap: pretty;
+    @apply text-neutral-200 leading-relaxed;
+  }
+}
+
+/* === IMPROVED TEXT VISIBILITY === */
+@layer utilities {
+  /* Enhanced text colors for better visibility */
+  .text-enhanced {
+    @apply text-neutral-100;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+  
+  .text-enhanced-muted {
+    @apply text-neutral-300;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  }
+  
+  .text-enhanced-subtle {
+    @apply text-neutral-400;
+  }
+  
+  /* Override any problematic text colors */
+  .text-red-500,
+  .text-red-600,
+  .text-red-700,
+  .text-red-800,
+  .text-red-900,
+  .text-red-300 {
+    @apply text-red-400 !important;
+  }
+  
+  /* Override destructive colors */
+  .text-destructive {
+    @apply text-red-400 !important;
+  }
+  
+  /* Make sure muted-foreground is always visible */
+  .text-muted-foreground {
+    @apply text-neutral-400 !important;
+  }
+  
+  /* Primary text variants */
+  .text-primary-enhanced {
+    @apply text-primary-400;
+    text-shadow: 0 0 20px rgba(255, 144, 0, 0.3);
+  }
+  
+  /* TEXT UTILITIES */
+  .text-shadow {
+    text-shadow: 0 1px 2px hsl(var(--background) / 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 2px 4px hsl(var(--background) / 0.7);
+  }
+}

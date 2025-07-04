@@ -1,0 +1,72 @@
+
+/* Accessibility and responsive styles */
+
+/* === SCROLLBAR STYLES === */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-neutral-800/20;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/40 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary/60;
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--primary) / 0.4) hsl(var(--neutral-800) / 0.2);
+}
+
+/* === MOTION PREFERENCES === */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  /* Still allow some essential animations for UX */
+  .animate-accordion-down,
+  .animate-accordion-up {
+    animation-duration: 0.2s !important;
+  }
+}
+
+/* === HIGH CONTRAST MODE === */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 100 100 100;
+    --foreground: 255 255 255;
+    --muted-foreground: 200 200 200;
+  }
+}
+
+/* === PRINT STYLES === */
+@media print {
+  :root {
+    --background: 255 255 255;
+    --foreground: 0 0 0;
+    --card: 255 255 255;
+    --card-foreground: 0 0 0;
+    --border: 0 0 0;
+  }
+  
+  * {
+    @apply shadow-none;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}
