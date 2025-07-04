@@ -15,7 +15,8 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
     isLoading,
     sendMessage,
     isSendingMessage,
-    getOtherParticipant
+    getOtherParticipant,
+    getOtherParticipantId
   } = useConversationData(conversationId);
 
   if (isLoading) {
@@ -28,6 +29,7 @@ const ConversationView = ({ conversationId, onBack }: ConversationViewProps) => 
         onBack={onBack}
         adTitle={conversation?.ads?.title}
         otherParticipant={getOtherParticipant()}
+        otherParticipantId={getOtherParticipantId()}
       />
 
       <div className="flex flex-col">

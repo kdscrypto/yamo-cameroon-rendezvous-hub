@@ -31,6 +31,35 @@ export const useConversationData = (conversationId: string) => {
     }
   });
 
+  // New query to fetch other participant's profile
+  const { data: otherParticipantProfile } = useQuery({
+    queryKey: ['other-participant-profile', conversationId, conversation],
+    queryFn: async () => {
+      if (!conversation || !user) return null;
+      
+      const participants = Array.isArray(conversation.participants) 
+        ? conversation.participants as string[]
+        : [];
+      
+      const otherParticipantId = participants.find((p: string) => p !== user.id);
+      if (!otherParticipantId) return null;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, full_name, email')
+        .eq('id', otherParticipantId)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching other participant profile:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!conversation && !!user
+  });
+
   const { data: messages, isLoading } = useQuery({
     queryKey: ['conversation-messages', conversationId],
     queryFn: async () => {
@@ -147,9 +176,17 @@ export const useConversationData = (conversationId: string) => {
   }, [conversationId, user, queryClient]);
 
   const getOtherParticipant = (): string => {
+    if (otherParticipantProfile?.full_name) {
+      return otherParticipantProfile.full_name;
+    }
+    
+    if (otherParticipantProfile?.email) {
+      return otherParticipantProfile.email;
+    }
+    
     if (!conversation) return 'Utilisateur inconnu';
     
-    // Safely handle participants as Json type and convert to string array
+    // Fallback to participant ID
     const participants = Array.isArray(conversation.participants) 
       ? conversation.participants as string[]
       : [];
@@ -158,12 +195,24 @@ export const useConversationData = (conversationId: string) => {
     return otherParticipantId || 'Utilisateur inconnu';
   };
 
+  const getOtherParticipantId = (): string | undefined => {
+    if (!conversation || !user) return undefined;
+    
+    const participants = Array.isArray(conversation.participants) 
+      ? conversation.participants as string[]
+      : [];
+    
+    return participants.find((p: string) => p !== user.id);
+  };
+
   return {
     conversation,
     messages,
     isLoading,
     sendMessage: sendMessageMutation.mutate,
     isSendingMessage: sendMessageMutation.isPending,
-    getOtherParticipant
+    getOtherParticipant,
+    getOtherParticipantId,
+    otherParticipantProfile
   };
 };
