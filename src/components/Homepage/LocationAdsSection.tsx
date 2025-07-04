@@ -44,7 +44,10 @@ const LocationAdsSection = React.memo(({
               <span className="animate-bounce-gentle">{emoji}</span>
               Hot à {displayName}
             </h2>
-            <Button variant="outline" asChild className="text-sm sm:text-base">
+            <Button 
+              asChild
+              className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0"
+            >
               <Link to={`/browse?location=${city}`}>
                 <span className="hidden sm:inline">Voir toutes les annonces {displayName}</span>
                 <span className="sm:hidden">Voir {displayName}</span>
@@ -72,7 +75,10 @@ const LocationAdsSection = React.memo(({
             <span className="animate-bounce-gentle">{emoji}</span>
             Hot à {displayName}
           </h2>
-          <Button variant="outline" asChild className="text-sm sm:text-base">
+          <Button 
+            asChild
+            className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border-0"
+          >
             <Link to={`/browse?location=${city}`}>
               <span className="hidden sm:inline">Voir toutes les annonces {displayName}</span>
               <span className="sm:hidden">Voir {displayName}</span>
