@@ -28,6 +28,8 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
     mutationFn: async () => {
       if (!user) throw new Error('User not authenticated');
       
+      console.log('Creating conversation between:', user.id, 'and', adOwnerId);
+      
       // Vérifier si une conversation existe déjà
       const { data: existingConversation } = await supabase
         .from('conversations')
@@ -37,6 +39,7 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
         .single();
 
       if (existingConversation) {
+        console.log('Existing conversation found:', existingConversation.id);
         return existingConversation.id;
       }
 
@@ -50,10 +53,16 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
         .select('id')
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error creating conversation:', error);
+        throw error;
+      }
+      
+      console.log('New conversation created:', newConversation.id);
       return newConversation.id;
     },
     onSuccess: (conversationId) => {
+      console.log('Navigating to conversation:', conversationId);
       navigate(`/dashboard?conversation=${conversationId}`);
     },
     onError: (error) => {
@@ -67,7 +76,10 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
   });
 
   const handleContactAction = (action: 'call' | 'whatsapp' | 'message') => {
+    console.log('Contact action triggered:', action);
+    
     if (!user) {
+      console.log('User not authenticated, redirecting to login');
       toast({
         title: "Connexion requise",
         description: "Vous devez être connecté pour contacter l'annonceur.",
@@ -87,12 +99,14 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
         });
         return;
       }
+      console.log('Starting private message conversation');
       createConversationMutation.mutate();
       return;
     }
 
     // Pour les autres actions, vérifier les informations de contact
     if (!contactInfo) {
+      console.log('No contact info available');
       toast({
         title: "Erreur",
         description: "Impossible de charger les informations de contact.",
@@ -104,7 +118,9 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
     const phoneNumber = contactInfo.phone;
     const whatsappNumber = contactInfo.whatsapp || contactInfo.phone;
 
-    if (!phoneNumber) {
+    console.log('Contact info:', { phoneNumber, whatsappNumber });
+
+    if (!phoneNumber && action === 'call') {
       toast({
         title: "Erreur",
         description: "Aucun numéro de téléphone disponible.",
@@ -115,6 +131,7 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
 
     switch (action) {
       case 'call':
+        console.log('Initiating phone call to:', phoneNumber);
         window.location.href = `tel:${phoneNumber}`;
         toast({
           title: "Appel en cours",
@@ -131,6 +148,7 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
           });
           return;
         }
+        console.log('Opening WhatsApp with:', whatsappNumber);
         const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/\D/g, '')}?text=Bonjour, je suis intéressé(e) par votre annonce "${adTitle}"`;
         window.open(whatsappUrl, '_blank');
         toast({
@@ -142,15 +160,15 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
   };
 
   return (
-    <Card>
+    <Card className="bg-card/50 border-border/50">
       <CardContent className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Contacter</h2>
+        <h2 className="text-xl font-semibold mb-4 text-yellow-400">Contacter</h2>
         {!user ? (
           <div className="text-center py-8">
-            <p className="text-muted-foreground mb-4">
+            <p className="text-white mb-4">
               Vous devez être connecté pour contacter l'annonceur.
             </p>
-            <Button onClick={() => navigate('/login')} className="w-full">
+            <Button onClick={() => navigate('/login')} className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold">
               Se connecter
             </Button>
           </div>
@@ -169,7 +187,7 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
             <Button 
               size="lg" 
               variant="outline" 
-              className="w-full"
+              className="w-full border-yellow-500 text-yellow-400 hover:bg-yellow-500/10"
               onClick={() => handleContactAction('whatsapp')}
               disabled={!contactInfo?.phone && !contactInfo?.whatsapp}
             >
@@ -180,7 +198,7 @@ const AdContactSection = ({ adTitle, adId, adOwnerId, contactInfo }: AdContactSe
             <Button 
               size="lg" 
               variant="outline" 
-              className="w-full"
+              className="w-full border-yellow-500 text-yellow-400 hover:bg-yellow-500/10"
               onClick={() => handleContactAction('message')}
               disabled={createConversationMutation.isPending || user.id === adOwnerId}
             >

@@ -63,12 +63,12 @@ const OptimizedAdCard = React.memo(({
 
       {/* Content Section */}
       <CardContent className="p-3 space-y-2">
-        {/* Title - En jaune selon la demande */}
+        {/* Title - En jaune */}
         <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-yellow-400 hover:text-yellow-300 transition-colors">
           {title}
         </h3>
         
-        {/* Description - En blanc selon la demande */}
+        {/* Description - En blanc */}
         <p className="text-xs text-white opacity-80 line-clamp-2 leading-relaxed">
           {description}
         </p>
@@ -79,7 +79,7 @@ const OptimizedAdCard = React.memo(({
             <MapPin className="w-3 h-3" />
             <span className="capitalize">{location}</span>
           </div>
-          <span className="text-yellow-600 bg-yellow-500/10 px-2 py-1 rounded text-xs font-medium capitalize">
+          <span className="text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded text-xs font-medium capitalize">
             {category}
           </span>
         </div>

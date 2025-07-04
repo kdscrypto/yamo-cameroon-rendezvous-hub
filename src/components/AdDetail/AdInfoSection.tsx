@@ -57,7 +57,7 @@ const AdInfoSection = ({
     <div className="space-y-6">
       <div>
         <div className="flex flex-wrap gap-2 mb-4">
-          <Badge variant="outline" className="text-primary border-primary/30">
+          <Badge variant="outline" className="text-yellow-400 border-yellow-400/30 bg-yellow-400/10">
             {getCategoryDisplay(category)}
           </Badge>
           {isVip && (
@@ -67,9 +67,9 @@ const AdInfoSection = ({
           )}
         </div>
         
-        <h1 className="text-3xl font-bold mb-4">{title}</h1>
+        <h1 className="text-3xl font-bold mb-4 text-yellow-400">{title}</h1>
         
-        <div className="flex items-center gap-4 text-muted-foreground mb-4">
+        <div className="flex items-center gap-4 text-yellow-500 mb-4">
           <div className="flex items-center gap-1">
             <MapPin className="w-4 h-4" />
             {getLocationDisplay(location)}
@@ -81,16 +81,16 @@ const AdInfoSection = ({
         </div>
 
         {price && (
-          <div className="text-3xl font-bold text-primary mb-6">
+          <div className="text-3xl font-bold text-yellow-400 mb-6">
             {price.toLocaleString()} FCFA
           </div>
         )}
       </div>
 
-      <Card>
+      <Card className="bg-card/50 border-border/50">
         <CardContent className="p-6">
-          <h2 className="text-xl font-semibold mb-4">Description</h2>
-          <p className="text-muted-foreground whitespace-pre-wrap leading-relaxed">
+          <h2 className="text-xl font-semibold mb-4 text-yellow-400">Description</h2>
+          <p className="text-white whitespace-pre-wrap leading-relaxed">
             {description || 'Aucune description disponible.'}
           </p>
         </CardContent>
