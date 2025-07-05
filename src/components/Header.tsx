@@ -93,11 +93,7 @@ const Header = () => {
                 className="w-full h-full object-contain filter brightness-110"
               />
             </div>
-            <span className="text-3xl font-bold text-primary hover:text-primary/90 transition-all duration-300 animate-pulse drop-shadow-lg" 
-                  style={{
-                    textShadow: '0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 0 60px hsl(var(--primary) / 0.1)',
-                    animation: 'glow 2s ease-in-out infinite alternate'
-                  }}>
+            <span className="text-3xl font-bold text-primary hover:text-primary/90 transition-all duration-300 logo-glow drop-shadow-lg">
               Yamo
             </span>
           </Link>
@@ -191,18 +187,6 @@ const Header = () => {
           </nav>
         </div>
       </div>
-
-      {/* Add the glow animation keyframes */}
-      <style jsx>{`
-        @keyframes glow {
-          from {
-            text-shadow: 0 0 20px hsl(var(--primary) / 0.5), 0 0 40px hsl(var(--primary) / 0.3), 0 0 60px hsl(var(--primary) / 0.1);
-          }
-          to {
-            text-shadow: 0 0 30px hsl(var(--primary) / 0.8), 0 0 60px hsl(var(--primary) / 0.5), 0 0 90px hsl(var(--primary) / 0.2);
-          }
-        }
-      `}</style>
     </header>
   );
 };
