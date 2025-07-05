@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Eye } from 'lucide-react';
 
@@ -9,8 +9,44 @@ interface AgeVerificationProps {
 
 const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
   const [isExiting, setIsExiting] = useState(false);
+  const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [countdown, setCountdown] = useState(3);
+
+  // Security delay before button becomes clickable
+  useEffect(() => {
+    console.log('AgeVerification: Component mounted, starting security delay');
+    
+    const timer = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          setButtonEnabled(true);
+          console.log('AgeVerification: Button enabled after security delay');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  const handleConfirm = () => {
+    if (!buttonEnabled) {
+      console.log('AgeVerification: Attempt to confirm before button enabled - blocked');
+      return;
+    }
+    
+    console.log('AgeVerification: Age verification confirmed by user');
+    // Use sessionStorage instead of localStorage for session-only persistence
+    sessionStorage.setItem('ageVerified', 'true');
+    sessionStorage.setItem('ageVerifiedTimestamp', Date.now().toString());
+    onConfirm();
+  };
 
   const handleExit = () => {
+    console.log('AgeVerification: User chose to exit (under 18)');
     setIsExiting(true);
     setTimeout(() => {
       window.location.href = 'https://www.google.com';
@@ -77,15 +113,31 @@ const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
             </div>
           </div>
 
+          {/* Security countdown notice */}
+          {!buttonEnabled && (
+            <div className="text-center mb-6">
+              <div className="bg-yellow-900/20 border border-yellow-600/30 rounded-lg p-4">
+                <p className="text-yellow-300 text-sm">
+                  Veuillez patienter {countdown} seconde{countdown > 1 ? 's' : ''}...
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* Action buttons with improved UX */}
           <div className="space-y-4">
             <Button 
-              onClick={onConfirm}
+              onClick={handleConfirm}
+              disabled={!buttonEnabled}
               size="lg"
-              className="w-full gradient-gold text-black hover:opacity-90 active:scale-[0.98] px-8 py-4 text-lg font-semibold border-0 rounded-xl shadow-lg hover:shadow-luxury transition-all duration-300 transform hover:-translate-y-0.5"
+              className={`w-full px-8 py-4 text-lg font-semibold border-0 rounded-xl shadow-lg transition-all duration-300 transform ${
+                buttonEnabled 
+                  ? 'gradient-gold text-black hover:opacity-90 active:scale-[0.98] hover:shadow-luxury hover:-translate-y-0.5' 
+                  : 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50'
+              }`}
             >
               <Shield className="w-5 h-5 mr-2" />
-              J'ai 18 ans ou plus - Accéder au site
+              {buttonEnabled ? "J'ai 18 ans ou plus - Accéder au site" : `Disponible dans ${countdown}s`}
             </Button>
             
             <Button 

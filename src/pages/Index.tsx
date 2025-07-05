@@ -14,22 +14,43 @@ const Index = React.memo(() => {
   const [ageVerified, setAgeVerified] = useState(false);
   const { getSEOForPath } = useSEO();
 
-  // Vérifier si l'utilisateur a déjà confirmé son âge
+  // Check age verification with enhanced security
   useEffect(() => {
-    const verified = localStorage.getItem('ageVerified');
-    if (verified === 'true') {
-      setAgeVerified(true);
+    console.log('Index: Checking age verification status');
+    
+    // Check sessionStorage instead of localStorage
+    const verified = sessionStorage.getItem('ageVerified');
+    const timestamp = sessionStorage.getItem('ageVerifiedTimestamp');
+    
+    if (verified === 'true' && timestamp) {
+      const verificationTime = parseInt(timestamp);
+      const currentTime = Date.now();
+      const hoursSinceVerification = (currentTime - verificationTime) / (1000 * 60 * 60);
+      
+      // Expire verification after 24 hours for additional security
+      if (hoursSinceVerification > 24) {
+        console.log('Index: Age verification expired (>24h), requiring re-verification');
+        sessionStorage.removeItem('ageVerified');
+        sessionStorage.removeItem('ageVerifiedTimestamp');
+        setAgeVerified(false);
+      } else {
+        console.log('Index: Valid age verification found, proceeding to main content');
+        setAgeVerified(true);
+      }
+    } else {
+      console.log('Index: No valid age verification found, showing verification page');
+      setAgeVerified(false);
     }
   }, []);
 
   const handleAgeVerification = React.useCallback(() => {
-    localStorage.setItem('ageVerified', 'true');
+    console.log('Index: Age verification completed, showing main content');
     setAgeVerified(true);
   }, []);
 
   const seoConfig = getSEOForPath('/');
 
-  // Si l'âge n'est pas vérifié, afficher la page de vérification
+  // If age not verified, show verification page
   if (!ageVerified) {
     return (
       <>
