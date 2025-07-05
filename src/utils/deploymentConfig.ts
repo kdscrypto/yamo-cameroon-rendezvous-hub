@@ -1,17 +1,17 @@
 
 // Configuration pour le déploiement
 export const DEPLOYMENT_CONFIG = {
-  // URL de production (à mettre à jour après déploiement)
-  PRODUCTION_URL: 'https://yamo.netlify.app',
+  // URL de production mise à jour avec votre domaine personnalisé
+  PRODUCTION_URL: 'https://yamo.chat',
   
   // URL de développement
   DEVELOPMENT_URL: 'http://localhost:8080',
   
   // Configuration Supabase
   SUPABASE_URL: 'https://lusovklxvtzhluekrhwvu.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1c292a2x4dnR6aGx1ZWtod3Z1Iiwicm9sZUkiImFub24iLCJpYXQiOjE3NDk5NDIyOTQsImV4cCI6MjA2NTUxODI5NH0.u4cFSTWFbC0ar9Fie1YZW26P-g1a_3iyDHscEWPLZcc',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1c292a2x4dnR6aGx1ZWtod3Z1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5NDIyOTQsImV4cCI6MjA2NTUxODI5NH0.u4cFSTWFbC0ar9Fie1YZW26P-g1a_3iyDHscEWPLZcc',
   
-  // Métadonnées pour le SEO
+  // Métadonnées pour le SEO mises à jour
   META: {
     title: 'Yamo - Plateforme d\'annonces adultes au Cameroun',
     description: 'Découvrez Yamo, la plateforme de référence pour les annonces adultes au Cameroun. Rencontres, massages, produits adultes en toute discrétion et sécurité.',
@@ -30,7 +30,7 @@ export const getBaseUrl = (): string => {
     return DEPLOYMENT_CONFIG.DEVELOPMENT_URL;
   }
   
-  // En production
+  // En production avec le nouveau domaine personnalisé
   return DEPLOYMENT_CONFIG.PRODUCTION_URL;
 };
 
