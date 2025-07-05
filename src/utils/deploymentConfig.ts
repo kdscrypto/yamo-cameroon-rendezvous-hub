@@ -1,4 +1,5 @@
 
+
 // Configuration pour le déploiement
 export const DEPLOYMENT_CONFIG = {
   // URL de production mise à jour avec votre domaine personnalisé
@@ -38,3 +39,4 @@ export const getBaseUrl = (): string => {
 export const isProduction = (): boolean => {
   return import.meta.env.PROD;
 };
+

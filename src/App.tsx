@@ -44,6 +44,7 @@ const App = () => (
             <Route path="/browse" element={<Browse />} />
             <Route path="/create-ad" element={<CreateAd />} />
             <Route path="/moderation" element={<Moderation />} />
+            <Route path="/admin/moderation" element={<Moderation />} />
             <Route path="/ad/:id" element={<AdDetail />} />
             <Route path="/rencontres" element={<Browse />} />
             <Route path="/massages" element={<Browse />} />

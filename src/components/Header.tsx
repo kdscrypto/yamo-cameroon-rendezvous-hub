@@ -1,9 +1,12 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { User, LogOut, Settings, BarChart3 } from 'lucide-react';
+import { User, LogOut, Settings, BarChart3, Shield } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import SearchBar from '@/components/SearchBar';
 import {
   DropdownMenu,
@@ -18,6 +21,29 @@ const Header = () => {
   const { user, signOut, loading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  // Check if user has moderator or admin role
+  const { data: userRole } = useQuery({
+    queryKey: ['user-role', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .in('role', ['moderator', 'admin'])
+        .single();
+      
+      if (error) {
+        console.log('No moderation role found for user');
+        return null;
+      }
+      
+      return data?.role as 'moderator' | 'admin';
+    },
+    enabled: !!user
+  });
 
   const handleSignOut = async () => {
     try {
@@ -156,6 +182,14 @@ const Header = () => {
                             <span className="font-medium">Profil</span>
                           </Link>
                         </DropdownMenuItem>
+                        {userRole && (
+                          <DropdownMenuItem asChild>
+                            <Link to="/moderation" className="cursor-pointer text-neutral-200 hover:bg-neutral-800 hover:text-primary-400 transition-colors duration-200 flex items-center py-3 px-4">
+                              <Shield className="mr-3 h-5 w-5" />
+                              <span className="font-medium">Modération</span>
+                            </Link>
+                          </DropdownMenuItem>
+                        )}
                         <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-neutral-200 hover:bg-neutral-800 hover:text-red-400 transition-colors duration-200 flex items-center py-3 px-4">
                           <LogOut className="mr-3 h-5 w-5" />
                           <span className="font-medium">Se déconnecter</span>
