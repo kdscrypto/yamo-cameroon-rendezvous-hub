@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { User, LogOut, Settings, BarChart3 } from 'lucide-react';
@@ -81,19 +80,19 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-background border-b border-border sticky top-0 z-50 shadow-lg backdrop-blur-sm">
+    <header className="bg-neutral-900 border-b border-primary/20 sticky top-0 z-50 shadow-lg backdrop-blur-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
-          {/* Logo avec amélioration visuelle et animation de glow */}
+          {/* Logo avec amélioration visuelle */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-to-r from-primary to-accent rounded-xl flex items-center justify-center p-2 shadow-lg group-hover:shadow-primary/25 transition-all duration-300">
+            <div className="w-10 h-10 bg-gradient-to-r from-primary-400 to-primary-600 rounded-xl flex items-center justify-center p-2 shadow-lg group-hover:shadow-primary/25 transition-all duration-300">
               <img 
                 src="/lovable-uploads/69763ec0-e661-4629-ba0e-0bfe2a747829.png" 
                 alt="Yamo Logo" 
                 className="w-full h-full object-contain filter brightness-110"
               />
             </div>
-            <span className="text-3xl font-bold text-primary hover:text-primary/90 transition-all duration-300 logo-glow drop-shadow-lg">
+            <span className="text-3xl font-bold bg-gradient-to-r from-primary-400 to-primary-600 bg-clip-text text-transparent hover:from-primary-300 hover:to-primary-500 transition-all duration-300">
               Yamo
             </span>
           </Link>
@@ -106,7 +105,7 @@ const Header = () => {
                 onChange={setSearchQuery}
                 onSearch={handleSearch}
                 placeholder="Rechercher des annonces..."
-                className="bg-card border-border focus:border-primary text-foreground placeholder:text-muted-foreground"
+                className="bg-neutral-800 border-primary/30 focus:border-primary/60 text-neutral-100 placeholder:text-neutral-400"
               />
             </div>
           </div>
@@ -120,44 +119,44 @@ const Header = () => {
                   <div className="flex items-center space-x-6">
                     <button 
                       onClick={handleCreateAdClick}
-                      className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-primary/25 transform hover:scale-105"
+                      className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-primary/25 transform hover:scale-105"
                     >
                       Publier une annonce
                     </button>
                     
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="relative h-12 w-12 rounded-full hover:bg-accent border-2 border-transparent hover:border-primary/30 transition-all duration-300">
+                        <Button variant="ghost" className="relative h-12 w-12 rounded-full hover:bg-neutral-800 border-2 border-transparent hover:border-primary/30 transition-all duration-300">
                           <Avatar className="h-10 w-10">
                             <AvatarImage src={user.user_metadata?.avatar_url} />
-                            <AvatarFallback className="bg-primary text-primary-foreground font-semibold text-sm">
+                            <AvatarFallback className="bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold text-sm">
                               {getUserInitials()}
                             </AvatarFallback>
                           </Avatar>
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-64 bg-card border-border shadow-xl" align="end" forceMount>
-                        <div className="flex items-center justify-start gap-3 p-4 border-b border-border">
+                      <DropdownMenuContent className="w-64 bg-neutral-850 border-primary/20 shadow-xl" align="end" forceMount>
+                        <div className="flex items-center justify-start gap-3 p-4 border-b border-primary/10">
                           <div className="flex flex-col space-y-1 leading-none">
-                            <p className="font-semibold text-foreground text-base">{getUserDisplayName()}</p>
-                            <p className="w-[200px] truncate text-sm text-muted-foreground">
+                            <p className="font-semibold text-neutral-100 text-base">{getUserDisplayName()}</p>
+                            <p className="w-[200px] truncate text-sm text-neutral-400">
                               {user.email}
                             </p>
                           </div>
                         </div>
                         <DropdownMenuItem asChild>
-                          <Link to="/dashboard" className="cursor-pointer text-foreground hover:bg-accent hover:text-primary transition-colors duration-200 flex items-center py-3 px-4">
+                          <Link to="/dashboard" className="cursor-pointer text-neutral-200 hover:bg-neutral-800 hover:text-primary-400 transition-colors duration-200 flex items-center py-3 px-4">
                             <BarChart3 className="mr-3 h-5 w-5" />
                             <span className="font-medium">Tableau de bord</span>
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                          <Link to="/profile" className="cursor-pointer text-foreground hover:bg-accent hover:text-primary transition-colors duration-200 flex items-center py-3 px-4">
+                          <Link to="/profile" className="cursor-pointer text-neutral-200 hover:bg-neutral-800 hover:text-primary-400 transition-colors duration-200 flex items-center py-3 px-4">
                             <Settings className="mr-3 h-5 w-5" />
                             <span className="font-medium">Profil</span>
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-foreground hover:bg-accent hover:text-destructive transition-colors duration-200 flex items-center py-3 px-4">
+                        <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-neutral-200 hover:bg-neutral-800 hover:text-red-400 transition-colors duration-200 flex items-center py-3 px-4">
                           <LogOut className="mr-3 h-5 w-5" />
                           <span className="font-medium">Se déconnecter</span>
                         </DropdownMenuItem>
@@ -169,14 +168,14 @@ const Header = () => {
                   <div className="flex items-center space-x-4">
                     <Link 
                       to="/login" 
-                      className="flex items-center px-5 py-2.5 text-foreground hover:text-primary transition-all duration-300 font-medium border border-transparent hover:border-primary/30 rounded-lg"
+                      className="flex items-center px-5 py-2.5 text-neutral-200 hover:text-primary-400 transition-all duration-300 font-medium border border-transparent hover:border-primary/30 rounded-lg"
                     >
                       <User className="w-5 h-5 mr-2" />
                       Connexion
                     </Link>
                     <button 
                       onClick={handleCreateAdClick}
-                      className="px-6 py-2.5 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-primary/25 transform hover:scale-105"
+                      className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white font-semibold rounded-lg hover:from-primary-600 hover:to-primary-700 transition-all duration-300 shadow-md hover:shadow-lg hover:shadow-primary/25 transform hover:scale-105"
                     >
                       Publier une annonce
                     </button>
