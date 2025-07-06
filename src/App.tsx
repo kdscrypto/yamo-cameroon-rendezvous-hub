@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +24,7 @@ import AdDetail from "./pages/AdDetail";
 import Events from "./pages/Events";
 import ParentalControl from "./pages/ParentalControl";
 import Referral from "@/pages/Referral";
+import UpdatePassword from "./pages/UpdatePassword";
 
 const queryClient = new QueryClient();
 
