@@ -191,9 +191,12 @@ const UserAds = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Mes annonces</h2>
-        <Button asChild>
+        <Button 
+          asChild 
+          className="bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200 px-6 py-3"
+        >
           <Link to="/create-ad">
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-5 h-5 mr-2" />
             Nouvelle annonce
           </Link>
         </Button>
@@ -207,7 +210,7 @@ const UserAds = () => {
             <Clock className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{pendingAds.length}</div>
+            <div className="text-2xl font-bold text-white">{pendingAds.length}</div>
             <p className="text-xs text-muted-foreground">En attente de validation</p>
           </CardContent>
         </Card>
@@ -218,7 +221,7 @@ const UserAds = () => {
             <Check className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{approvedAds.filter(ad => ad.status === 'active').length}</div>
+            <div className="text-2xl font-bold text-white">{approvedAds.filter(ad => ad.status === 'active').length}</div>
             <p className="text-xs text-muted-foreground">Publiées et visibles</p>
           </CardContent>
         </Card>
@@ -229,7 +232,7 @@ const UserAds = () => {
             <AlertCircle className="h-4 w-4 text-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{rejectedAds.length}</div>
+            <div className="text-2xl font-bold text-white">{rejectedAds.length}</div>
             <p className="text-xs text-muted-foreground">Nécessitent attention</p>
           </CardContent>
         </Card>
@@ -238,9 +241,16 @@ const UserAds = () => {
       {!ads || ads.length === 0 ? (
         <Card>
           <CardContent className="text-center py-12">
-            <p className="text-muted-foreground mb-4">Vous n'avez pas encore d'annonces.</p>
-            <Button asChild>
-              <Link to="/create-ad">Créer votre première annonce</Link>
+            <p className="text-muted-foreground mb-6 text-lg">Vous n'avez pas encore d'annonces.</p>
+            <Button 
+              asChild
+              size="lg"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200 px-8 py-4 text-lg"
+            >
+              <Link to="/create-ad">
+                <Plus className="w-6 h-6 mr-3" />
+                Créer votre première annonce
+              </Link>
             </Button>
           </CardContent>
         </Card>

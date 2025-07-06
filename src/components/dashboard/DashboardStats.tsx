@@ -4,30 +4,111 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { MessageSquare, FileText, Eye, Calendar } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { useEffect } from 'react';
 
 const DashboardStats = () => {
   const { user } = useAuth();
 
-  const { data: stats, isLoading } = useQuery({
+  const { data: stats, isLoading, refetch } = useQuery({
     queryKey: ['user-stats', user?.id],
     queryFn: async () => {
       if (!user) return null;
       
-      const { data, error } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', user.id)
-        .single();
+      // Fetch real-time counts directly from the ads table
+      const { data: adsData, error: adsError } = await supabase
+        .from('ads')
+        .select('status, moderation_status')
+        .eq('user_id', user.id);
       
-      if (error) {
-        console.error('Error fetching user stats:', error);
-        return null;
+      if (adsError) {
+        console.error('Error fetching ads for stats:', adsError);
       }
       
-      return data;
+      // Fetch real-time message counts
+      const { data: messagesData, error: messagesError } = await supabase
+        .from('messages')
+        .select('is_read')
+        .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`);
+      
+      if (messagesError) {
+        console.error('Error fetching messages for stats:', messagesError);
+      }
+      
+      // Calculate real-time stats
+      const totalAds = adsData?.length || 0;
+      const activeAds = adsData?.filter(ad => ad.status === 'active' && ad.moderation_status === 'approved').length || 0;
+      const totalMessages = messagesData?.length || 0;
+      const unreadMessages = messagesData?.filter(msg => !msg.is_read).length || 0;
+      
+      return {
+        total_ads: totalAds,
+        active_ads: activeAds,
+        total_messages: totalMessages,
+        unread_messages: unreadMessages
+      };
     },
-    enabled: !!user
+    enabled: !!user,
+    refetchInterval: 30000, // Refetch every 30 seconds for real-time updates
   });
+
+  // Set up real-time subscription for ads and messages
+  useEffect(() => {
+    if (!user) return;
+
+    console.log('Setting up real-time subscription for dashboard stats');
+
+    const adsChannel = supabase
+      .channel('dashboard-ads-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'ads',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Ads updated for dashboard stats:', payload);
+          refetch();
+        }
+      )
+      .subscribe();
+
+    const messagesChannel = supabase
+      .channel('dashboard-messages-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `sender_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Messages updated for dashboard stats:', payload);
+          refetch();
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'messages',
+          filter: `recipient_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Received messages updated for dashboard stats:', payload);
+          refetch();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(adsChannel);
+      supabase.removeChannel(messagesChannel);
+    };
+  }, [user, refetch]);
 
   if (isLoading) {
     return (
@@ -92,7 +173,7 @@ const DashboardStats = () => {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{stat.value}</div>
+            <div className="text-2xl font-bold text-white">{stat.value}</div>
             <p className="text-xs text-muted-foreground">{stat.description}</p>
           </CardContent>
         </Card>
