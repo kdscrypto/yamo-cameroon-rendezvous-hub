@@ -39,7 +39,7 @@ const SearchBar = ({
   return (
     <form onSubmit={handleSubmit} className={`relative ${className}`}>
       <div className={`relative transition-all duration-200 ${isFocused ? 'ring-2 ring-primary ring-opacity-50' : ''} rounded-md`}>
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white w-4 h-4" />
         <Input
           type="text"
           placeholder={placeholder}
@@ -48,7 +48,7 @@ const SearchBar = ({
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           onKeyDown={handleKeyDown}
-          className="pl-10 pr-10 bg-background border-border focus:ring-2 focus:ring-primary focus:border-transparent"
+          className="pl-10 pr-10 bg-neutral-800/50 border-neutral-600 text-white placeholder:text-neutral-300 focus:ring-2 focus:ring-primary focus:border-transparent"
         />
         {value && (
           <Button
@@ -56,7 +56,7 @@ const SearchBar = ({
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-muted hover:text-foreground"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 hover:bg-neutral-700 text-white hover:text-neutral-200"
           >
             <X className="w-3 h-3" />
           </Button>
