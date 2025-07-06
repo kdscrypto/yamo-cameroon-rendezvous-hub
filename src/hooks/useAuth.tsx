@@ -4,7 +4,7 @@ import { useSignUp } from './auth/useSignUp';
 import { useSignIn } from './auth/useSignIn';
 import { useSignOut } from './auth/useSignOut';
 
-export { AuthState };
+export type { AuthState };
 
 export const useAuth = () => {
   const authState = useAuthState();
