@@ -12,22 +12,22 @@ const HeroSection = () => {
       <DynamicColorBackground />
       
       <div className="container mx-auto px-4 text-center relative z-10">
-        {/* Titre principal - exactement comme dans l'image */}
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-yellow-400 mb-6 animate-fade-in">
+        {/* Main title - exactly as in the image */}
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-yellow-400 mb-6 animate-fade-in drop-shadow-lg">
           Bienvenue sur Yamo
         </h1>
         
-        {/* Description - exactement comme dans l'image */}
+        {/* Description - with enhanced text visibility */}
         <div className="max-w-4xl mx-auto mb-12 space-y-2">
-          <p className="text-lg md:text-xl text-gray-200 animate-fade-in">
+          <p className="text-lg md:text-xl text-gray-100 animate-fade-in drop-shadow-md">
             La plateforme de référence pour les annonces adultes au Cameroun.
           </p>
-          <p className="text-lg md:text-xl text-gray-200 animate-fade-in">
+          <p className="text-lg md:text-xl text-gray-100 animate-fade-in drop-shadow-md">
             Trouvez ce que vous cherchez en toute discrétion et sécurité.
           </p>
         </div>
 
-        {/* Boutons d'action - exactement comme dans l'image */}
+        {/* Action buttons - exactly as in the image */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-fade-in">
           <Button 
             onClick={() => navigate('/browse')}
