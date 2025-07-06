@@ -249,6 +249,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          referral_code: string | null
           updated_at: string | null
         }
         Insert: {
@@ -258,6 +259,7 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          referral_code?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -267,7 +269,95 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          referral_code?: string | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      referral_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_points: {
+        Row: {
+          id: string
+          level_1_points: number
+          level_2_points: number
+          total_points: number
+          total_referrals_level_1: number
+          total_referrals_level_2: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          level_1_points?: number
+          level_2_points?: number
+          total_points?: number
+          total_referrals_level_1?: number
+          total_referrals_level_2?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          level_1_points?: number
+          level_2_points?: number
+          total_points?: number
+          total_referrals_level_1?: number
+          total_referrals_level_2?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      referral_relationships: {
+        Row: {
+          created_at: string
+          id: string
+          level: number
+          points_awarded: number
+          referral_code_used: string
+          referred_user_id: string
+          referrer_user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          level: number
+          points_awarded?: number
+          referral_code_used: string
+          referred_user_id: string
+          referrer_user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          level?: number
+          points_awarded?: number
+          referral_code_used?: string
+          referred_user_id?: string
+          referrer_user_id?: string
         }
         Relationships: []
       }
@@ -336,12 +426,24 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_referral_code: {
+        Args: { _user_id: string }
+        Returns: string
+      }
       has_role: {
         Args: {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: boolean
+      }
+      initialize_referral_system: {
+        Args: { _user_id: string }
+        Returns: undefined
+      }
+      process_referral: {
+        Args: { _referred_user_id: string; _referral_code: string }
+        Returns: undefined
       }
     }
     Enums: {

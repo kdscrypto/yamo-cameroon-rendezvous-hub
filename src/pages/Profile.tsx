@@ -5,6 +5,10 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Gift, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const { user, loading } = useAuth();
@@ -42,7 +46,7 @@ const Profile = () => {
       <Header />
       
       <div className="flex-1 container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl">Mon profil</CardTitle>
@@ -82,6 +86,47 @@ const Profile = () => {
                     {new Date(user.created_at).toLocaleDateString('fr-FR')}
                   </p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Section Parrainage */}
+          <Card className="border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-amber-800">
+                <Gift className="w-5 h-5" />
+                Programme de parrainage
+              </CardTitle>
+              <CardDescription className="text-amber-700">
+                Invitez vos amis et gagnez des points de parrainage !
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-medium text-amber-800 mb-1">
+                    Partagez Yamo avec vos amis
+                  </h4>
+                  <p className="text-sm text-amber-700 mb-3">
+                    Vous et vos amis recevrez des points à chaque parrainage
+                  </p>
+                  <div className="flex gap-2">
+                    <Badge className="bg-amber-100 text-amber-800 border-amber-300">
+                      +2 points par parrainage direct
+                    </Badge>
+                    <Badge className="bg-orange-100 text-orange-800 border-orange-300">
+                      +1 point par parrainage indirect
+                    </Badge>
+                  </div>
+                </div>
+                <Link to="/referral">
+                  <Button className="bg-amber-600 hover:bg-amber-700 text-white">
+                    <Gift className="w-4 h-4 mr-2" />
+                    Gérer mes parrainages
+                    <ExternalLink className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
               </div>
             </CardContent>
           </Card>

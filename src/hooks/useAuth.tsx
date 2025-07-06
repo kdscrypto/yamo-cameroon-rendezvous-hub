@@ -42,7 +42,7 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName?: string, phone?: string) => {
+  const signUp = async (email: string, password: string, fullName?: string, phone?: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
     // Validation et normalisation du numéro de téléphone si fourni
@@ -78,6 +78,31 @@ export const useAuth = () => {
         };
       }
     }
+
+    // Validation du code de parrainage si fourni
+    if (referralCode && referralCode.trim()) {
+      const { data: referralData, error: referralError } = await supabase
+        .from('referral_codes')
+        .select('code, user_id')
+        .eq('code', referralCode.trim().toUpperCase())
+        .eq('is_active', true)
+        .maybeSingle();
+
+      if (referralError) {
+        console.error('Erreur lors de la vérification du code de parrainage:', referralError);
+        return { 
+          data: null, 
+          error: { message: "Erreur lors de la vérification du code de parrainage." }
+        };
+      }
+
+      if (!referralData) {
+        return { 
+          data: null, 
+          error: { message: "Code de parrainage invalide." }
+        };
+      }
+    }
     
     const { data, error } = await supabase.auth.signUp({
       email,
@@ -86,7 +111,8 @@ export const useAuth = () => {
         emailRedirectTo: redirectUrl,
         data: {
           full_name: fullName,
-          phone: normalizedPhone
+          phone: normalizedPhone,
+          referral_code: referralCode?.trim().toUpperCase()
         }
       }
     });

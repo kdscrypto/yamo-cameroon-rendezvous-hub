@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
+import ReferralInput from '@/components/referral/ReferralInput';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -21,6 +22,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     confirmPassword: '',
     fullName: '',
     phone: '',
+    referralCode: '',
     acceptTerms: false,
     isAdult: false
   });
@@ -90,7 +92,8 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         formData.email, 
         formData.password, 
         formData.fullName, 
-        formData.phone.trim() || undefined
+        formData.phone.trim() || undefined,
+        formData.referralCode.trim() || undefined
       );
 
       if (error) {
@@ -253,6 +256,13 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
           </button>
         </div>
       </div>
+
+      {/* Code de parrainage */}
+      <ReferralInput
+        value={formData.referralCode}
+        onChange={(value) => handleInputChange('referralCode', value)}
+        disabled={isLoading}
+      />
       
       <div className="space-y-4 pt-2">
         <div className="flex items-start space-x-3">
