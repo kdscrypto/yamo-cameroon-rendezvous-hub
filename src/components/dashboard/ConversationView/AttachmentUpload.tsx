@@ -36,16 +36,24 @@ const AttachmentUpload = ({
       const fileExt = attachment.file.name.split('.').pop();
       const fileName = `${user!.id}/${Date.now()}-${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
 
-      // Create a simple upload without progress tracking for now
+      console.log('Uploading file to message-attachments bucket:', fileName);
+
       const { data, error } = await supabase.storage
         .from('message-attachments')
         .upload(fileName, attachment.file);
 
-      if (error) throw error;
+      if (error) {
+        console.error('Upload error:', error);
+        throw error;
+      }
+
+      console.log('File uploaded successfully:', data);
 
       const { data: { publicUrl } } = supabase.storage
         .from('message-attachments')
         .getPublicUrl(fileName);
+
+      console.log('Public URL generated:', publicUrl);
 
       // Update progress to 100%
       setAttachments(prev => 
@@ -76,6 +84,8 @@ const AttachmentUpload = ({
       return;
     }
 
+    console.log('Files dropped:', acceptedFiles);
+
     if (attachments.length + acceptedFiles.length > maxFiles) {
       toast.error(`Maximum ${maxFiles} fichiers autorisés`);
       return;
@@ -98,16 +108,22 @@ const AttachmentUpload = ({
 
     setAttachments(prev => [...prev, ...newAttachments]);
 
-    const uploadPromises = newAttachments.map(uploadFile);
-    const uploadedFiles = await Promise.all(uploadPromises);
-    const successfulUploads = uploadedFiles.filter(file => file !== null);
-    
-    if (successfulUploads.length > 0) {
-      onAttachmentsChange([...getUploadedAttachments(), ...successfulUploads]);
-      toast.success(`${successfulUploads.length} fichier(s) uploadé(s) avec succès`);
+    try {
+      const uploadPromises = newAttachments.map(uploadFile);
+      const uploadedFiles = await Promise.all(uploadPromises);
+      const successfulUploads = uploadedFiles.filter(file => file !== null);
+      
+      if (successfulUploads.length > 0) {
+        const currentUploaded = getUploadedAttachments();
+        onAttachmentsChange([...currentUploaded, ...successfulUploads]);
+        toast.success(`${successfulUploads.length} fichier(s) uploadé(s) avec succès`);
+      }
+    } catch (error) {
+      console.error('Error during upload process:', error);
+      toast.error('Erreur lors de l\'upload des fichiers');
+    } finally {
+      setIsUploading(false);
     }
-
-    setIsUploading(false);
   }, [user, attachments, maxFiles, maxSizeInMB, onAttachmentsChange]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -123,9 +139,12 @@ const AttachmentUpload = ({
   });
 
   const removeAttachment = (id: string) => {
+    const attachmentToRemove = attachments.find(att => att.id === id);
     setAttachments(prev => prev.filter(att => att.id !== id));
+    
+    // Update the parent component with remaining attachments
     const remainingAttachments = getUploadedAttachments().filter(att => 
-      !attachments.find(a => a.id === id && a.url === att.url)
+      !attachmentToRemove || att.url !== attachmentToRemove.url
     );
     onAttachmentsChange(remainingAttachments);
   };
@@ -167,10 +186,10 @@ const AttachmentUpload = ({
         <input {...getInputProps()} />
         <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
         {isDragActive ? (
-          <p>Déposez les fichiers ici...</p>
+          <p className="text-white">Déposez les fichiers ici...</p>
         ) : (
           <div>
-            <p className="text-sm text-gray-600 mb-1">
+            <p className="text-sm text-white mb-1">
               Cliquez ou glissez-déposez des fichiers ici
             </p>
             <p className="text-xs text-gray-500">
@@ -182,22 +201,22 @@ const AttachmentUpload = ({
 
       {attachments.length > 0 && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium">Fichiers joints ({attachments.length}/{maxFiles})</h4>
+          <h4 className="text-sm font-medium text-white">Fichiers joints ({attachments.length}/{maxFiles})</h4>
           {attachments.map((attachment) => (
-            <div key={attachment.id} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+            <div key={attachment.id} className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg">
               {getFileIcon(attachment.file.type)}
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">{attachment.file.name}</p>
-                <p className="text-xs text-gray-500">{formatFileSize(attachment.file.size)}</p>
+                <p className="text-sm font-medium truncate text-white">{attachment.file.name}</p>
+                <p className="text-xs text-gray-400">{formatFileSize(attachment.file.size)}</p>
                 {!attachment.uploaded && (
                   <Progress value={attachment.progress} className="w-full h-1 mt-1" />
                 )}
               </div>
               <div className="flex items-center gap-2">
                 {attachment.uploaded ? (
-                  <span className="text-xs text-green-600 font-medium">Uploadé</span>
+                  <span className="text-xs text-green-400 font-medium">Uploadé</span>
                 ) : (
-                  <span className="text-xs text-blue-600 font-medium">
+                  <span className="text-xs text-blue-400 font-medium">
                     {Math.round(attachment.progress)}%
                   </span>
                 )}
@@ -206,6 +225,7 @@ const AttachmentUpload = ({
                   size="sm"
                   onClick={() => removeAttachment(attachment.id)}
                   disabled={isUploading}
+                  className="text-white hover:bg-muted/40"
                 >
                   <X className="w-4 h-4" />
                 </Button>
@@ -216,8 +236,8 @@ const AttachmentUpload = ({
       )}
 
       {isUploading && (
-        <div className="flex items-center gap-2 text-sm text-blue-600">
-          <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+        <div className="flex items-center gap-2 text-sm text-blue-400">
+          <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
           Upload en cours...
         </div>
       )}

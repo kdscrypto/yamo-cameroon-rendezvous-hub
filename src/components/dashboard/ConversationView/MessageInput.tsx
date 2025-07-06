@@ -38,6 +38,7 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
     }
 
     try {
+      console.log('Sending message with attachments:', attachments);
       await onSendMessage(message.trim(), attachments.length > 0 ? attachments : undefined);
       setMessage('');
       setAttachments([]);
@@ -79,6 +80,11 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
     }
   };
 
+  const handleAttachmentsChange = (newAttachments: Attachment[]) => {
+    console.log('Attachments updated:', newAttachments);
+    setAttachments(newAttachments);
+  };
+
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
@@ -104,7 +110,7 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
       <Collapsible open={showAttachments} onOpenChange={setShowAttachments}>
         <CollapsibleContent>
           <AttachmentUpload
-            onAttachmentsChange={setAttachments}
+            onAttachmentsChange={handleAttachmentsChange}
             maxFiles={5}
             maxSizeInMB={10}
           />
@@ -178,4 +184,3 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
 };
 
 export default MessageInput;
-
