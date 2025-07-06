@@ -1,161 +1,116 @@
 
-import { createContext, useContext, useEffect, useState } from "react"
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-type Theme = "dark" | "light" | "system"
+type Theme = 'dark' | 'light' | 'system';
 
 type ThemeProviderProps = {
-  children: React.ReactNode
-  defaultTheme?: Theme
-  storageKey?: string
-}
+  children: React.ReactNode;
+  defaultTheme?: Theme;
+  storageKey?: string;
+};
 
 type ThemeProviderState = {
-  theme: Theme
-  setTheme: (theme: Theme) => void
-}
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+};
 
 const initialState: ThemeProviderState = {
-  theme: "system",
+  theme: 'dark',
   setTheme: () => null,
-}
+};
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
-
-// Fonction utilitaire pour vérifier si le DOM est disponible
-const isDOMAvailable = (): boolean => {
-  try {
-    return (
-      typeof window !== "undefined" &&
-      typeof window.document !== "undefined" &&
-      typeof window.document.documentElement !== "undefined" &&
-      window.document.documentElement !== null
-    )
-  } catch {
-    return false
-  }
-}
-
-// Fonction utilitaire pour vérifier localStorage
-const isLocalStorageAvailable = (): boolean => {
-  try {
-    return (
-      typeof window !== "undefined" &&
-      typeof window.localStorage !== "undefined" &&
-      window.localStorage !== null
-    )
-  } catch {
-    return false
-  }
-}
-
-// Fonction utilitaire pour appliquer le thème de manière sécurisée
-const safeApplyTheme = (theme: Theme): void => {
-  console.log("Attempting to apply theme:", theme)
-  
-  if (!isDOMAvailable()) {
-    console.warn("DOM not available, skipping theme application")
-    return
-  }
-
-  try {
-    const root = window.document.documentElement
-    
-    if (!root) {
-      console.warn("documentElement is null")
-      return
-    }
-
-    if (!root.classList) {
-      console.warn("classList is not available on documentElement")
-      return
-    }
-
-    // Nettoyage sécurisé
-    console.log("Removing existing theme classes")
-    root.classList.remove("light", "dark")
-
-    if (theme === "system") {
-      try {
-        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
-        const systemTheme = mediaQuery.matches ? "dark" : "light"
-        console.log("Detected system theme:", systemTheme)
-        root.classList.add(systemTheme)
-      } catch (error) {
-        console.warn("Error detecting system theme:", error)
-        // Fallback sécurisé
-        root.classList.add("dark")
-      }
-    } else {
-      console.log("Adding theme class:", theme)
-      root.classList.add(theme)
-    }
-    
-    console.log("Theme applied successfully")
-  } catch (error) {
-    console.error("Error in safeApplyTheme:", error)
-  }
-}
+const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
-  storageKey = "vite-ui-theme",
+  defaultTheme = 'dark',
+  storageKey = 'yamo-theme',
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    console.log("Initializing theme state")
-    
-    if (!isLocalStorageAvailable()) {
-      console.log("localStorage not available, using default theme:", defaultTheme)
-      return defaultTheme
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      return defaultTheme;
     }
     
     try {
-      const storedTheme = localStorage.getItem(storageKey) as Theme
-      const initialTheme = storedTheme || defaultTheme
-      console.log("Initial theme from storage:", initialTheme)
-      return initialTheme
+      const stored = localStorage.getItem(storageKey) as Theme;
+      return stored || defaultTheme;
     } catch (error) {
-      console.warn("Error reading from localStorage:", error)
-      return defaultTheme
+      console.warn('Failed to access localStorage:', error);
+      return defaultTheme;
     }
-  })
+  });
 
   useEffect(() => {
-    console.log("ThemeProvider useEffect triggered with theme:", theme)
-    safeApplyTheme(theme)
-  }, [theme])
+    // Check if we're in a browser environment
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const root = window.document.documentElement;
+
+    // Clear existing theme classes
+    root.classList.remove('light', 'dark');
+    
+    if (theme === 'system') {
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
+        ? 'dark'
+        : 'light';
+      root.classList.add(systemTheme);
+    } else {
+      root.classList.add(theme);
+    }
+  }, [theme]);
+
+  // Set default dark theme on component mount
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const root = window.document.documentElement;
+    root.classList.add('dark');
+    
+    // Set default theme if none is set
+    try {
+      if (!localStorage.getItem(storageKey)) {
+        localStorage.setItem(storageKey, 'dark');
+      }
+    } catch (error) {
+      console.warn('Failed to set localStorage:', error);
+    }
+  }, [storageKey]);
 
   const value = {
     theme,
-    setTheme: (newTheme: Theme) => {
-      console.log("Setting new theme:", newTheme)
-      
-      if (isLocalStorageAvailable()) {
-        try {
-          localStorage.setItem(storageKey, newTheme)
-          console.log("Theme saved to localStorage")
-        } catch (error) {
-          console.warn("Error saving theme to localStorage:", error)
+    setTheme: (theme: Theme) => {
+      try {
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(storageKey, theme);
         }
+        setTheme(theme);
+      } catch (error) {
+        console.warn('Failed to save theme to localStorage:', error);
+        setTheme(theme);
       }
-      
-      setTheme(newTheme)
     },
-  }
+  };
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>
       {children}
     </ThemeProviderContext.Provider>
-  )
+  );
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext)
+  const context = useContext(ThemeProviderContext);
 
-  if (context === undefined)
-    throw new Error("useTheme must be used within a ThemeProvider")
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
 
-  return context
-}
+  return context;
+};

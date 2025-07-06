@@ -1,73 +1,73 @@
 
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { HelmetProvider } from 'react-helmet-async';
+import App from "./App.tsx";
+import "./index.css";
+import { optimizeForProduction } from './utils/environmentUtils';
 
-// Fonction pour vérifier si le DOM est prêt
-const isDOMReady = (): boolean => {
-  return (
-    typeof window !== "undefined" &&
-    typeof document !== "undefined" &&
-    document.readyState !== "loading"
-  )
+// Optimiser pour la production
+optimizeForProduction();
+
+// Ensure we have a root element before rendering
+const rootElement = document.getElementById("root");
+if (!rootElement) {
+  throw new Error("Root element not found");
 }
 
-// Service Worker registration avec vérification
-const registerServiceWorker = () => {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered successfully:', registration);
-        })
-        .catch((error) => {
-          console.log('Service Worker registration failed:', error);
+createRoot(rootElement).render(
+  <StrictMode>
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
+  </StrictMode>,
+);
+
+// Service worker registration avec gestion d'erreur améliorée
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registered successfully:', registration.scope);
+        
+        // Écouter les mises à jour du service worker
+        registration.addEventListener('updatefound', () => {
+          console.log('Service Worker update found');
         });
-    });
-  }
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
 }
 
-// Fonction d'initialisation de l'application
-const initializeApp = () => {
-  console.log("Initializing app...")
-  
-  const container = document.getElementById('root');
-  if (!container) {
-    console.error('Root element not found');
-    throw new Error('Root element not found');
-  }
+// Sitemap generation utilities (conservé pour compatibilité)
+import { generateSitemap, generateRobotsTxt } from './utils/sitemapGenerator';
 
-  console.log("Root container found, creating React root...")
-  
-  try {
-    const root = createRoot(container);
-    
-    root.render(
-      <StrictMode>
-        <App />
-      </StrictMode>
-    );
-    
-    console.log("React app rendered successfully")
-    
-    // Enregistrer le service worker après le rendu
-    registerServiceWorker()
-    
-  } catch (error) {
-    console.error("Error initializing React app:", error)
-    throw error
-  }
-}
+const sitemap = generateSitemap();
+const robotsTxt = generateRobotsTxt();
 
-// Attendre que le DOM soit prêt avant d'initialiser
-if (isDOMReady()) {
-  console.log("DOM is ready, initializing immediately")
-  initializeApp()
-} else {
-  console.log("DOM not ready, waiting for DOMContentLoaded")
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOMContentLoaded fired, initializing app")
-    initializeApp()
-  })
-}
+// Expose sitemap utilities globally
+(window as any).downloadSitemap = () => {
+  const blob = new Blob([sitemap], { type: 'application/xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sitemap.xml';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
+
+(window as any).downloadRobotsTxt = () => {
+  const blob = new Blob([robotsTxt], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'robots.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+};
