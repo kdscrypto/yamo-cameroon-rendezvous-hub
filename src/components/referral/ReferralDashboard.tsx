@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -8,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Users, Gift, Star, Trophy, User } from 'lucide-react';
+import { getBaseUrl } from '@/utils/deploymentConfig';
 
 interface ReferralStats {
   total_points: number;
@@ -75,7 +75,7 @@ const ReferralDashboard = () => {
     if (!referralCode) return;
 
     try {
-      const referralUrl = `${window.location.origin}/register?ref=${referralCode}`;
+      const referralUrl = `${getBaseUrl()}/register?ref=${referralCode}`;
       await navigator.clipboard.writeText(referralUrl);
       toast({
         title: "Lien copié !",
@@ -121,7 +121,7 @@ const ReferralDashboard = () => {
     );
   }
 
-  const referralUrl = `${window.location.origin}/register?ref=${referralCode}`;
+  const referralUrl = `${getBaseUrl()}/register?ref=${referralCode}`;
 
   return (
     <div className="space-y-6">
