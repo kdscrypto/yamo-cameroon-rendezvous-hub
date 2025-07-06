@@ -44,47 +44,65 @@ const UserDropdown = ({ user, unreadCount, onLogout }: UserDropdownProps) => {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage src={user.user_metadata?.avatar_url} />
-            <AvatarFallback>{getUserInitials()}</AvatarFallback>
+            <AvatarFallback className="bg-yellow-400 text-black font-semibold">
+              {getUserInitials()}
+            </AvatarFallback>
           </Avatar>
           {unreadCount > 0 && (
             <NotificationBadge count={unreadCount} />
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="end" forceMount>
-        <DropdownMenuLabel className="font-normal">
+      <DropdownMenuContent 
+        className="w-56 bg-neutral-800 border-yellow-400/30 shadow-lg" 
+        align="end" 
+        forceMount
+      >
+        <DropdownMenuLabel className="font-normal bg-neutral-750 border-b border-yellow-400/20 pb-3">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">
+            <p className="text-sm font-semibold leading-none text-yellow-300">
               {getUserDisplayName()}
             </p>
-            <p className="text-xs leading-none text-muted-foreground">
+            <p className="text-xs leading-none text-yellow-400/80">
               {user.email}
             </p>
           </div>
         </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator className="bg-yellow-400/20" />
         <DropdownMenuItem asChild>
-          <Link to="/dashboard" className="cursor-pointer">
+          <Link 
+            to="/dashboard" 
+            className="cursor-pointer text-yellow-200 hover:text-yellow-100 hover:bg-yellow-400/10 focus:bg-yellow-400/10 focus:text-yellow-100 transition-colors"
+          >
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            <span>Tableau de bord</span>
+            <span className="font-medium">Tableau de bord</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/profile" className="cursor-pointer">
+          <Link 
+            to="/profile" 
+            className="cursor-pointer text-yellow-200 hover:text-yellow-100 hover:bg-yellow-400/10 focus:bg-yellow-400/10 focus:text-yellow-100 transition-colors"
+          >
             <UserIcon className="mr-2 h-4 w-4" />
-            <span>Profil</span>
+            <span className="font-medium">Profil</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <Link to="/referral" className="cursor-pointer">
+          <Link 
+            to="/referral" 
+            className="cursor-pointer text-yellow-200 hover:text-yellow-100 hover:bg-yellow-400/10 focus:bg-yellow-400/10 focus:text-yellow-100 transition-colors"
+          >
             <Gift className="mr-2 h-4 w-4" />
-            <span>Parrainage</span>
+            <span className="font-medium">Parrainage</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={onLogout} className="cursor-pointer">
+        <DropdownMenuSeparator className="bg-yellow-400/20" />
+        <DropdownMenuItem 
+          onClick={onLogout} 
+          className="cursor-pointer text-red-300 hover:text-red-200 hover:bg-red-500/10 focus:bg-red-500/10 focus:text-red-200 transition-colors"
+        >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Se déconnecter</span>
+          <span className="font-medium">Se déconnecter</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
