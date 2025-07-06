@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Eye, Sparkles } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface AgeVerificationProps {
   onConfirm: () => void;
@@ -176,9 +177,12 @@ const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
                 </p>
               </div>
               <p className="text-sm text-white/70 leading-relaxed mb-4">
-                Notre <button className="text-amber-400 hover:text-amber-300 underline transition-colors duration-200 font-medium">
+                Notre <Link 
+                  to="/controle-parental" 
+                  className="text-amber-400 hover:text-amber-300 underline transition-colors duration-200 font-medium"
+                >
                   page de contrôle parental
-                </button> vous explique comment bloquer facilement l'accès à ce site.
+                </Link> vous explique comment bloquer facilement l'accès à ce site.
               </p>
             </div>
           </div>
