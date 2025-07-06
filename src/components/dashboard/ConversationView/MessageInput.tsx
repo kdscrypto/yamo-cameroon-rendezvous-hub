@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Send, Paperclip } from 'lucide-react';
 import { toast } from 'sonner';
-import AttachmentUpload from './AttachmentUpload';
+import SecureAttachmentUpload from './SecureAttachmentUpload';
 import MessageTypingIndicator from './MessageTypingIndicator';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { Attachment } from './types';
@@ -37,6 +37,26 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
       return;
     }
 
+    // Validation de sécurité du contenu du message
+    if (message.length > 2000) {
+      toast.error('Message trop long (maximum 2000 caractères)');
+      return;
+    }
+
+    // Vérifier les caractères potentiellement dangereux
+    const dangerousPatterns = [
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      /javascript:/gi,
+      /data:text\/html/gi,
+      /vbscript:/gi
+    ];
+
+    const hasDangerousContent = dangerousPatterns.some(pattern => pattern.test(message));
+    if (hasDangerousContent) {
+      toast.error('Contenu du message non autorisé');
+      return;
+    }
+
     try {
       console.log('Sending message with attachments:', attachments);
       await onSendMessage(message.trim(), attachments.length > 0 ? attachments : undefined);
@@ -61,6 +81,12 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
   };
 
   const handleMessageChange = (value: string) => {
+    // Limiter la longueur en temps réel
+    if (value.length > 2000) {
+      value = value.substring(0, 2000);
+      toast.warning('Limite de 2000 caractères atteinte');
+    }
+
     setMessage(value);
     
     if (!isTyping && value.trim()) {
@@ -109,7 +135,7 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
       
       <Collapsible open={showAttachments} onOpenChange={setShowAttachments}>
         <CollapsibleContent>
-          <AttachmentUpload
+          <SecureAttachmentUpload
             onAttachmentsChange={handleAttachmentsChange}
             maxFiles={5}
             maxSizeInMB={10}
@@ -132,9 +158,13 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
             />
             
             <div className="flex justify-between items-center mt-1 text-xs text-white">
-              <span className="text-yellow-500">{message.length}/2000 caractères</span>
+              <span className={`${message.length > 1800 ? 'text-orange-400' : 'text-yellow-500'}`}>
+                {message.length}/2000 caractères
+              </span>
               {attachments.length > 0 && (
-                <span className="text-white">{attachments.length} fichier{attachments.length > 1 ? 's' : ''} joint{attachments.length > 1 ? 's' : ''}</span>
+                <span className="text-white flex items-center gap-1">
+                  🔒 {attachments.length} fichier{attachments.length > 1 ? 's' : ''} sécurisé{attachments.length > 1 ? 's' : ''}
+                </span>
               )}
             </div>
           </div>
