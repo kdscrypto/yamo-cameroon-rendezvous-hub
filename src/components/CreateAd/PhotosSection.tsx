@@ -25,8 +25,8 @@ const PhotosSection = ({ formData, onInputChange }: PhotosSectionProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Photos</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-yellow-400">Photos</CardTitle>
+        <CardDescription className="text-white">
           Ajoutez jusqu'à 6 photos pour rendre votre annonce plus attractive
         </CardDescription>
       </CardHeader>
@@ -35,7 +35,7 @@ const PhotosSection = ({ formData, onInputChange }: PhotosSectionProps) => {
           {/* Photo upload area */}
           <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
             <Image className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground mb-4">
+            <p className="text-white mb-4">
               Glissez vos photos ici ou cliquez pour sélectionner
             </p>
             <input

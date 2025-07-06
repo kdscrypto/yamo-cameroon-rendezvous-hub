@@ -35,7 +35,7 @@ const PreviewPage = ({
       <div className="flex-1 px-4 py-8">
         <div className="container mx-auto max-w-4xl">
           <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold">Prévisualisation de votre annonce</h1>
+            <h1 className="text-3xl font-bold text-yellow-400">Prévisualisation de votre annonce</h1>
             <Button 
               variant="outline" 
               onClick={onBack}
@@ -52,7 +52,7 @@ const PreviewPage = ({
           />
           
           <div className="mt-8 text-center space-y-4">
-            <p className="text-muted-foreground">
+            <p className="text-white">
               Votre annonce sera soumise pour modération et sera visible après approbation par notre équipe.
             </p>
             {formData.vipOption !== 'standard' && (

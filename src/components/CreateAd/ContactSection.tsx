@@ -15,14 +15,14 @@ const ContactSection = ({ formData, onInputChange }: ContactSectionProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Contact</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-yellow-400">Contact</CardTitle>
+        <CardDescription className="text-white">
           Ces informations seront visibles uniquement aux utilisateurs connectés
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="phone">Numéro de téléphone *</Label>
+          <Label htmlFor="phone" className="text-white">Numéro de téléphone *</Label>
           <Input
             id="phone"
             type="tel"
@@ -30,19 +30,21 @@ const ContactSection = ({ formData, onInputChange }: ContactSectionProps) => {
             value={formData.phone}
             onChange={(e) => onInputChange('phone', e.target.value)}
             required
+            className="text-white placeholder:text-gray-400"
           />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="whatsapp">WhatsApp</Label>
+          <Label htmlFor="whatsapp" className="text-white">WhatsApp</Label>
           <Input
             id="whatsapp"
             type="tel"
             placeholder="Ex: +237 6XX XXX XXX (optionnel)"
             value={formData.whatsapp}
             onChange={(e) => onInputChange('whatsapp', e.target.value)}
+            className="text-white placeholder:text-gray-400"
           />
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-white">
             Si différent du numéro de téléphone principal
           </p>
         </div>
