@@ -109,25 +109,37 @@ export type Database = {
       }
       event_waitlist: {
         Row: {
+          city: string | null
           created_at: string
           email: string
           full_name: string | null
+          gender: string | null
           id: string
           notified: boolean
+          pseudonym: string | null
+          telegram_username: string | null
         }
         Insert: {
+          city?: string | null
           created_at?: string
           email: string
           full_name?: string | null
+          gender?: string | null
           id?: string
           notified?: boolean
+          pseudonym?: string | null
+          telegram_username?: string | null
         }
         Update: {
+          city?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
+          gender?: string | null
           id?: string
           notified?: boolean
+          pseudonym?: string | null
+          telegram_username?: string | null
         }
         Relationships: []
       }
