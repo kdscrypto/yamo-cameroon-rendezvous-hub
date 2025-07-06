@@ -28,32 +28,73 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    if (typeof window === "undefined") return defaultTheme
-    return (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    // Vérification plus sûre de l'environnement
+    if (typeof window === "undefined" || !window.localStorage) {
+      return defaultTheme
+    }
+    
+    try {
+      return (localStorage.getItem(storageKey) as Theme) || defaultTheme
+    } catch {
+      return defaultTheme
+    }
   })
 
   useEffect(() => {
-    const root = window.document.documentElement
-
-    root.classList.remove("light", "dark")
-
-    if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
-        ? "dark"
-        : "light"
-
-      root.classList.add(systemTheme)
+    // Vérification sécurisée de l'existence du DOM
+    if (typeof window === "undefined" || !window.document || !window.document.documentElement) {
       return
     }
 
-    root.classList.add(theme)
+    const root = window.document.documentElement
+
+    // Vérification que root existe et a la méthode classList
+    if (!root || !root.classList) {
+      return
+    }
+
+    // Nettoyage sécurisé des classes existantes
+    try {
+      root.classList.remove("light", "dark")
+    } catch (error) {
+      console.warn("Error removing theme classes:", error)
+      return
+    }
+
+    if (theme === "system") {
+      try {
+        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+          .matches
+          ? "dark"
+          : "light"
+
+        root.classList.add(systemTheme)
+      } catch (error) {
+        console.warn("Error detecting system theme:", error)
+        // Fallback à dark theme
+        root.classList.add("dark")
+      }
+      return
+    }
+
+    try {
+      root.classList.add(theme)
+    } catch (error) {
+      console.warn("Error adding theme class:", error)
+    }
   }, [theme])
 
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme)
+      // Vérification sécurisée avant d'accéder au localStorage
+      if (typeof window !== "undefined" && window.localStorage) {
+        try {
+          localStorage.setItem(storageKey, theme)
+        } catch (error) {
+          console.warn("Error saving theme to localStorage:", error)
+        }
+      }
       setTheme(theme)
     },
   }

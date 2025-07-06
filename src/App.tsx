@@ -23,17 +23,26 @@ import AuthCallback from "./pages/AuthCallback";
 import AdDetail from "./pages/AdDetail";
 import Events from "./pages/Events";
 import ParentalControl from "./pages/ParentalControl";
+import { useState } from "react";
 
-const queryClient = new QueryClient({
+// Configuration stable du QueryClient
+const createQueryClient = () => new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
       retry: 1,
     },
   },
 });
 
 function App() {
+  // Création stable du client avec useState pour éviter les recréations
+  const [queryClient] = useState(() => createQueryClient());
+
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
