@@ -1,4 +1,3 @@
-
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { Button } from '@/components/ui/button';
@@ -82,8 +81,8 @@ const SecureAttachmentUpload = ({
         throw new Error('Session non trouvée');
       }
 
-      // Appeler la fonction Edge sécurisée
-      const response = await fetch('/functions/v1/secure-file-upload', {
+      // Appeler la fonction Edge sécurisée avec l'URL complète
+      const response = await fetch('https://lusovklxvtzhluekhwvu.supabase.co/functions/v1/secure-file-upload', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${session.access_token}`,
@@ -93,6 +92,7 @@ const SecureAttachmentUpload = ({
 
       if (!response.ok) {
         const errorText = await response.text();
+        console.error('Upload response error:', errorText);
         throw new Error(errorText || 'Erreur lors de l\'upload');
       }
 

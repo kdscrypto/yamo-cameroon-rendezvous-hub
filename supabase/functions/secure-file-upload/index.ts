@@ -119,12 +119,18 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Secure file upload function called')
+    
     // Vérifier l'authentification
     const authHeader = req.headers.get('Authorization')
     if (!authHeader?.startsWith('Bearer ')) {
-      return new Response('Unauthorized', { 
+      console.log('No auth header found')
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Unauthorized' 
+      }), { 
         status: 401, 
-        headers: corsHeaders 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
@@ -141,17 +147,26 @@ serve(async (req) => {
     // Vérifier l'utilisateur
     const { data: { user }, error: authError } = await supabase.auth.getUser()
     if (authError || !user) {
-      return new Response('Unauthorized', { 
+      console.log('Auth error:', authError)
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Unauthorized' 
+      }), { 
         status: 401, 
-        headers: corsHeaders 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
+    console.log('User authenticated:', user.id)
+
     // Vérifier le rate limiting
     if (!checkRateLimit(user.id)) {
-      return new Response('Too many uploads. Please wait.', { 
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'Too many uploads. Please wait.' 
+      }), { 
         status: 429, 
-        headers: corsHeaders 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
@@ -160,36 +175,50 @@ serve(async (req) => {
     const files = formData.getAll('files') as File[]
 
     if (!files || files.length === 0) {
-      return new Response('No files provided', { 
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: 'No files provided' 
+      }), { 
         status: 400, 
-        headers: corsHeaders 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
     if (files.length > SECURITY_CONFIG.MAX_FILES_PER_REQUEST) {
-      return new Response(`Too many files. Maximum ${SECURITY_CONFIG.MAX_FILES_PER_REQUEST} allowed.`, { 
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `Too many files. Maximum ${SECURITY_CONFIG.MAX_FILES_PER_REQUEST} allowed.` 
+      }), { 
         status: 400, 
-        headers: corsHeaders 
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
     }
 
     const uploadResults = []
 
     for (const file of files) {
+      console.log('Processing file:', file.name, 'Size:', file.size)
+      
       // Vérifier la taille
       if (file.size > SECURITY_CONFIG.MAX_FILE_SIZE) {
-        return new Response(`File ${file.name} is too large. Maximum ${SECURITY_CONFIG.MAX_FILE_SIZE / 1024 / 1024}MB allowed.`, { 
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: `File ${file.name} is too large. Maximum ${SECURITY_CONFIG.MAX_FILE_SIZE / 1024 / 1024}MB allowed.` 
+        }), { 
           status: 400, 
-          headers: corsHeaders 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
       }
 
       // Vérifier l'extension
       const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase()
       if (!SECURITY_CONFIG.ALLOWED_EXTENSIONS.includes(extension)) {
-        return new Response(`File type ${extension} not allowed for ${file.name}`, { 
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: `File type ${extension} not allowed for ${file.name}` 
+        }), { 
           status: 400, 
-          headers: corsHeaders 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
       }
 
@@ -198,15 +227,20 @@ serve(async (req) => {
 
       // Valider le type MIME réel
       if (!validateMimeType(fileBuffer, file.name)) {
-        return new Response(`Invalid file content for ${file.name}. File content doesn't match extension.`, { 
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: `Invalid file content for ${file.name}. File content doesn't match extension.` 
+        }), { 
           status: 400, 
-          headers: corsHeaders 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
       }
 
       // Générer un nom de fichier sécurisé
       const secureFileName = generateSecureFileName(file.name, user.id)
       const filePath = `${user.id}/${secureFileName}`
+
+      console.log('Uploading to path:', filePath)
 
       // Upload vers Supabase Storage
       const { data: uploadData, error: uploadError } = await supabase.storage
@@ -218,9 +252,12 @@ serve(async (req) => {
 
       if (uploadError) {
         console.error('Upload error:', uploadError)
-        return new Response(`Failed to upload ${file.name}`, { 
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: `Failed to upload ${file.name}: ${uploadError.message}` 
+        }), { 
           status: 500, 
-          headers: corsHeaders 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         })
       }
 
@@ -236,10 +273,14 @@ serve(async (req) => {
         size: file.size,
         secureName: secureFileName
       })
+
+      console.log('File uploaded successfully:', file.name)
     }
 
     // Enregistrer l'upload pour le rate limiting
     recordUpload(user.id)
+
+    console.log('All files uploaded successfully:', uploadResults.length)
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -253,9 +294,12 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Server error:', error)
-    return new Response('Internal server error', { 
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: 'Internal server error' 
+    }), { 
       status: 500, 
-      headers: corsHeaders 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
   }
 })
