@@ -81,29 +81,29 @@ const Events = () => {
           {/* Coming Soon Features */}
           <section className="py-16 px-4 bg-muted/30">
             <div className="container mx-auto max-w-4xl text-center">
-              <h2 className="text-3xl font-bold mb-8">Ce qui vous attend</h2>
+              <h2 className="text-3xl font-bold mb-8 text-yellow-400">Ce qui vous attend</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">Soirées thématiques</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-xl font-semibold mb-4 text-yellow-400">Soirées thématiques</h3>
+                  <p className="text-white">
                     Des événements organisés autour de thèmes spécifiques pour des expériences inoubliables.
                   </p>
                 </div>
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">Rencontres premium</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-xl font-semibold mb-4 text-yellow-400">Rencontres premium</h3>
+                  <p className="text-white">
                     Des opportunités exclusives de rencontres dans un cadre privilégié et discret.
                   </p>
                 </div>
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">Événements privés</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-xl font-semibold mb-4 text-yellow-400">Événements privés</h3>
+                  <p className="text-white">
                     Des rassemblements intimes réservés aux membres les plus actifs de la communauté.
                   </p>
                 </div>
                 <div className="bg-card border border-border rounded-lg p-6">
-                  <h3 className="text-xl font-semibold mb-4">Expériences sur mesure</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-xl font-semibold mb-4 text-yellow-400">Expériences sur mesure</h3>
+                  <p className="text-white">
                     Des événements personnalisés selon vos préférences et centres d'intérêt.
                   </p>
                 </div>

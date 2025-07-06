@@ -21,10 +21,38 @@ const EventsWaitlistForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!email) {
+    // Validation pour les champs obligatoires
+    if (!pseudonym) {
       toast({
-        title: "Email requis",
-        description: "Veuillez saisir votre adresse email.",
+        title: "Pseudonyme requis",
+        description: "Veuillez saisir votre pseudonyme.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!gender) {
+      toast({
+        title: "Genre requis",
+        description: "Veuillez sélectionner votre genre.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!telegramUsername) {
+      toast({
+        title: "Nom d'utilisateur Telegram requis",
+        description: "Veuillez saisir votre nom d'utilisateur Telegram.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!city) {
+      toast({
+        title: "Ville requise",
+        description: "Veuillez saisir votre ville.",
         variant: "destructive"
       });
       return;
@@ -37,11 +65,11 @@ const EventsWaitlistForm = () => {
         .from('event_waitlist')
         .insert([
           {
-            email: email.trim().toLowerCase(),
-            pseudonym: pseudonym.trim() || null,
-            gender: gender || null,
-            telegram_username: telegramUsername.trim() || null,
-            city: city.trim() || null
+            email: email.trim().toLowerCase() || null,
+            pseudonym: pseudonym.trim(),
+            gender: gender,
+            telegram_username: telegramUsername.trim(),
+            city: city.trim()
           }
         ]);
 
@@ -113,7 +141,7 @@ const EventsWaitlistForm = () => {
         <div>
           <Label htmlFor="pseudonym" className="flex items-center gap-2 mb-2 text-white">
             <User className="w-4 h-4" />
-            Pseudonyme (optionnel)
+            Pseudonyme *
           </Label>
           <Input
             id="pseudonym"
@@ -121,6 +149,7 @@ const EventsWaitlistForm = () => {
             value={pseudonym}
             onChange={(e) => setPseudonym(e.target.value)}
             placeholder="Votre pseudonyme"
+            required
             className="w-full bg-black/50 border-yellow-400/30 text-white placeholder:text-gray-400 focus:border-yellow-400"
           />
         </div>
@@ -128,7 +157,7 @@ const EventsWaitlistForm = () => {
         <div>
           <Label htmlFor="email" className="flex items-center gap-2 mb-2 text-white">
             <Mail className="w-4 h-4" />
-            Adresse email *
+            Adresse email (optionnel)
           </Label>
           <Input
             id="email"
@@ -136,7 +165,6 @@ const EventsWaitlistForm = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="votre@email.com"
-            required
             className="w-full bg-black/50 border-yellow-400/30 text-white placeholder:text-gray-400 focus:border-yellow-400"
           />
         </div>
@@ -144,9 +172,9 @@ const EventsWaitlistForm = () => {
         <div>
           <Label htmlFor="gender" className="flex items-center gap-2 mb-2 text-white">
             <Users className="w-4 h-4" />
-            Genre (optionnel)
+            Genre *
           </Label>
-          <Select value={gender} onValueChange={setGender}>
+          <Select value={gender} onValueChange={setGender} required>
             <SelectTrigger className="w-full bg-black/50 border-yellow-400/30 text-white focus:border-yellow-400">
               <SelectValue placeholder="Sélectionnez votre genre" />
             </SelectTrigger>
@@ -162,7 +190,7 @@ const EventsWaitlistForm = () => {
         <div>
           <Label htmlFor="telegramUsername" className="flex items-center gap-2 mb-2 text-white">
             <MessageCircle className="w-4 h-4" />
-            Nom d'utilisateur Telegram (optionnel)
+            Nom d'utilisateur Telegram *
           </Label>
           <Input
             id="telegramUsername"
@@ -170,6 +198,7 @@ const EventsWaitlistForm = () => {
             value={telegramUsername}
             onChange={(e) => setTelegramUsername(e.target.value)}
             placeholder="@votre_nom_telegram"
+            required
             className="w-full bg-black/50 border-yellow-400/30 text-white placeholder:text-gray-400 focus:border-yellow-400"
           />
         </div>
@@ -177,7 +206,7 @@ const EventsWaitlistForm = () => {
         <div>
           <Label htmlFor="city" className="flex items-center gap-2 mb-2 text-white">
             <MapPin className="w-4 h-4" />
-            Ville (optionnel)
+            Ville *
           </Label>
           <Input
             id="city"
@@ -185,6 +214,7 @@ const EventsWaitlistForm = () => {
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Votre ville"
+            required
             className="w-full bg-black/50 border-yellow-400/30 text-white placeholder:text-gray-400 focus:border-yellow-400"
           />
         </div>
