@@ -1,18 +1,15 @@
 
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import DynamicColorBackground from './DynamicColorBackground';
 
 const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900">
-      {/* Background overlay pour créer l'effet sombre */}
-      <div className="absolute inset-0 bg-black/40"></div>
-      
-      {/* Effets de lumière subtils */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl"></div>
+    <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+      {/* Dynamic flowing background */}
+      <DynamicColorBackground />
       
       <div className="container mx-auto px-4 text-center relative z-10">
         {/* Titre principal - exactement comme dans l'image */}

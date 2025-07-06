@@ -1,0 +1,56 @@
+
+/* Dynamic Background Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+  }
+  25% {
+    transform: translateY(-20px) translateX(10px) scale(1.05);
+  }
+  50% {
+    transform: translateY(-40px) translateX(-15px) scale(0.95);
+  }
+  75% {
+    transform: translateY(-20px) translateX(5px) scale(1.02);
+  }
+}
+
+/* Floating animation with different timing delays */
+.animate-float-delay-1 {
+  animation: float 20s ease-in-out infinite;
+}
+
+.animate-float-delay-2 {
+  animation: float 25s ease-in-out infinite reverse;
+}
+
+.animate-float-delay-3 {
+  animation: float 15s ease-in-out infinite 0.5s;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 768px) {
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px) scale(0.8);
+    }
+    25% {
+      transform: translateY(-15px) translateX(8px) scale(0.85);
+    }
+    50% {
+      transform: translateY(-30px) translateX(-12px) scale(0.75);
+    }
+    75% {
+      transform: translateY(-15px) translateX(4px) scale(0.82);
+    }
+  }
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-delay-1,
+  .animate-float-delay-2,
+  .animate-float-delay-3 {
+    animation: none;
+  }
+}
