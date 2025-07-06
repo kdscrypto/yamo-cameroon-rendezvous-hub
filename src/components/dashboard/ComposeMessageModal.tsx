@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -167,10 +168,10 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-background">
         <DialogHeader>
-          <DialogTitle>Nouveau message</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-yellow-500 text-xl">Nouveau message</DialogTitle>
+          <DialogDescription className="text-white">
             Envoyez un message à propos d'une annonce ou directement à un utilisateur.
           </DialogDescription>
         </DialogHeader>
@@ -178,7 +179,7 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Ad Selection */}
           <div className="space-y-2">
-            <Label htmlFor="ad-select">Annonce (optionnel)</Label>
+            <Label htmlFor="ad-select" className="text-white">Annonce (optionnel)</Label>
             <Select value={selectedAd} onValueChange={handleAdSelect}>
               <SelectTrigger>
                 <SelectValue placeholder="Sélectionner une annonce..." />
@@ -196,38 +197,40 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
           {/* Manual Recipient ID (if no ad selected) */}
           {!selectedAd && (
             <div className="space-y-2">
-              <Label htmlFor="recipient">ID du destinataire</Label>
+              <Label htmlFor="recipient" className="text-white">ID du destinataire</Label>
               <Input
                 id="recipient"
                 value={recipientId}
                 onChange={(e) => setRecipientId(e.target.value)}
                 placeholder="Entrez l'ID de l'utilisateur..."
                 required={!selectedAd}
+                className="text-white"
               />
             </div>
           )}
 
           {/* Subject */}
           <div className="space-y-2">
-            <Label htmlFor="subject">Sujet (optionnel)</Label>
+            <Label htmlFor="subject" className="text-white">Sujet (optionnel)</Label>
             <Input
               id="subject"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               placeholder="Sujet du message..."
+              className="text-white"
             />
           </div>
 
           {/* Message Content with character counter */}
           <div className="space-y-2">
-            <Label htmlFor="content">Message * ({content.length}/2000)</Label>
+            <Label htmlFor="content" className="text-white">Message * ({content.length}/2000)</Label>
             <Textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Tapez votre message ici..."
               required
-              className="min-h-[120px]"
+              className="min-h-[120px] text-white"
               maxLength={2000}
             />
             {content.length > 1800 && (
@@ -248,7 +251,7 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
 
           {/* Actions */}
           <div className="flex justify-end gap-2">
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose} className="text-white">
               Annuler
             </Button>
             <Button 
@@ -260,6 +263,7 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
                 !content.trim() ||
                 content.length > 2000
               }
+              className="bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold"
             >
               {sendMessageMutation.isPending ? 'Envoi...' : 'Envoyer'}
             </Button>
@@ -271,3 +275,4 @@ const ComposeMessageModal = ({ isOpen, onClose, onMessageSent }: ComposeMessageM
 };
 
 export default ComposeMessageModal;
+

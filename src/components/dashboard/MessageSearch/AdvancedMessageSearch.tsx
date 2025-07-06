@@ -132,8 +132,8 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 mb-4">
-        <Search className="w-5 h-5" />
-        <h2 className="text-xl font-semibold">Recherche avancée</h2>
+        <Search className="w-5 h-5 text-yellow-500" />
+        <h2 className="text-xl font-semibold text-yellow-500">Recherche avancée</h2>
       </div>
 
       <SearchFilters 
@@ -144,7 +144,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
       {isLoading && (
         <div className="text-center py-8">
           <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Recherche en cours...</p>
+          <p className="text-white">Recherche en cours...</p>
         </div>
       )}
 
@@ -159,7 +159,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
       {isSearchActive && !isLoading && searchResults && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-sm text-white">
               {searchResults.length} résultat{searchResults.length > 1 ? 's' : ''} trouvé{searchResults.length > 1 ? 's' : ''}
             </p>
           </div>
@@ -168,7 +168,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
             <Card>
               <CardContent className="text-center py-12">
                 <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">Aucun message trouvé pour cette recherche.</p>
+                <p className="text-white">Aucun message trouvé pour cette recherche.</p>
               </CardContent>
             </Card>
           ) : (
@@ -182,7 +182,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
-                        <CardTitle className="text-sm font-medium flex items-center gap-2">
+                        <CardTitle className="text-sm font-medium flex items-center gap-2 text-yellow-500">
                           <MessageSquare className="w-4 h-4" />
                           {message.subject || 'Sans sujet'}
                           {message.message_attachments && message.message_attachments.length > 0 && (
@@ -192,7 +192,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
                             </Badge>
                           )}
                         </CardTitle>
-                        <div className="flex items-center gap-2 text-xs text-muted-foreground mt-1">
+                        <div className="flex items-center gap-2 text-xs text-white mt-1">
                           <span>De: {getSenderName(message)}</span>
                           <span>•</span>
                           <Calendar className="w-3 h-3" />
@@ -205,7 +205,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="text-sm text-white line-clamp-2">
                       {message.content}
                     </p>
                   </CardContent>
@@ -220,7 +220,7 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
         <Card>
           <CardContent className="text-center py-12">
             <Search className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">
+            <p className="text-white">
               Utilisez la barre de recherche ci-dessus pour trouver des messages.
             </p>
             <p className="text-sm text-muted-foreground mt-2">
@@ -234,3 +234,4 @@ const AdvancedMessageSearch = ({ onMessageSelect }: AdvancedMessageSearchProps) 
 };
 
 export default AdvancedMessageSearch;
+

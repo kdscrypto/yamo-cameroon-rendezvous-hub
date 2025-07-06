@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -94,7 +95,7 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
   }, []);
 
   return (
-    <div className="border-t bg-white p-4 space-y-4">
+    <div className="border-t bg-background p-4 space-y-4">
       <MessageTypingIndicator 
         conversationId={conversationId} 
         isTyping={isTyping}
@@ -120,14 +121,14 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
               onKeyPress={handleKeyPress}
               placeholder="Tapez votre message..."
               disabled={isLoading || isRateLimited}
-              className="min-h-[60px] max-h-[200px] resize-none"
+              className="min-h-[60px] max-h-[200px] resize-none text-white bg-muted/50 border-muted"
               rows={2}
             />
             
-            <div className="flex justify-between items-center mt-1 text-xs text-muted-foreground">
-              <span>{message.length}/2000 caractères</span>
+            <div className="flex justify-between items-center mt-1 text-xs text-white">
+              <span className="text-yellow-500">{message.length}/2000 caractères</span>
               {attachments.length > 0 && (
-                <span>{attachments.length} fichier{attachments.length > 1 ? 's' : ''} joint{attachments.length > 1 ? 's' : ''}</span>
+                <span className="text-white">{attachments.length} fichier{attachments.length > 1 ? 's' : ''} joint{attachments.length > 1 ? 's' : ''}</span>
               )}
             </div>
           </div>
@@ -139,6 +140,7 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
               size="sm"
               onClick={() => setShowAttachments(!showAttachments)}
               disabled={isLoading || isRateLimited}
+              className="bg-muted hover:bg-muted/80 text-white border-muted"
             >
               <Paperclip className="w-4 h-4" />
             </Button>
@@ -152,6 +154,7 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
                 message.length > 2000
               }
               size="sm"
+              className="bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
             >
               <Send className="w-4 h-4" />
             </Button>
@@ -175,3 +178,4 @@ const MessageInput = ({ conversationId, onSendMessage, isLoading, isRateLimited 
 };
 
 export default MessageInput;
+

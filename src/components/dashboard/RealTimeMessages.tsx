@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -169,14 +170,17 @@ const RealTimeMessages = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl font-bold flex items-center gap-2">
+          <h2 className="text-2xl font-bold flex items-center gap-2 text-yellow-500">
             <MessageSquare className="w-6 h-6" />
             Messages
           </h2>
-          <p className="text-muted-foreground">Gérez vos conversations en temps réel</p>
+          <p className="text-white">Gérez vos conversations en temps réel</p>
         </div>
-        <Button onClick={() => setIsComposeOpen(true)}>
-          <Plus className="w-4 h-4 mr-2" />
+        <Button 
+          onClick={() => setIsComposeOpen(true)}
+          className="bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200 px-6 py-3"
+        >
+          <Plus className="w-5 h-5 mr-2" />
           Nouveau message
         </Button>
       </div>
@@ -189,7 +193,7 @@ const RealTimeMessages = () => {
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{conversations?.length || 0}</div>
+            <div className="text-2xl font-bold text-white">{conversations?.length || 0}</div>
             <p className="text-xs text-muted-foreground">Conversations actives</p>
           </CardContent>
         </Card>
@@ -200,7 +204,7 @@ const RealTimeMessages = () => {
             <Mail className="h-4 w-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {conversations?.reduce((sum, conv) => sum + (conv.unread_count || 0), 0) || 0}
             </div>
             <p className="text-xs text-muted-foreground">Messages non lus</p>
@@ -213,7 +217,7 @@ const RealTimeMessages = () => {
             <MessageSquare className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-white">
               {conversations?.filter(conv => {
                 const lastMessageTime = new Date(conv.last_message_at);
                 const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -247,9 +251,12 @@ const RealTimeMessages = () => {
             <Card>
               <CardContent className="text-center py-12">
                 <MessageSquare className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground mb-4">Aucune conversation pour le moment.</p>
-                <Button onClick={() => setIsComposeOpen(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
+                <p className="text-white mb-4">Aucune conversation pour le moment.</p>
+                <Button 
+                  onClick={() => setIsComposeOpen(true)}
+                  className="bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200 px-6 py-3"
+                >
+                  <Plus className="w-5 h-5 mr-2" />
                   Commencer une conversation
                 </Button>
               </CardContent>
@@ -270,7 +277,7 @@ const RealTimeMessages = () => {
                     <CardHeader>
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
-                          <CardTitle className="text-lg flex items-center gap-2">
+                          <CardTitle className="text-lg flex items-center gap-2 text-yellow-500">
                             {hasUnread ? (
                               <Mail className="w-4 h-4 text-primary" />
                             ) : (
@@ -282,7 +289,7 @@ const RealTimeMessages = () => {
                               'Conversation directe'
                             )}
                           </CardTitle>
-                          <CardDescription className="flex items-center gap-2">
+                          <CardDescription className="flex items-center gap-2 text-white">
                             <span>Avec: {getOtherParticipant(conversation.participants)}</span>
                             <span>•</span>
                             <span>{new Date(conversation.last_message_at).toLocaleDateString('fr-FR')}</span>
@@ -313,7 +320,7 @@ const RealTimeMessages = () => {
                     {conversation.last_message && (
                       <CardContent>
                         <div className="flex justify-between items-center">
-                          <p className="text-sm text-muted-foreground truncate flex-1">
+                          <p className="text-sm text-white truncate flex-1">
                             {conversation.last_message.sender_id === user?.id ? 'Vous: ' : ''}
                             {conversation.last_message.content}
                           </p>
@@ -340,7 +347,7 @@ const RealTimeMessages = () => {
           <Card>
             <CardContent className="text-center py-12">
               <Archive className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">Fonctionnalité d'archivage à venir.</p>
+              <p className="text-white">Fonctionnalité d'archivage à venir.</p>
             </CardContent>
           </Card>
         </TabsContent>
@@ -360,3 +367,4 @@ const RealTimeMessages = () => {
 };
 
 export default RealTimeMessages;
+
