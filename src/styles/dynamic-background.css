@@ -1,5 +1,7 @@
 
-/* Dynamic Background Animations */
+/* Enhanced Dynamic Background Animations */
+
+/* Original float animation */
 @keyframes float {
   0%, 100% {
     transform: translateY(0px) translateX(0px) scale(1);
@@ -15,7 +17,73 @@
   }
 }
 
-/* Floating animation with different timing delays */
+/* Morphing animation for organic shape changes */
+@keyframes morph {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(0deg);
+    border-radius: 50% 30% 40% 60%;
+  }
+  25% {
+    transform: translateY(-30px) translateX(20px) scale(1.1) rotate(45deg);
+    border-radius: 40% 60% 30% 50%;
+  }
+  50% {
+    transform: translateY(-60px) translateX(-25px) scale(0.9) rotate(90deg);
+    border-radius: 60% 40% 50% 30%;
+  }
+  75% {
+    transform: translateY(-30px) translateX(10px) scale(1.05) rotate(135deg);
+    border-radius: 30% 50% 60% 40%;
+  }
+}
+
+/* Reverse morphing animation */
+@keyframes morph-reverse {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1) rotate(180deg);
+    border-radius: 60% 40% 50% 30%;
+  }
+  25% {
+    transform: translateY(40px) translateX(-15px) scale(0.85) rotate(225deg);
+    border-radius: 50% 30% 40% 60%;
+  }
+  50% {
+    transform: translateY(80px) translateX(30px) scale(1.15) rotate(270deg);
+    border-radius: 40% 60% 30% 50%;
+  }
+  75% {
+    transform: translateY(40px) translateX(-10px) scale(0.95) rotate(315deg);
+    border-radius: 30% 50% 60% 40%;
+  }
+}
+
+/* Wave flow animation for fluid motion */
+@keyframes wave-flow {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px) scale(1);
+    border-radius: 50% 40% 30% 60%;
+  }
+  33% {
+    transform: translateY(-25px) translateX(40px) scale(1.2);
+    border-radius: 30% 60% 50% 40%;
+  }
+  66% {
+    transform: translateY(25px) translateX(-30px) scale(0.8);
+    border-radius: 60% 30% 40% 50%;
+  }
+}
+
+/* Light rays rotation animation */
+@keyframes light-rays {
+  0% {
+    transform: scale(2) rotate(0deg);
+  }
+  100% {
+    transform: scale(2) rotate(360deg);
+  }
+}
+
+/* Enhanced floating animations with different timing */
 .animate-float-delay-1 {
   animation: float 20s ease-in-out infinite;
 }
@@ -28,20 +96,70 @@
   animation: float 15s ease-in-out infinite 0.5s;
 }
 
+.animate-morph-1 {
+  animation: morph 25s ease-in-out infinite;
+}
+
+.animate-morph-2 {
+  animation: morph-reverse 30s ease-in-out infinite;
+}
+
+.animate-wave-flow {
+  animation: wave-flow 20s ease-in-out infinite;
+}
+
 /* Responsive adjustments for mobile */
 @media (max-width: 768px) {
   @keyframes float {
     0%, 100% {
-      transform: translateY(0px) translateX(0px) scale(0.8);
+      transform: translateY(0px) translateX(0px) scale(0.6);
     }
     25% {
-      transform: translateY(-15px) translateX(8px) scale(0.85);
+      transform: translateY(-12px) translateX(6px) scale(0.65);
     }
     50% {
-      transform: translateY(-30px) translateX(-12px) scale(0.75);
+      transform: translateY(-24px) translateX(-9px) scale(0.55);
     }
     75% {
-      transform: translateY(-15px) translateX(4px) scale(0.82);
+      transform: translateY(-12px) translateX(3px) scale(0.62);
+    }
+  }
+  
+  @keyframes morph {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px) scale(0.7) rotate(0deg);
+      border-radius: 50% 30% 40% 60%;
+    }
+    25% {
+      transform: translateY(-20px) translateX(12px) scale(0.75) rotate(45deg);
+      border-radius: 40% 60% 30% 50%;
+    }
+    50% {
+      transform: translateY(-40px) translateX(-15px) scale(0.65) rotate(90deg);
+      border-radius: 60% 40% 50% 30%;
+    }
+    75% {
+      transform: translateY(-20px) translateX(6px) scale(0.72) rotate(135deg);
+      border-radius: 30% 50% 60% 40%;
+    }
+  }
+  
+  @keyframes morph-reverse {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px) scale(0.6) rotate(180deg);
+      border-radius: 60% 40% 50% 30%;
+    }
+    25% {
+      transform: translateY(25px) translateX(-10px) scale(0.55) rotate(225deg);
+      border-radius: 50% 30% 40% 60%;
+    }
+    50% {
+      transform: translateY(50px) translateX(18px) scale(0.75) rotate(270deg);
+      border-radius: 40% 60% 30% 50%;
+    }
+    75% {
+      transform: translateY(25px) translateX(-6px) scale(0.65) rotate(315deg);
+      border-radius: 30% 50% 60% 40%;
     }
   }
 }
@@ -50,7 +168,25 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-float-delay-1,
   .animate-float-delay-2,
-  .animate-float-delay-3 {
+  .animate-float-delay-3,
+  .animate-morph-1,
+  .animate-morph-2,
+  .animate-wave-flow {
     animation: none;
+  }
+  
+  @keyframes light-rays {
+    0%, 100% {
+      transform: scale(2) rotate(0deg);
+    }
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  .animate-float-delay-1,
+  .animate-float-delay-2,
+  .animate-float-delay-3 {
+    opacity: 0.3 !important;
   }
 }
