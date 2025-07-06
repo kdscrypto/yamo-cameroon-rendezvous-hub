@@ -21,6 +21,81 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState)
 
+// Fonction utilitaire pour vérifier si le DOM est disponible
+const isDOMAvailable = (): boolean => {
+  try {
+    return (
+      typeof window !== "undefined" &&
+      typeof window.document !== "undefined" &&
+      typeof window.document.documentElement !== "undefined" &&
+      window.document.documentElement !== null
+    )
+  } catch {
+    return false
+  }
+}
+
+// Fonction utilitaire pour vérifier localStorage
+const isLocalStorageAvailable = (): boolean => {
+  try {
+    return (
+      typeof window !== "undefined" &&
+      typeof window.localStorage !== "undefined" &&
+      window.localStorage !== null
+    )
+  } catch {
+    return false
+  }
+}
+
+// Fonction utilitaire pour appliquer le thème de manière sécurisée
+const safeApplyTheme = (theme: Theme): void => {
+  console.log("Attempting to apply theme:", theme)
+  
+  if (!isDOMAvailable()) {
+    console.warn("DOM not available, skipping theme application")
+    return
+  }
+
+  try {
+    const root = window.document.documentElement
+    
+    if (!root) {
+      console.warn("documentElement is null")
+      return
+    }
+
+    if (!root.classList) {
+      console.warn("classList is not available on documentElement")
+      return
+    }
+
+    // Nettoyage sécurisé
+    console.log("Removing existing theme classes")
+    root.classList.remove("light", "dark")
+
+    if (theme === "system") {
+      try {
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)")
+        const systemTheme = mediaQuery.matches ? "dark" : "light"
+        console.log("Detected system theme:", systemTheme)
+        root.classList.add(systemTheme)
+      } catch (error) {
+        console.warn("Error detecting system theme:", error)
+        // Fallback sécurisé
+        root.classList.add("dark")
+      }
+    } else {
+      console.log("Adding theme class:", theme)
+      root.classList.add(theme)
+    }
+    
+    console.log("Theme applied successfully")
+  } catch (error) {
+    console.error("Error in safeApplyTheme:", error)
+  }
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -28,74 +103,44 @@ export function ThemeProvider({
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
-    // Vérification plus sûre de l'environnement
-    if (typeof window === "undefined" || !window.localStorage) {
+    console.log("Initializing theme state")
+    
+    if (!isLocalStorageAvailable()) {
+      console.log("localStorage not available, using default theme:", defaultTheme)
       return defaultTheme
     }
     
     try {
-      return (localStorage.getItem(storageKey) as Theme) || defaultTheme
-    } catch {
+      const storedTheme = localStorage.getItem(storageKey) as Theme
+      const initialTheme = storedTheme || defaultTheme
+      console.log("Initial theme from storage:", initialTheme)
+      return initialTheme
+    } catch (error) {
+      console.warn("Error reading from localStorage:", error)
       return defaultTheme
     }
   })
 
   useEffect(() => {
-    // Vérification sécurisée de l'existence du DOM
-    if (typeof window === "undefined" || !window.document || !window.document.documentElement) {
-      return
-    }
-
-    const root = window.document.documentElement
-
-    // Vérification que root existe et a la méthode classList
-    if (!root || !root.classList) {
-      return
-    }
-
-    // Nettoyage sécurisé des classes existantes
-    try {
-      root.classList.remove("light", "dark")
-    } catch (error) {
-      console.warn("Error removing theme classes:", error)
-      return
-    }
-
-    if (theme === "system") {
-      try {
-        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-          .matches
-          ? "dark"
-          : "light"
-
-        root.classList.add(systemTheme)
-      } catch (error) {
-        console.warn("Error detecting system theme:", error)
-        // Fallback à dark theme
-        root.classList.add("dark")
-      }
-      return
-    }
-
-    try {
-      root.classList.add(theme)
-    } catch (error) {
-      console.warn("Error adding theme class:", error)
-    }
+    console.log("ThemeProvider useEffect triggered with theme:", theme)
+    safeApplyTheme(theme)
   }, [theme])
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      // Vérification sécurisée avant d'accéder au localStorage
-      if (typeof window !== "undefined" && window.localStorage) {
+    setTheme: (newTheme: Theme) => {
+      console.log("Setting new theme:", newTheme)
+      
+      if (isLocalStorageAvailable()) {
         try {
-          localStorage.setItem(storageKey, theme)
+          localStorage.setItem(storageKey, newTheme)
+          console.log("Theme saved to localStorage")
         } catch (error) {
           console.warn("Error saving theme to localStorage:", error)
         }
       }
-      setTheme(theme)
+      
+      setTheme(newTheme)
     },
   }
 
