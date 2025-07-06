@@ -40,11 +40,11 @@ const AdForm = ({ formData, onInputChange, onPreview, onSubmit, getVipPrice }: A
           type="button" 
           variant="outline" 
           size="lg" 
-          className="flex-1 hover:bg-muted hover:text-foreground"
+          className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
           onClick={onPreview}
           disabled={!isFormValid}
         >
-          <Eye className="w-4 h-4 mr-2" />
+          <Eye className="w-5 h-5 mr-2" />
           Prévisualiser
         </Button>
       </div>
