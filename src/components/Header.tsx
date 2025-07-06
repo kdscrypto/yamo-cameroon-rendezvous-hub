@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,13 +19,14 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Menu, Plus, User, LogOut, LayoutDashboard, Gift } from "lucide-react";
+import { Menu, Plus, User, LogOut, LayoutDashboard, Gift, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   useGetUnreadMessagesCount,
 } from "@/hooks/useGetUnreadMessagesCount";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationBadge } from "@/components/ui/notification-badge";
+import { Input } from "@/components/ui/input";
 
 const navItems = [
   { label: "Parcourir", href: "/browse" },
@@ -75,7 +77,7 @@ const Header = () => {
 
   return (
     <header className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border/40 sticky top-0 z-50">
-      <div className="container-spacing">
+      <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
@@ -87,29 +89,34 @@ const Header = () => {
             </span>
           </Link>
 
-          {/* Navigation Desktop */}
-          <nav className="hidden md:flex items-center space-x-8">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                to={item.href}
-                className="text-muted-foreground hover:text-foreground transition-colors duration-200 font-medium"
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          {/* Barre de recherche centrée */}
+          <div className="flex-1 max-w-2xl mx-8 hidden md:block">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                type="text"
+                placeholder="Rechercher des annonces..."
+                className="w-full pl-10 pr-4 py-2 bg-muted/50 border-muted-foreground/20 focus:border-amber-500 focus:ring-amber-500/20 rounded-full"
+              />
+            </div>
+          </div>
 
           {/* Actions */}
           <div className="flex items-center space-x-4">
             {user ? (
               <>
-                <Link to="/create-ad">
-                  <Button className="hidden sm:flex bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Publier
-                  </Button>
-                </Link>
+                <Button className="hidden sm:flex bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 rounded-full px-6">
+                  <Plus className="w-4 h-4 mr-2" />
+                  Publier une annonce
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="text-amber-400 hover:text-amber-300 hidden sm:flex items-center space-x-1"
+                >
+                  <User className="w-4 h-4" />
+                  <span>Connexion</span>
+                </Button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -163,14 +170,24 @@ const Header = () => {
               </>
             ) : (
               <>
-                <Link to="/login">
-                  <Button variant="ghost">Se connecter</Button>
-                </Link>
-                <Link to="/register">
-                  <Button className="bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                    S'inscrire
-                  </Button>
-                </Link>
+                <Button
+                  variant="ghost"
+                  className="text-amber-400 hover:text-amber-300 hidden sm:flex items-center space-x-1"
+                  asChild
+                >
+                  <Link to="/login">
+                    <User className="w-4 h-4" />
+                    <span>Connexion</span>
+                  </Link>
+                </Button>
+                <Button
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 rounded-full px-6"
+                  asChild
+                >
+                  <Link to="/create-ad">
+                    Publier une annonce
+                  </Link>
+                </Button>
               </>
             )}
 
@@ -187,6 +204,16 @@ const Header = () => {
                   <SheetTitle>Menu</SheetTitle>
                 </SheetHeader>
                 <nav className="flex flex-col space-y-4 mt-4">
+                  {/* Barre de recherche mobile */}
+                  <div className="relative mb-4">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                    <Input
+                      type="text"
+                      placeholder="Rechercher des annonces..."
+                      className="w-full pl-10 pr-4 py-2 bg-muted/50 border-muted-foreground/20 focus:border-amber-500 focus:ring-amber-500/20 rounded-full"
+                    />
+                  </div>
+                  
                   {navItems.map((item) => (
                     <Link
                       key={item.href}
