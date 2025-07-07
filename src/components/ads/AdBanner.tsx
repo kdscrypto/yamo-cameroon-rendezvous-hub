@@ -1,6 +1,7 @@
 
 import React from 'react';
 import GoogleAdUnit from './GoogleAdUnit';
+import { getAdSlot, ADS_CONFIG } from '@/config/adsConfig';
 
 interface AdBannerProps {
   placement: 'header' | 'footer' | 'sidebar' | 'content';
@@ -12,31 +13,31 @@ const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' }) => {
     switch (placement) {
       case 'header':
         return {
-          adSlot: '1234567890', // Replace with your actual ad slot
+          adSlot: getAdSlot('HEADER_BANNER'),
           adFormat: 'horizontal' as const,
           className: 'w-full max-w-4xl mx-auto my-4'
         };
       case 'sidebar':
         return {
-          adSlot: '2345678901', // Replace with your actual ad slot
+          adSlot: getAdSlot('SIDEBAR_RECTANGLE'),
           adFormat: 'vertical' as const,
           className: 'w-full max-w-xs'
         };
       case 'content':
         return {
-          adSlot: '3456789012', // Replace with your actual ad slot
+          adSlot: getAdSlot('CONTENT_RECTANGLE'),
           adFormat: 'rectangle' as const,
           className: 'w-full max-w-md mx-auto my-6'
         };
       case 'footer':
         return {
-          adSlot: '4567890123', // Replace with your actual ad slot
+          adSlot: getAdSlot('FOOTER_BANNER'),
           adFormat: 'horizontal' as const,
           className: 'w-full max-w-4xl mx-auto my-4'
         };
       default:
         return {
-          adSlot: '1234567890',
+          adSlot: getAdSlot('HEADER_BANNER'),
           adFormat: 'auto' as const,
           className: 'w-full'
         };
@@ -51,6 +52,7 @@ const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' }) => {
         adSlot={config.adSlot}
         adFormat={config.adFormat}
         className={config.className}
+        fullWidthResponsive={ADS_CONFIG.SETTINGS.FULL_WIDTH_RESPONSIVE}
       />
     </div>
   );

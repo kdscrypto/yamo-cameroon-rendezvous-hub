@@ -1,9 +1,9 @@
 
 export const ADS_CONFIG = {
-  // Replace with your actual Google AdSense Publisher ID
+  // Remplacez par votre véritable ID d'éditeur Google AdSense
   PUBLISHER_ID: 'ca-pub-YOUR_PUBLISHER_ID',
   
-  // Ad slots - replace with your actual ad slot IDs
+  // Slots publicitaires - remplacez par vos véritables ID de slots
   AD_SLOTS: {
     HEADER_BANNER: '1234567890',
     SIDEBAR_RECTANGLE: '2345678901', 
@@ -12,14 +12,16 @@ export const ADS_CONFIG = {
     MOBILE_BANNER: '5678901234',
   },
   
-  // Ad settings
+  // Paramètres publicitaires
   SETTINGS: {
     AUTO_ADS_ENABLED: false,
     FULL_WIDTH_RESPONSIVE: true,
     TEST_MODE: process.env.NODE_ENV === 'development',
+    // Délai avant l'affichage des publicités (en ms)
+    LOAD_DELAY: 1000,
   },
   
-  // Placements configuration
+  // Configuration des emplacements
   PLACEMENTS: {
     HOMEPAGE: {
       header: true,
@@ -42,13 +44,25 @@ export const ADS_CONFIG = {
   }
 };
 
-// Helper function to get ad slot by placement
+// Fonction utilitaire pour obtenir un slot publicitaire par emplacement
 export const getAdSlot = (placement: keyof typeof ADS_CONFIG.AD_SLOTS): string => {
   return ADS_CONFIG.AD_SLOTS[placement];
 };
 
-// Helper function to check if ads should be shown in a specific location
+// Fonction utilitaire pour vérifier si les publicités doivent être affichées
 export const shouldShowAd = (page: keyof typeof ADS_CONFIG.PLACEMENTS, location: string): boolean => {
   const pageConfig = ADS_CONFIG.PLACEMENTS[page];
   return pageConfig && pageConfig[location as keyof typeof pageConfig] === true;
+};
+
+// Fonction utilitaire pour vérifier si AdSense est prêt
+export const isAdSenseReady = (): boolean => {
+  return typeof window !== 'undefined' && 
+         typeof window.adsbygoogle !== 'undefined' && 
+         Array.isArray(window.adsbygoogle);
+};
+
+// Fonction utilitaire pour obtenir l'ID d'éditeur configuré
+export const getPublisherId = (): string => {
+  return ADS_CONFIG.PUBLISHER_ID;
 };
