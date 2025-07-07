@@ -16,7 +16,7 @@ const GoogleAdUnit: React.FC<GoogleAdUnitProps> = ({
   className = '',
   style = {}
 }) => {
-  const adRef = useRef<HTMLDivElement>(null);
+  const adRef = useRef<HTMLModElement>(null);
 
   useEffect(() => {
     try {
