@@ -6,7 +6,7 @@ import ReferralHowItWorks from './ReferralHowItWorks';
 import ReferralLoadingState from './ReferralLoadingState';
 
 const ReferralDashboard = () => {
-  const { referralCode, stats, loading } = useReferralData();
+  const { referralCode, stats, loading, refetch } = useReferralData();
 
   if (loading) {
     return <ReferralLoadingState />;
@@ -14,7 +14,11 @@ const ReferralDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <ReferralCodeSection referralCode={referralCode} />
+      <ReferralCodeSection 
+        referralCode={referralCode} 
+        loading={loading}
+        onRefresh={refetch}
+      />
       <ReferralStats stats={stats} />
       <ReferralHowItWorks />
     </div>
