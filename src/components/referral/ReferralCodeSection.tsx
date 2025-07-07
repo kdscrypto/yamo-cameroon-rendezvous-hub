@@ -72,13 +72,13 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
 
   if (loading) {
     return (
-      <Card>
+      <Card className="bg-neutral-800/50 border-neutral-700">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-yellow-400">
             <Gift className="w-5 h-5 text-amber-500" />
             Votre code de parrainage
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-neutral-300">
             Chargement de votre code de parrainage...
           </CardDescription>
         </CardHeader>
@@ -101,23 +101,27 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
 
   if (!referralCode) {
     return (
-      <Card>
+      <Card className="bg-neutral-800/50 border-neutral-700">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-yellow-400">
             <Gift className="w-5 h-5 text-amber-500" />
             Votre code de parrainage
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-neutral-300">
             Votre code de parrainage n'est pas encore disponible.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="text-center py-4">
-            <p className="text-muted-foreground mb-4">
+            <p className="text-neutral-200 mb-4">
               Nous initialisons votre système de parrainage...
             </p>
             {onRefresh && (
-              <Button onClick={onRefresh} variant="outline" className="gap-2">
+              <Button 
+                onClick={onRefresh} 
+                variant="outline" 
+                className="gap-2 bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500 hover:border-yellow-600 font-medium"
+              >
                 <RefreshCw className="w-4 h-4" />
                 Actualiser
               </Button>
@@ -129,13 +133,13 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
   }
 
   return (
-    <Card>
+    <Card className="bg-neutral-800/50 border-neutral-700">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-yellow-400">
           <Gift className="w-5 h-5 text-amber-500" />
           Votre code de parrainage
         </CardTitle>
-        <CardDescription>
+        <CardDescription className="text-neutral-300">
           Partagez ce code avec vos amis et gagnez des points !
         </CardDescription>
       </CardHeader>
@@ -144,24 +148,36 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
           <Input
             value={referralCode}
             readOnly
-            className="font-mono text-lg font-bold text-center bg-muted"
+            className="font-mono text-lg font-bold text-center bg-neutral-700/50 border-neutral-600 text-white"
             placeholder="Chargement..."
           />
-          <Button onClick={copyCodeOnly} variant="outline" size="icon" title="Copier le code">
+          <Button 
+            onClick={copyCodeOnly} 
+            variant="outline" 
+            size="icon" 
+            title="Copier le code"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500 hover:border-yellow-600"
+          >
             <Copy className="w-4 h-4" />
           </Button>
         </div>
         
         <div className="space-y-2">
-          <label className="text-sm font-medium">Lien de parrainage :</label>
+          <label className="text-sm font-medium text-neutral-200">Lien de parrainage :</label>
           <div className="flex items-center gap-2">
             <Input
               value={referralUrl}
               readOnly
-              className="text-sm bg-muted"
+              className="text-sm bg-neutral-700/50 border-neutral-600 text-neutral-200"
               placeholder="Génération du lien..."
             />
-            <Button onClick={copyReferralCode} variant="outline" size="icon" title="Copier le lien">
+            <Button 
+              onClick={copyReferralCode} 
+              variant="outline" 
+              size="icon" 
+              title="Copier le lien"
+              className="bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500 hover:border-yellow-600"
+            >
               <Copy className="w-4 h-4" />
             </Button>
           </div>
@@ -169,7 +185,12 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
         
         {onRefresh && (
           <div className="pt-2">
-            <Button onClick={onRefresh} variant="ghost" size="sm" className="gap-2">
+            <Button 
+              onClick={onRefresh} 
+              variant="ghost" 
+              size="sm" 
+              className="gap-2 text-neutral-200 hover:text-yellow-400 hover:bg-neutral-700/50"
+            >
               <RefreshCw className="w-3 h-3" />
               Actualiser
             </Button>
