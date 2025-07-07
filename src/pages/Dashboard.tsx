@@ -5,10 +5,14 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import UserAds from '@/components/dashboard/UserAds';
 import RealTimeMessages from '@/components/dashboard/RealTimeMessages';
+import AdContainer from '@/components/ads/AdContainer';
+import AdBanner from '@/components/ads/AdBanner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useGoogleAds } from '@/hooks/useGoogleAds';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
+  const { refreshAds } = useGoogleAds();
 
   if (loading) {
     return (
@@ -39,25 +43,48 @@ const Dashboard = () => {
             <h1 className="text-3xl font-bold mb-2 text-gradient-luxe">Tableau de bord</h1>
             <p className="text-muted-foreground">Gérez vos annonces et messages depuis votre espace personnel</p>
           </div>
-          
-          <Tabs defaultValue="ads" className="mt-8">
-            <TabsList className="grid w-full grid-cols-2 bg-secondary">
-              <TabsTrigger value="ads" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                Mes annonces
-              </TabsTrigger>
-              <TabsTrigger value="messages" className="data-[state=active]:bg-primary data-[state=active]:text-white">
-                Messages
-              </TabsTrigger>
-            </TabsList>
+
+          {/* Sidebar Ad for larger screens */}
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div className="lg:col-span-3">
+              <Tabs defaultValue="ads" className="mt-8">
+                <TabsList className="grid w-full grid-cols-2 bg-secondary">
+                  <TabsTrigger value="ads" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                    Mes annonces
+                  </TabsTrigger>
+                  <TabsTrigger value="messages" className="data-[state=active]:bg-primary data-[state=active]:text-white">
+                    Messages
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="ads" className="mt-6">
+                  <UserAds />
+                </TabsContent>
+                
+                <TabsContent value="messages" className="mt-6">
+                  <RealTimeMessages />
+                </TabsContent>
+              </Tabs>
+            </div>
             
-            <TabsContent value="ads" className="mt-6">
-              <UserAds />
-            </TabsContent>
-            
-            <TabsContent value="messages" className="mt-6">
-              <RealTimeMessages />
-            </TabsContent>
-          </Tabs>
+            {/* Sidebar with ads - hidden on mobile */}
+            <div className="hidden lg:block space-y-6">
+              <AdContainer variant="bordered" title="Sponsorisé">
+                <AdBanner placement="sidebar" />
+              </AdContainer>
+              
+              <AdContainer variant="subtle" title="Publicité">
+                <AdBanner placement="sidebar" />
+              </AdContainer>
+            </div>
+          </div>
+
+          {/* Mobile ad banner */}
+          <div className="lg:hidden mt-6">
+            <AdContainer variant="subtle">
+              <AdBanner placement="content" />
+            </AdContainer>
+          </div>
         </div>
       </div>
       

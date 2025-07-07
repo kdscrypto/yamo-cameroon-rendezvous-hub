@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -7,12 +6,16 @@ import HeroSection from '@/components/Homepage/HeroSection';
 import CategoriesSection from '@/components/Homepage/CategoriesSection';
 import OptimizedAdSections from '@/components/Homepage/OptimizedAdSections';
 import SafetySection from '@/components/Homepage/SafetySection';
+import AdBanner from '@/components/ads/AdBanner';
+import AdContainer from '@/components/ads/AdContainer';
 import SEO from '@/components/SEO';
 import { useSEO } from '@/hooks/useSEO';
+import { useGoogleAds } from '@/hooks/useGoogleAds';
 
 const Index = React.memo(() => {
   const [ageVerified, setAgeVerified] = useState(false);
   const { getSEOForPath } = useSEO();
+  const { refreshAds } = useGoogleAds();
 
   // Check age verification with enhanced security
   useEffect(() => {
@@ -46,7 +49,9 @@ const Index = React.memo(() => {
   const handleAgeVerification = React.useCallback(() => {
     console.log('Index: Age verification completed, showing main content');
     setAgeVerified(true);
-  }, []);
+    // Refresh ads after age verification
+    setTimeout(() => refreshAds(), 1000);
+  }, [refreshAds]);
 
   const seoConfig = getSEOForPath('/');
 
@@ -75,8 +80,24 @@ const Index = React.memo(() => {
       />
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
+        
+        {/* Header Ad Banner */}
+        <AdContainer variant="transparent" title="">
+          <AdBanner placement="header" />
+        </AdContainer>
+        
         <HeroSection />
         <CategoriesSection />
+        
+        {/* Content Ad between sections */}
+        <section className="py-4">
+          <div className="container mx-auto px-4">
+            <AdContainer variant="subtle">
+              <AdBanner placement="content" />
+            </AdContainer>
+          </div>
+        </section>
+        
         <OptimizedAdSections />
         <SafetySection />
         <Footer />
