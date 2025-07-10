@@ -22,7 +22,7 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
     if (refCode && !value) {
-      onChange(refCode);
+      onChange(refCode.toUpperCase());
     }
   }, []);
 
@@ -39,6 +39,11 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
     setIsValidating(true);
     
     try {
+      // Normaliser le code en majuscules pour la validation
+      const normalizedCode = code.trim().toUpperCase();
+      
+      console.log('Validation du code de parrainage:', normalizedCode);
+      
       // Vérifier si le code de parrainage existe et est actif
       const { data: referralData, error } = await supabase
         .from('referral_codes')
@@ -47,29 +52,39 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
           user_id,
           profiles:user_id (full_name, email)
         `)
-        .eq('code', code.toUpperCase())
+        .eq('code', normalizedCode)
         .eq('is_active', true)
         .maybeSingle();
 
       if (error) {
         console.error('Erreur lors de la validation du code:', error);
         setIsValid(false);
+        setReferrerName('');
       } else if (referralData) {
+        console.log('Code valide trouvé:', referralData);
         setIsValid(true);
         // Extraire le nom du parrain
         const profile = referralData.profiles as any;
         const name = profile?.full_name || profile?.email?.split('@')[0] || 'Utilisateur';
         setReferrerName(name);
       } else {
+        console.log('Aucun code trouvé pour:', normalizedCode);
         setIsValid(false);
         setReferrerName('');
       }
     } catch (error) {
-      console.error('Erreur inattendue:', error);
+      console.error('Erreur inattendue lors de la validation:', error);
       setIsValid(false);
+      setReferrerName('');
     } finally {
       setIsValidating(false);
     }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Convertir automatiquement en majuscules et limiter à 8 caractères
+    const normalizedValue = e.target.value.toUpperCase().slice(0, 8);
+    onChange(normalizedValue);
   };
 
   const getStatusIcon = () => {
@@ -92,7 +107,7 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
     if (isValid === true && referrerName) {
       return `Code valide - Parrain : ${referrerName}`;
     }
-    if (isValid === false) {
+    if (isValid === false && value && value.length >= 4) {
       return "Code de parrainage invalide";
     }
     return null;
@@ -110,7 +125,7 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
           type="text"
           placeholder="Ex: ABC12345"
           value={value}
-          onChange={(e) => onChange(e.target.value.toUpperCase())}
+          onChange={handleInputChange}
           disabled={disabled}
           className={`h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 pr-12 transition-all duration-200 ${
             isValid === true ? 'border-green-500 focus:border-green-500 focus:ring-green-500/20' : ''

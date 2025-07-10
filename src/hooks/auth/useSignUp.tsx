@@ -41,11 +41,16 @@ export const useSignUp = () => {
     }
 
     // Validation du code de parrainage si fourni
+    let normalizedReferralCode: string | undefined = undefined;
     if (referralCode && referralCode.trim()) {
+      normalizedReferralCode = referralCode.trim().toUpperCase();
+      
+      console.log('Validation du code de parrainage lors de l\'inscription:', normalizedReferralCode);
+      
       const { data: referralData, error: referralError } = await supabase
         .from('referral_codes')
         .select('code, user_id')
-        .eq('code', referralCode.trim().toUpperCase())
+        .eq('code', normalizedReferralCode)
         .eq('is_active', true)
         .maybeSingle();
 
@@ -58,11 +63,14 @@ export const useSignUp = () => {
       }
 
       if (!referralData) {
+        console.log('Code de parrainage non trouvé:', normalizedReferralCode);
         return { 
           data: null, 
           error: { message: "Code de parrainage invalide." }
         };
       }
+      
+      console.log('Code de parrainage valide:', referralData);
     }
     
     const { data, error } = await supabase.auth.signUp({
@@ -73,7 +81,7 @@ export const useSignUp = () => {
         data: {
           full_name: fullName,
           phone: normalizedPhone,
-          referral_code: referralCode?.trim().toUpperCase()
+          referral_code: normalizedReferralCode
         }
       }
     });
