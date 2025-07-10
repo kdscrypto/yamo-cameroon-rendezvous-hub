@@ -47,14 +47,7 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
       // Vérifier si le code de parrainage existe et est actif
       const { data: referralData, error } = await supabase
         .from('referral_codes')
-        .select(`
-          code,
-          user_id,
-          profiles!referral_codes_user_id_fkey (
-            full_name,
-            email
-          )
-        `)
+        .select('code, user_id')
         .eq('code', normalizedCode)
         .eq('is_active', true)
         .maybeSingle();
@@ -65,11 +58,24 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
         setReferrerName('');
       } else if (referralData) {
         console.log('Code valide trouvé:', referralData);
-        setIsValid(true);
-        // Extraire le nom du parrain
-        const profile = referralData.profiles as any;
-        const name = profile?.full_name || profile?.email?.split('@')[0] || 'Utilisateur';
-        setReferrerName(name);
+        
+        // Récupérer les informations du parrain séparément pour éviter les problèmes de jointure
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('full_name, email')
+          .eq('id', referralData.user_id)
+          .maybeSingle();
+
+        if (profileError) {
+          console.error('Erreur lors de la récupération du profil:', profileError);
+          // Le code est valide même si on ne peut pas récupérer le profil
+          setIsValid(true);
+          setReferrerName('Utilisateur');
+        } else {
+          setIsValid(true);
+          const name = profileData?.full_name || profileData?.email?.split('@')[0] || 'Utilisateur';
+          setReferrerName(name);
+        }
       } else {
         console.log('Aucun code trouvé pour:', normalizedCode);
         setIsValid(false);
