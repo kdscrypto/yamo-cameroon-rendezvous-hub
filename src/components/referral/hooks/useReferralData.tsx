@@ -23,6 +23,55 @@ export const useReferralData = () => {
     }
   }, [user]);
 
+  // Système de mise à jour en temps réel pour les points
+  useEffect(() => {
+    if (!user) return;
+
+    // Écouter les changements sur la table referral_points
+    const pointsChannel = supabase
+      .channel('referral-points-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'referral_points',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Points de parrainage mis à jour:', payload);
+          if (payload.new) {
+            setStats(payload.new as ReferralStats);
+          }
+        }
+      )
+      .subscribe();
+
+    // Écouter les changements sur les relations de parrainage
+    const relationshipsChannel = supabase
+      .channel('referral-relationships-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'referral_relationships',
+          filter: `referrer_user_id=eq.${user.id}`
+        },
+        (payload) => {
+          console.log('Nouveau parrainage détecté:', payload);
+          // Recharger les données pour avoir les stats à jour
+          fetchReferralData();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(pointsChannel);
+      supabase.removeChannel(relationshipsChannel);
+    };
+  }, [user]);
+
   const fetchReferralData = async () => {
     if (!user) return;
 

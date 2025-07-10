@@ -158,11 +158,6 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
         </div>
       )}
       
-      {isValid === true && (
-        <Badge className="bg-green-100 text-green-800">
-          Vous et votre parrain recevrez des points de parrainage !
-        </Badge>
-      )}
       
       <div className="text-xs text-neutral-500">
         En saisissant un code de parrainage, vous aidez un membre de la communauté
