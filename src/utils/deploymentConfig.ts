@@ -1,5 +1,4 @@
 
-
 // Configuration pour le déploiement
 export const DEPLOYMENT_CONFIG = {
   // URL de production mise à jour avec votre domaine personnalisé
@@ -40,3 +39,36 @@ export const isProduction = (): boolean => {
   return import.meta.env.PROD;
 };
 
+// Fonction pour forcer le rechargement du cache
+export const clearCache = (): void => {
+  if ('caches' in window) {
+    caches.keys().then(names => {
+      names.forEach(name => {
+        caches.delete(name);
+      });
+    });
+  }
+  
+  // Forcer le rechargement sans cache
+  if (typeof window !== 'undefined') {
+    window.location.reload();
+  }
+};
+
+// Fonction pour vérifier le statut du déploiement
+export const checkDeploymentStatus = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${getBaseUrl()}/health`, {
+      cache: 'no-cache',
+      headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Erreur lors de la vérification du déploiement:', error);
+    return false;
+  }
+};

@@ -29,7 +29,16 @@
 [[headers]]
   for = "/sw.js"
   [headers.values]
-    Cache-Control = "no-cache"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
 [[headers]]
   for = "/*"
@@ -38,3 +47,22 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Configuration spécifique pour le domaine personnalisé
+[[redirects]]
+  from = "https://yamo.chat/*"
+  to = "https://yamo.chat/:splat"
+  status = 200
+  force = true
+
+# Health check endpoint
+[[redirects]]
+  from = "/health"
+  to = "/.netlify/functions/health"
+  status = 200
+
+# Invalidation du cache pour les mises à jour
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Deployment-Time = "2025-01-10T15:00:00Z"
