@@ -34,8 +34,8 @@ const ForgotPassword = () => {
     setIsLoading(true);
 
     try {
-      // CORRECTION : Utiliser la nouvelle URL de callback
-      const redirectUrl = `${window.location.origin}/auth/callback`;
+      // CORRECTION : Utiliser l'URL de reset directe
+      const redirectUrl = `${window.location.origin}/reset-password`;
       
       console.log('ForgotPassword: Sending password reset email for:', email);
       console.log('ForgotPassword: Redirect URL:', redirectUrl);
