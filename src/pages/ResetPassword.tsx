@@ -14,6 +14,11 @@ const ResetPassword = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
+  console.log('🔧 ResetPassword: Component loaded');
+  console.log('🔧 ResetPassword: Current URL:', window.location.href);
+  console.log('🔧 ResetPassword: Hash:', window.location.hash);
+  console.log('🔧 ResetPassword: Search:', window.location.search);
+
   // Vérification et validation des tokens directement depuis l'URL
   useEffect(() => {
     const validateAndSetSession = async () => {
