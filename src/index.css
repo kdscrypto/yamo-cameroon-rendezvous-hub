@@ -414,6 +414,35 @@
   text-shadow: 0 2px 4px rgba(32, 20, 8, 0.7);
 }
 
+/* === GRADIENT UTILITIES === */
+.gradient-gold {
+  background: linear-gradient(135deg, hsl(45 100% 70%), hsl(43 100% 60%));
+  color: hsl(32 20 8);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid hsl(43 100% 50%);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
+.gradient-gold:hover {
+  background: linear-gradient(135deg, hsl(45 100% 75%), hsl(43 100% 65%));
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+  transform: translateY(-1px);
+}
+
+.gradient-gold:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(255, 215, 0, 0.3);
+}
+
+.gradient-gold:disabled {
+  background: linear-gradient(135deg, hsl(45 20% 50%), hsl(43 20% 45%));
+  color: hsl(45 20% 30%);
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
+}
+
 /* === BACKGROUND PATTERNS === */
 .bg-dots {
   background-image: radial-gradient(circle, rgba(255, 215, 0, 0.1) 1px, transparent 1px);
