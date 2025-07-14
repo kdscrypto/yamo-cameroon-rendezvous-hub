@@ -148,7 +148,7 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
           <Input
             value={referralCode}
             readOnly
-            className="font-mono text-lg font-bold text-center bg-neutral-700/50 border-neutral-600 text-white"
+            className="font-mono text-lg font-bold text-center bg-neutral-800 border-yellow-500/30 text-yellow-100 focus:border-yellow-400 focus:ring-yellow-400/20"
             placeholder="Chargement..."
           />
           <Button 
@@ -163,12 +163,12 @@ const ReferralCodeSection = ({ referralCode, loading = false, onRefresh }: Refer
         </div>
         
         <div className="space-y-2">
-          <label className="text-sm font-medium text-neutral-200">Lien de parrainage :</label>
+          <label className="text-sm font-medium text-yellow-300">Lien de parrainage :</label>
           <div className="flex items-center gap-2">
             <Input
               value={referralUrl}
               readOnly
-              className="text-sm bg-neutral-700/50 border-neutral-600 text-neutral-200"
+              className="text-sm bg-neutral-800 border-yellow-500/30 text-yellow-100 focus:border-yellow-400 focus:ring-yellow-400/20"
               placeholder="Génération du lien..."
             />
             <Button 
