@@ -96,10 +96,10 @@ const ForgotPassword = () => {
                 <span className="text-black font-bold text-xl">Y</span>
               </div>
             </div>
-            <CardTitle className="text-2xl text-foreground">
+            <CardTitle className="text-2xl text-white font-semibold">
               {isEmailSent ? 'Email envoyé' : 'Mot de passe oublié'}
             </CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription className="text-yellow-300">
               {isEmailSent 
                 ? 'Nous avons envoyé un lien de réinitialisation à votre adresse email'
                 : 'Entrez votre adresse email pour recevoir un lien de réinitialisation'
@@ -111,7 +111,7 @@ const ForgotPassword = () => {
             {!isEmailSent ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-foreground">Adresse email</Label>
+                  <Label htmlFor="email" className="text-yellow-300 font-medium">Adresse email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -160,7 +160,7 @@ const ForgotPassword = () => {
             <div className="mt-6 text-center">
               <Link 
                 to="/login" 
-                className="inline-flex items-center text-sm text-primary hover:underline"
+                className="inline-flex items-center text-sm text-yellow-400 hover:text-yellow-300 transition-colors duration-200 hover:underline"
               >
                 <ArrowLeft className="w-4 h-4 mr-1" />
                 Retour à la connexion
