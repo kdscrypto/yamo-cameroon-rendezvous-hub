@@ -43,7 +43,7 @@ const App: React.FC = () => {
             minHeight: '100vh'
           }}>
             <Routes>
-              <Route path="/" element={<MinimalIndex />} />
+              <Route path="/" element={<TestHomePage />} />
               <Route path="/test" element={<TestHomePage />} />
               <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
             </Routes>
