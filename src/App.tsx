@@ -3,6 +3,7 @@ import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import Index from "./pages/Index";
 
 // Create QueryClient outside component
 const queryClient = new QueryClient({
@@ -20,14 +21,14 @@ const TestHomePage = () => {
   const [count, setCount] = React.useState(0);
   return (
     <div style={{ padding: '20px', color: 'white' }}>
-      <h1>Page d'accueil - Test {count}</h1>
+      <h1>Page de test - Test {count}</h1>
       <button 
         onClick={() => setCount(count + 1)}
         style={{ padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}
       >
         Test Counter
       </button>
-      <p>BrowserRouter + Routes + QueryClient + ThemeProvider + useState = OK</p>
+      <p>Providers OK - Test avec vrai Index</p>
     </div>
   );
 };
@@ -42,7 +43,8 @@ const App: React.FC = () => {
             minHeight: '100vh'
           }}>
             <Routes>
-              <Route path="/" element={<TestHomePage />} />
+              <Route path="/" element={<Index />} />
+              <Route path="/test" element={<TestHomePage />} />
               <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
             </Routes>
           </div>
