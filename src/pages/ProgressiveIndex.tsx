@@ -1,7 +1,9 @@
 import * as React from 'react';
+import { useSEO } from '@/hooks/useSEO';
 
 const ProgressiveIndex = () => {
   const [ageVerified, setAgeVerified] = React.useState(false);
+  const { getSEOForPath } = useSEO();
 
   const handleAgeVerification = React.useCallback(() => {
     console.log('Age verification completed');
