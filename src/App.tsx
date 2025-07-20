@@ -1,5 +1,5 @@
 
-import React, { StrictMode } from "react";
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -40,8 +40,7 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <StrictMode>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
           <TooltipProvider delayDuration={0}>
             <BrowserRouter>
@@ -75,7 +74,6 @@ function App() {
           </TooltipProvider>
         </ThemeProvider>
       </QueryClientProvider>
-    </StrictMode>
   );
 }
 

@@ -15,9 +15,11 @@ if (!rootElement) {
 }
 
 createRoot(rootElement).render(
-  <HelmetProvider>
-    <App />
-  </HelmetProvider>
+  <React.StrictMode>
+    <HelmetProvider>
+      <App />
+    </HelmetProvider>
+  </React.StrictMode>
 );
 
 // Service worker registration avec gestion d'erreur améliorée
