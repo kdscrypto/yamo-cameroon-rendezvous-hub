@@ -169,36 +169,14 @@ function toast({ ...props }: Toast) {
 }
 
 function useToast() {
-  // Version simplifiée qui évite les problèmes d'initialisation React
-  try {
-    const [state, setState] = React.useState<State>(memoryState)
-
-    React.useEffect(() => {
-      listeners.push(setState)
-      return () => {
-        const index = listeners.indexOf(setState)
-        if (index > -1) {
-          listeners.splice(index, 1)
-        }
-      }
-    }, [state])
-
-    return {
-      ...state,
-      toast,
-      dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
-    }
-  } catch (error) {
-    // Fallback si React n'est pas disponible
-    console.warn('React not available for useToast, using fallback')
-    return {
-      toasts: [],
-      toast: (props: Toast) => {
-        console.log('Toast (fallback):', props.title, props.description)
-        return { id: '', dismiss: () => {}, update: () => {} }
-      },
-      dismiss: () => {},
-    }
+  // Version sans hooks React pour éviter les problèmes d'initialisation
+  return {
+    toasts: memoryState.toasts,
+    toast: (props: Toast) => {
+      console.log('Toast:', props.title, props.description);
+      return toast(props);
+    },
+    dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   }
 }
 
