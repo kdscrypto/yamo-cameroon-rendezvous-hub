@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Eye, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -9,12 +9,12 @@ interface AgeVerificationProps {
 }
 
 const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
-  const [isExiting, setIsExiting] = useState(false);
-  const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [countdown, setCountdown] = useState(3);
+  const [isExiting, setIsExiting] = React.useState(false);
+  const [buttonEnabled, setButtonEnabled] = React.useState(false);
+  const [countdown, setCountdown] = React.useState(3);
 
   // Security delay before button becomes clickable
-  useEffect(() => {
+  React.useEffect(() => {
     console.log('AgeVerification: Component mounted, starting security delay');
     
     const timer = setInterval(() => {
