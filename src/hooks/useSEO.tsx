@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface SEOConfig {
@@ -54,7 +54,7 @@ export const useSEO = () => {
     return defaultSEO[path] || defaultSEO['/'];
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     const seo = getSEOForPath(location.pathname);
     
     // Update page title
