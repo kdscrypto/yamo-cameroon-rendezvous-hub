@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import SimpleHeader from '@/components/SimpleHeader';
+import SimpleFooter from '@/components/SimpleFooter';
 import PreviewPage from '@/components/CreateAd/PreviewPage';
 import CreateAdLayout from '@/components/CreateAd/CreateAdLayout';
 import { useCreateAdForm } from '@/hooks/useCreateAdForm';
@@ -60,14 +60,14 @@ const CreateAd = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
+        <SimpleHeader />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-muted-foreground">Chargement...</p>
           </div>
         </div>
-        <Footer />
+        <SimpleFooter />
       </div>
     );
   }

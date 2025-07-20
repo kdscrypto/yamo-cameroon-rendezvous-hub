@@ -1,8 +1,8 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import SimpleHeader from '@/components/SimpleHeader';
+import SimpleFooter from '@/components/SimpleFooter';
 import UserAds from '@/components/dashboard/UserAds';
 import RealTimeMessages from '@/components/dashboard/RealTimeMessages';
 import AdContainer from '@/components/ads/AdContainer';
@@ -17,14 +17,14 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <Header />
+        <SimpleHeader />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-muted-foreground">Chargement...</p>
           </div>
         </div>
-        <Footer />
+        <SimpleFooter />
       </div>
     );
   }
@@ -35,12 +35,12 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
+      <SimpleHeader />
       
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2 text-gradient-luxe">Tableau de bord</h1>
+            <h1 className="text-3xl font-bold mb-2">Tableau de bord</h1>
             <p className="text-muted-foreground">Gérez vos annonces et messages depuis votre espace personnel</p>
           </div>
 
@@ -88,7 +88,7 @@ const Dashboard = () => {
         </div>
       </div>
       
-      <Footer />
+      <SimpleFooter />
     </div>
   );
 };
