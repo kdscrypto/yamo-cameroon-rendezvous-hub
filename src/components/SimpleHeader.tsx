@@ -1,6 +1,18 @@
 import * as React from "react";
+import { useAuth } from "@/hooks/useAuth";
 
 const SimpleHeader = () => {
+  const { user, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    const { error } = await signOut();
+    if (error) {
+      console.error("Erreur lors de la déconnexion:", error);
+    } else {
+      console.log("Vous êtes déconnecté.");
+    }
+  };
+
   return (
     <header className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-3">
@@ -15,9 +27,25 @@ const SimpleHeader = () => {
             </span>
           </div>
           
-          {/* Simple text instead of buttons */}
-          <div className="text-muted-foreground">
-            Application loading...
+          {/* Auth section */}
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <div className="flex items-center space-x-3">
+                <span className="text-sm text-muted-foreground">
+                  Bienvenue, {user.email}
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 transition-colors"
+                >
+                  Déconnexion
+                </button>
+              </div>
+            ) : (
+              <span className="text-muted-foreground text-sm">
+                Non connecté
+              </span>
+            )}
           </div>
         </div>
       </div>
