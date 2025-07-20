@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import CreateAd from "./pages/CreateAd";
 import Browse from "./pages/Browse";
 import AdDetail from "./pages/AdDetail";
+import NavigationTest from "./pages/NavigationTest";
 
 // Create QueryClient outside component
 const queryClient = new QueryClient({
@@ -56,6 +57,7 @@ const App: React.FC = () => {
               <Route path="/create-ad" element={<CreateAd />} />
               <Route path="/browse" element={<Browse />} />
               <Route path="/ad/:id" element={<AdDetail />} />
+              <Route path="/test-navigation" element={<NavigationTest />} />
               <Route path="/test" element={<TestHomePage />} />
               <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
             </Routes>

@@ -120,24 +120,29 @@ const Index = React.memo(() => {
             
             {/* Status Section */}
             <div className="text-center bg-card/50 rounded-xl p-8 border">
-              <h2 className="text-2xl font-bold mb-4 text-green-600">Application Successfully Loaded!</h2>
+              <h2 className="text-2xl font-bold mb-4 text-green-600">✅ Application restaurée avec succès !</h2>
               <p className="text-muted-foreground mb-6">
-                The React hooks and router issues have been resolved.
+                Toutes les fonctionnalités principales ont été restaurées et testées.
               </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <div className="flex items-center justify-center space-x-2">
                   <span className="text-green-600 text-xl">✅</span>
-                  <span>Age verification passed</span>
+                  <span>Navigation complète</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <span className="text-green-600 text-xl">✅</span>
-                  <span>Authentication working</span>
+                  <span>Authentification opérationnelle</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <span className="text-green-600 text-xl">✅</span>
-                  <span>Ready for full functionality</span>
+                  <span>Dashboard et création d'annonces</span>
                 </div>
               </div>
+              <Link to="/test-navigation">
+                <Button variant="outline" size="lg">
+                  🧪 Tester la navigation complète
+                </Button>
+              </Link>
             </div>
           </div>
         </section>

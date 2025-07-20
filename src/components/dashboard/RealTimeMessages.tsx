@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, Plus, Search, Archive } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useState } from 'react';
-import { toast } from 'sonner';
+// import { toast } from 'sonner'; // Temporairement désactivé
 import ConversationView from './ConversationView';
 import ComposeMessageModal from './ComposeMessageModal';
 import MessagesSummaryStats from './RealTimeMessages/MessagesSummaryStats';
@@ -101,7 +101,7 @@ const RealTimeMessages = () => {
         onClose={() => setIsComposeOpen(false)}
         onMessageSent={() => {
           refetch();
-          toast.success('Message envoyé avec succès');
+          console.log('Toast: Message envoyé avec succès');
         }}
       />
     </div>
