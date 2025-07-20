@@ -1,9 +1,11 @@
 
 import * as React from "react";
 import { useAuth } from "@/hooks/useAuth";
-// import { useToast } from "@/hooks/use-toast"; // Temporairement désactivé
+import { useToast } from "@/hooks/use-toast";
 import { useGetUnreadMessagesCount } from "@/hooks/useGetUnreadMessagesCount";
-// import { useIsMobile } from "@/hooks/use-mobile"; // Temporairement désactivé
+import { useIsMobile } from "@/hooks/use-mobile";
+import AdContainer from "./ads/AdContainer";
+import AdBanner from "./ads/AdBanner";
 import Logo from "./Header/Logo";
 import SearchBar from "./Header/SearchBar";
 import AuthButtons from "./Header/AuthButtons";
@@ -12,11 +14,10 @@ import MobileMenu from "./Header/MobileMenu";
 import MobileHeader from "./Header/MobileHeader";
 
 const Header = () => {
-  // Temporary fallbacks to avoid React hook issues during initialization
-  const user = null;
-  const signOut = async () => ({ error: null });
-  const unreadCount = 0;
-  const isMobile = false; // Temporairement désactivé - assume desktop
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+  const { unreadCount = 0 } = useGetUnreadMessagesCount();
+  const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -26,8 +27,17 @@ const Header = () => {
   const handleLogout = async () => {
     const { error } = await signOut();
     if (error) {
+      toast({
+        title: "Erreur",
+        description: "Erreur lors de la déconnexion",
+        variant: "destructive",
+      });
       console.error("Erreur lors de la déconnexion:", error);
     } else {
+      toast({
+        title: "Succès",
+        description: "Vous êtes déconnecté",
+      });
       console.log("Vous êtes déconnecté.");
     }
   };
@@ -75,6 +85,13 @@ const Header = () => {
               />
             )}
           </div>
+        </div>
+        
+        {/* Header Advertisement */}
+        <div className="py-2">
+          <AdContainer variant="transparent">
+            <AdBanner placement="header" />
+          </AdContainer>
         </div>
       </div>
     </header>

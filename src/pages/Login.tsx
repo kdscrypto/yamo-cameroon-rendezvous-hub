@@ -2,8 +2,8 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import SimpleHeader from '@/components/SimpleHeader';
-import SimpleFooter from '@/components/SimpleFooter';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import LoginHeader from '@/components/auth/LoginHeader';
 import LoginForm from '@/components/auth/LoginForm';
 import LoginTrustIndicators from '@/components/auth/LoginTrustIndicators';
@@ -21,7 +21,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <SimpleHeader />
+      <Header />
       
       <div className="flex-1 flex items-center justify-center px-4 py-8">
         <div className="w-full max-w-md">
@@ -31,7 +31,7 @@ const Login = () => {
         </div>
       </div>
       
-      <SimpleFooter />
+      <Footer />
     </div>
   );
 };
