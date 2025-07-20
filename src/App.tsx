@@ -2,6 +2,7 @@
 import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 // Create QueryClient outside component
 const queryClient = new QueryClient({
@@ -26,7 +27,7 @@ const TestHomePage = () => {
       >
         Test Counter
       </button>
-      <p>BrowserRouter + Routes + QueryClient + useState = OK</p>
+      <p>BrowserRouter + Routes + QueryClient + ThemeProvider + useState = OK</p>
     </div>
   );
 };
@@ -34,17 +35,19 @@ const TestHomePage = () => {
 const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <div style={{ 
-          backgroundColor: '#1a1a1a', 
-          minHeight: '100vh'
-        }}>
-          <Routes>
-            <Route path="/" element={<TestHomePage />} />
-            <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
-          </Routes>
-        </div>
-      </BrowserRouter>
+      <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
+        <BrowserRouter>
+          <div style={{ 
+            backgroundColor: '#1a1a1a', 
+            minHeight: '100vh'
+          }}>
+            <Routes>
+              <Route path="/" element={<TestHomePage />} />
+              <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
