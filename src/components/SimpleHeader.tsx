@@ -9,6 +9,11 @@ const SimpleHeader = () => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -82,7 +87,8 @@ const SimpleHeader = () => {
             )}
           </div>
 
-          {/* Mobile Menu */}
+          {/* Mobile Menu - Only render when mounted */}
+          {isMounted && (
           <div className="md:hidden">
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -154,6 +160,7 @@ const SimpleHeader = () => {
               </SheetContent>
             </Sheet>
           </div>
+          )}
         </div>
       </div>
     </header>
