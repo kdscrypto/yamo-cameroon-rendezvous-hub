@@ -2,8 +2,7 @@ import * as React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import { Menu } from "lucide-react";
 
 const SimpleHeader = () => {
   const { user, signOut } = useAuth();
@@ -14,6 +13,20 @@ const SimpleHeader = () => {
   React.useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  // Fermer le menu mobile si on clique en dehors
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (isOpen && !(event.target as Element)?.closest('header')) {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [isOpen]);
 
   const handleLogout = async () => {
     const { error } = await signOut();
@@ -87,20 +100,19 @@ const SimpleHeader = () => {
             )}
           </div>
 
-          {/* Mobile Menu - Only render when mounted */}
-          {isMounted && (
+          {/* Menu mobile simplifié sans Sheet */}
           <div className="md:hidden">
-            <Sheet open={isOpen} onOpenChange={setIsOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <nav className="flex flex-col space-y-4 mt-8">
+            <Button variant="ghost" size="sm" onClick={() => setIsOpen(!isOpen)}>
+              <Menu className="h-5 w-5" />
+            </Button>
+            
+            {/* Menu mobile simple sans Dialog */}
+            {isOpen && (
+              <div className="absolute top-full left-0 right-0 bg-background border-t border-border shadow-lg z-50">
+                <nav className="container mx-auto px-4 py-4 flex flex-col space-y-2">
                   <Link 
                     to="/browse" 
-                    className="text-foreground hover:text-primary transition-colors p-2"
+                    className="text-foreground hover:text-primary transition-colors p-2 rounded hover:bg-muted"
                     onClick={() => setIsOpen(false)}
                   >
                     Parcourir
@@ -109,14 +121,14 @@ const SimpleHeader = () => {
                     <>
                       <Link 
                         to="/create-ad" 
-                        className="text-foreground hover:text-primary transition-colors p-2"
+                        className="text-foreground hover:text-primary transition-colors p-2 rounded hover:bg-muted"
                         onClick={() => setIsOpen(false)}
                       >
                         Créer une annonce
                       </Link>
                       <Link 
                         to="/dashboard" 
-                        className="text-foreground hover:text-primary transition-colors p-2"
+                        className="text-foreground hover:text-primary transition-colors p-2 rounded hover:bg-muted"
                         onClick={() => setIsOpen(false)}
                       >
                         Dashboard
@@ -124,11 +136,11 @@ const SimpleHeader = () => {
                     </>
                   )}
                   
-                  <div className="border-t pt-4 mt-4">
+                  <div className="border-t pt-2 mt-2">
                     {user ? (
-                      <div className="space-y-4">
+                      <div className="space-y-2">
                         <p className="text-sm text-muted-foreground px-2">
-                          Connecté en tant que: {user.email}
+                          Connecté: {user.email}
                         </p>
                         <Button
                           onClick={() => {
@@ -136,20 +148,21 @@ const SimpleHeader = () => {
                             setIsOpen(false);
                           }}
                           variant="destructive"
+                          size="sm"
                           className="w-full"
                         >
                           Déconnexion
                         </Button>
                       </div>
                     ) : (
-                      <div className="space-y-2">
-                        <Link to="/login" onClick={() => setIsOpen(false)}>
-                          <Button variant="ghost" className="w-full">
+                      <div className="flex space-x-2">
+                        <Link to="/login" onClick={() => setIsOpen(false)} className="flex-1">
+                          <Button variant="ghost" size="sm" className="w-full">
                             Connexion
                           </Button>
                         </Link>
-                        <Link to="/register" onClick={() => setIsOpen(false)}>
-                          <Button className="w-full">
+                        <Link to="/register" onClick={() => setIsOpen(false)} className="flex-1">
+                          <Button size="sm" className="w-full">
                             S'inscrire
                           </Button>
                         </Link>
@@ -157,10 +170,9 @@ const SimpleHeader = () => {
                     )}
                   </div>
                 </nav>
-              </SheetContent>
-            </Sheet>
+              </div>
+            )}
           </div>
-          )}
         </div>
       </div>
     </header>
