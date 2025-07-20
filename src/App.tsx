@@ -3,7 +3,7 @@ import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import Index from "./pages/Index";
+import MinimalIndex from "./pages/MinimalIndex";
 
 // Create QueryClient outside component
 const queryClient = new QueryClient({
@@ -43,7 +43,7 @@ const App: React.FC = () => {
             minHeight: '100vh'
           }}>
             <Routes>
-              <Route path="/" element={<TestHomePage />} />
+              <Route path="/" element={<MinimalIndex />} />
               <Route path="/test" element={<TestHomePage />} />
               <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
             </Routes>
