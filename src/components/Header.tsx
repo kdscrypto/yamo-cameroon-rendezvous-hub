@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast"; // Temporairement désactivé
 import { useGetUnreadMessagesCount } from "@/hooks/useGetUnreadMessagesCount";
 import { useIsMobile } from "@/hooks/use-mobile";
 import AdContainer from "./ads/AdContainer";
@@ -15,7 +15,7 @@ import MobileHeader from "./Header/MobileHeader";
 
 const Header = () => {
   const { user, signOut } = useAuth();
-  const { toast } = useToast();
+  // const { toast } = useToast(); // Temporairement désactivé
   const { unreadCount = 0 } = useGetUnreadMessagesCount();
   const isMobile = useIsMobile();
   const [isMounted, setIsMounted] = React.useState(false);
@@ -27,18 +27,13 @@ const Header = () => {
   const handleLogout = async () => {
     const { error } = await signOut();
     if (error) {
-      toast({
-        title: "Erreur",
-        description: "Erreur lors de la déconnexion",
-        variant: "destructive",
-      });
       console.error("Erreur lors de la déconnexion:", error);
+      // Toast temporairement remplacé par console.log
+      console.log("Toast: Erreur lors de la déconnexion");
     } else {
-      toast({
-        title: "Succès",
-        description: "Vous êtes déconnecté",
-      });
       console.log("Vous êtes déconnecté.");
+      // Toast temporairement remplacé par console.log  
+      console.log("Toast: Vous êtes déconnecté");
     }
   };
 
