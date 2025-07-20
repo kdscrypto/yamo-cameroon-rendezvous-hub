@@ -4,6 +4,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Dashboard from "./pages/Dashboard";
+import CreateAd from "./pages/CreateAd";
+import Browse from "./pages/Browse";
+import AdDetail from "./pages/AdDetail";
 
 // Create QueryClient outside component
 const queryClient = new QueryClient({
@@ -44,6 +50,12 @@ const App: React.FC = () => {
           }}>
             <Routes>
               <Route path="/" element={<Index />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/create-ad" element={<CreateAd />} />
+              <Route path="/browse" element={<Browse />} />
+              <Route path="/ad/:id" element={<AdDetail />} />
               <Route path="/test" element={<TestHomePage />} />
               <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
             </Routes>

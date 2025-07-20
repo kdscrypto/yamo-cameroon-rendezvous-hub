@@ -1,8 +1,10 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import SimpleHeader from '@/components/SimpleHeader';
 import SimpleFooter from '@/components/SimpleFooter';
 import AgeVerification from '@/components/AgeVerification';
 import SEO from '@/components/SEO';
+import { Button } from '@/components/ui/button';
 import { useGoogleAds } from '@/hooks/useGoogleAds';
 
 const Index = React.memo(() => {
@@ -82,6 +84,18 @@ const Index = React.memo(() => {
                 La plateforme de référence pour les annonces adultes au Cameroun. 
                 Rencontres, massages, produits adultes en toute discrétion et sécurité.
               </p>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <Link to="/browse">
+                  <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700">
+                    Parcourir les annonces
+                  </Button>
+                </Link>
+                <Link to="/create-ad">
+                  <Button size="lg" variant="outline">
+                    Créer une annonce
+                  </Button>
+                </Link>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
                 <div className="p-6 bg-card rounded-xl border">
                   <h3 className="text-xl font-semibold mb-3">🔒 Sécurisé</h3>
