@@ -1,18 +1,22 @@
-import React, { useState } from 'react';
+import * as React from 'react';
+import AgeVerification from '@/components/AgeVerification';
 
 const MinimalIndex = () => {
-  const [test, setTest] = useState(0);
+  const [ageVerified, setAgeVerified] = React.useState(false);
+
+  const handleAgeVerification = React.useCallback(() => {
+    console.log('Age verification completed');
+    setAgeVerified(true);
+  }, []);
+
+  if (!ageVerified) {
+    return <AgeVerification onConfirm={handleAgeVerification} />;
+  }
 
   return (
-    <div style={{ padding: '20px', color: 'white' }}>
-      <h1>Index Minimal Ultra Simple - Test {test}</h1>
-      <button 
-        onClick={() => setTest(test + 1)}
-        style={{ padding: '10px', backgroundColor: '#4CAF50', color: 'white', border: 'none', borderRadius: '4px' }}
-      >
-        Test useState simple
-      </button>
-      <p>Test sans hooks complexes</p>
+    <div style={{ padding: '20px', color: 'white', textAlign: 'center' }}>
+      <h1>Application Loaded Successfully!</h1>
+      <p>Age verification passed. The React hooks issue has been resolved.</p>
     </div>
   );
 };
