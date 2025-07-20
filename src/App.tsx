@@ -1,6 +1,18 @@
 
 import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+// Create QueryClient outside component
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 // Composant de test simple sans hooks complexes
 const TestHomePage = () => {
@@ -14,24 +26,26 @@ const TestHomePage = () => {
       >
         Test Counter
       </button>
-      <p>BrowserRouter + Routes + useState = OK</p>
+      <p>BrowserRouter + Routes + QueryClient + useState = OK</p>
     </div>
   );
 };
 
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <div style={{ 
-        backgroundColor: '#1a1a1a', 
-        minHeight: '100vh'
-      }}>
-        <Routes>
-          <Route path="/" element={<TestHomePage />} />
-          <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
-        </Routes>
-      </div>
-    </BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <div style={{ 
+          backgroundColor: '#1a1a1a', 
+          minHeight: '100vh'
+        }}>
+          <Routes>
+            <Route path="/" element={<TestHomePage />} />
+            <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
+          </Routes>
+        </div>
+      </BrowserRouter>
+    </QueryClientProvider>
   );
 };
 
