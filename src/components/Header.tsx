@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useGetUnreadMessagesCount } from "@/hooks/useGetUnreadMessagesCount";
@@ -16,9 +16,9 @@ const Header = () => {
   const { toast } = useToast();
   const { unreadCount } = useGetUnreadMessagesCount();
   const isMobile = useIsMobile();
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     setIsMounted(true);
   }, []);
 
