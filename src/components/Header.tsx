@@ -3,7 +3,7 @@ import * as React from "react";
 import { useAuth } from "@/hooks/useAuth";
 // import { useToast } from "@/hooks/use-toast"; // Temporairement désactivé
 import { useGetUnreadMessagesCount } from "@/hooks/useGetUnreadMessagesCount";
-import { useIsMobile } from "@/hooks/use-mobile";
+// import { useIsMobile } from "@/hooks/use-mobile"; // Temporairement désactivé
 import Logo from "./Header/Logo";
 import SearchBar from "./Header/SearchBar";
 import AuthButtons from "./Header/AuthButtons";
@@ -16,7 +16,7 @@ const Header = () => {
   const user = null;
   const signOut = async () => ({ error: null });
   const unreadCount = 0;
-  const isMobile = useIsMobile();
+  const isMobile = false; // Temporairement désactivé - assume desktop
   const [isMounted, setIsMounted] = React.useState(false);
 
   React.useEffect(() => {

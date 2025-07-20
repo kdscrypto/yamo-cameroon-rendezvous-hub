@@ -3,11 +3,14 @@ import * as React from "react"
 const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile() {
-  // Temporary fallback without React hooks to avoid initialization issues
-  if (typeof window === 'undefined') {
+  // Completely static implementation to avoid React hooks issues
+  try {
+    if (typeof window === 'undefined') {
+      return false;
+    }
+    return window.innerWidth < MOBILE_BREAKPOINT;
+  } catch (error) {
+    console.warn('useIsMobile fallback:', error);
     return false;
   }
-  
-  // Direct check without React state
-  return window.innerWidth < MOBILE_BREAKPOINT;
 }
