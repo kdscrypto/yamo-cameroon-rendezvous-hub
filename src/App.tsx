@@ -28,7 +28,7 @@ const TestHomePage = () => {
       >
         Test Counter
       </button>
-      <p>Providers OK - Test avec vrai Index</p>
+      <p>Providers OK - Test avec MinimalIndex</p>
     </div>
   );
 };
