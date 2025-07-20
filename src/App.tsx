@@ -2,7 +2,6 @@
 import * as React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HelmetProvider } from 'react-helmet-async';
 import { ThemeProvider } from "@/components/ThemeProvider";
 import Index from "./pages/Index";
 
@@ -36,24 +35,22 @@ const TestHomePage = () => {
 
 const App: React.FC = () => {
   return (
-    <HelmetProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
-          <BrowserRouter>
-            <div style={{ 
-              backgroundColor: '#1a1a1a', 
-              minHeight: '100vh'
-            }}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/test" element={<TestHomePage />} />
-                <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
-              </Routes>
-            </div>
-          </BrowserRouter>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </HelmetProvider>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
+        <BrowserRouter>
+          <div style={{ 
+            backgroundColor: '#1a1a1a', 
+            minHeight: '100vh'
+          }}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/test" element={<TestHomePage />} />
+              <Route path="*" element={<div style={{ padding: '20px', color: 'white' }}>Page non trouvée</div>} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </ThemeProvider>
+    </QueryClientProvider>
   );
 };
 
