@@ -1,11 +1,12 @@
 
 import { Link } from 'react-router-dom';
+import { Facebook, Youtube, Twitter, MessageCircle, Mail } from 'lucide-react';
 
 const Footer = () => {
   return (
     <footer className="bg-card border-t border-border mt-auto">
       <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Logo et description */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
@@ -47,6 +48,60 @@ const Footer = () => {
               <li><Link to="/privacy" className="text-white hover:text-primary transition-colors">Confidentialité</Link></li>
               <li><Link to="/contact" className="text-white hover:text-primary transition-colors">Contact</Link></li>
             </ul>
+          </div>
+
+          {/* Réseaux sociaux */}
+          <div>
+            <h4 className="font-semibold mb-4">Réseaux sociaux</h4>
+            <div className="space-y-3">
+              <a 
+                href="https://www.facebook.com/yamoplatform" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
+              >
+                <Facebook className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">Facebook</span>
+              </a>
+              
+              <a 
+                href="https://www.youtube.com/@yamoplatform" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
+              >
+                <Youtube className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">YouTube</span>
+              </a>
+              
+              <a 
+                href="https://x.com/yamoplatform" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
+              >
+                <Twitter className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">X (Twitter)</span>
+              </a>
+              
+              <a 
+                href="https://www.tiktok.com/@yamoplatform" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
+              >
+                <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">TikTok</span>
+              </a>
+              
+              <a 
+                href="mailto:contact@yamo.cm" 
+                className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
+              >
+                <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                <span className="text-sm">Email</span>
+              </a>
+            </div>
           </div>
         </div>
 
