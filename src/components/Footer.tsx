@@ -55,7 +55,7 @@ const Footer = () => {
             <h4 className="font-semibold mb-4">Réseaux sociaux</h4>
             <div className="space-y-3">
               <a 
-                href="https://www.facebook.com/yamoplatform" 
+                href="https://www.facebook.com/profile.php?id=61577906023966" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
@@ -65,7 +65,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://www.youtube.com/@yamoplatform" 
+                href="https://www.youtube.com/@Yamo-w3z" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
@@ -75,7 +75,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://x.com/yamoplatform" 
+                href="https://x.com/yamocontact" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
@@ -85,7 +85,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="https://www.tiktok.com/@yamoplatform" 
+                href="https://www.tiktok.com/@yamocameroun?lang=fr" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
@@ -95,7 +95,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="mailto:contact@yamo.cm" 
+                href="mailto:contactyamoo@gmail.com" 
                 className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
               >
                 <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
