@@ -18,7 +18,7 @@ export const useAnalytics = () => {
 
   const trackMetric = useCallback(async (data: MetricData) => {
     try {
-      const { data: result, error } = await supabase.rpc('track_metric' as any, {
+      const { data: result, error } = await supabase.rpc('track_metric', {
         p_metric_type: data.metric_type,
         p_metric_value: data.metric_value || 1,
         p_page_url: data.page_url || window.location.href,

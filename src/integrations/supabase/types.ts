@@ -77,6 +77,45 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_events: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          metric_type: string
+          metric_value: number | null
+          page_url: string | null
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          metric_type: string
+          metric_value?: number | null
+          page_url?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          metric_type?: string
+          metric_value?: number | null
+          page_url?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       conversations: {
         Row: {
           ad_id: string | null
@@ -455,6 +494,15 @@ export type Database = {
         Args: { _user_id: string }
         Returns: string
       }
+      get_analytics_summary: {
+        Args: { p_start_date?: string; p_end_date?: string }
+        Returns: {
+          metric_type: string
+          total_count: number
+          unique_sessions: number
+          date_breakdown: Json
+        }[]
+      }
       has_role: {
         Args: {
           _user_id: string
@@ -469,6 +517,19 @@ export type Database = {
       process_referral: {
         Args: { _referred_user_id: string; _referral_code: string }
         Returns: undefined
+      }
+      track_metric: {
+        Args: {
+          p_metric_type: string
+          p_metric_value?: number
+          p_page_url?: string
+          p_user_agent?: string
+          p_referrer?: string
+          p_ip_address?: string
+          p_session_id?: string
+          p_metadata?: Json
+        }
+        Returns: string
       }
       user_has_moderation_rights: {
         Args: { _user_id: string }

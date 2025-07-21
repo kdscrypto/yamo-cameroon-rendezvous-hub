@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { User as UserIcon, LogOut, LayoutDashboard, Gift, BarChart3 } from "lucide-react";
 import { NotificationBadge } from "@/components/ui/notification-badge";
+import { useModerationRights } from "@/hooks/useModerationRights";
 
 interface UserDropdownProps {
   user: User;
@@ -21,6 +22,8 @@ interface UserDropdownProps {
 }
 
 const UserDropdown = ({ user, unreadCount, onLogout }: UserDropdownProps) => {
+  const { hasModerationRights } = useModerationRights();
+  
   const getUserDisplayName = () => {
     if (user?.user_metadata?.full_name) {
       return user.user_metadata.full_name;
@@ -96,15 +99,17 @@ const UserDropdown = ({ user, unreadCount, onLogout }: UserDropdownProps) => {
             <span className="font-medium">Parrainage</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link 
-            to="/analytics" 
-            className="cursor-pointer text-yellow-200 hover:text-yellow-100 hover:bg-yellow-400/10 focus:bg-yellow-400/10 focus:text-yellow-100 transition-colors"
-          >
-            <BarChart3 className="mr-2 h-4 w-4" />
-            <span className="font-medium">Analytics</span>
-          </Link>
-        </DropdownMenuItem>
+        {hasModerationRights && (
+          <DropdownMenuItem asChild>
+            <Link 
+              to="/analytics" 
+              className="cursor-pointer text-yellow-200 hover:text-yellow-100 hover:bg-yellow-400/10 focus:bg-yellow-400/10 focus:text-yellow-100 transition-colors"
+            >
+              <BarChart3 className="mr-2 h-4 w-4" />
+              <span className="font-medium">Analytics</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator className="bg-yellow-400/20" />
         <DropdownMenuItem 
           onClick={onLogout} 
