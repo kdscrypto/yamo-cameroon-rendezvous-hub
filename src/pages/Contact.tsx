@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -24,15 +25,30 @@ const Contact = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulation d'envoi
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData
+      });
+
+      if (error) {
+        throw error;
+      }
+
       toast({
         title: "Message envoyé",
         description: "Nous vous répondrons dans les plus brefs délais."
       });
       setFormData({ name: '', email: '', subject: '', message: '' });
+    } catch (error: any) {
+      console.error('Error sending contact email:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+        variant: "destructive"
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -67,7 +83,7 @@ const Contact = () => {
                     <Mail className="w-5 h-5 text-primary mt-1" />
                     <div>
                       <h3 className="font-semibold text-yellow-400">Email</h3>
-                      <p className="text-white">contact@yamo.fr</p>
+                      <p className="text-white">contactyamoo@gmail.com</p>
                       <p className="text-sm text-white">Support général</p>
                     </div>
                   </div>
