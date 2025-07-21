@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useMemo, createContext, useContext } from 'react';
+import * as React from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
 
@@ -19,7 +19,7 @@ const initialState: ThemeProviderState = {
   setTheme: () => null,
 };
 
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
+const ThemeProviderContext = React.createContext<ThemeProviderState>(initialState);
 
 export function ThemeProvider({
   children,
@@ -27,7 +27,7 @@ export function ThemeProvider({
   storageKey = 'yamo-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setTheme] = React.useState<Theme>(() => {
     // Check if we're in a browser environment
     if (typeof window === 'undefined') {
       return defaultTheme;
@@ -42,7 +42,7 @@ export function ThemeProvider({
     }
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     // Check if we're in a browser environment
     if (typeof window === 'undefined') {
       return;
@@ -65,7 +65,7 @@ export function ThemeProvider({
   }, [theme]);
 
   // Set default dark theme on component mount
-  useEffect(() => {
+  React.useEffect(() => {
     if (typeof window === 'undefined') {
       return;
     }
@@ -83,7 +83,7 @@ export function ThemeProvider({
     }
   }, [storageKey]);
 
-  const value = useMemo(() => ({
+  const value = React.useMemo(() => ({
     theme,
     setTheme: (theme: Theme) => {
       try {
@@ -106,7 +106,7 @@ export function ThemeProvider({
 }
 
 export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
+  const context = React.useContext(ThemeProviderContext);
 
   if (context === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');

@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import { Helmet } from 'react-helmet-async';
 
 interface SEOProps {
   title?: string;
@@ -27,32 +27,75 @@ const SEO = ({
   siteName = "Yamo"
 }: SEOProps) => {
   const fullTitle = title.includes('Yamo') ? title : `${title} | Yamo`;
+  const fullUrl = url.startsWith('http') ? url : `https://yamo.lovable.app${url}`;
+  const fullImage = image.startsWith('http') ? image : `https://yamo.lovable.app${image}`;
 
-  // Update document title
-  React.useEffect(() => {
-    document.title = fullTitle;
-    
-    // Update meta description
-    let metaDescription = document.querySelector('meta[name="description"]');
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
-    }
-    metaDescription.setAttribute('content', description);
-    
-    // Update meta keywords
-    let metaKeywords = document.querySelector('meta[name="keywords"]');
-    if (!metaKeywords) {
-      metaKeywords = document.createElement('meta');
-      metaKeywords.setAttribute('name', 'keywords');
-      document.head.appendChild(metaKeywords);
-    }
-    metaKeywords.setAttribute('content', keywords);
-  }, [fullTitle, description, keywords]);
-
-  // Return null as this component only handles side effects
-  return null;
+  return (
+    <Helmet>
+      {/* Basic Meta Tags */}
+      <title>{fullTitle}</title>
+      <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
+      <meta name="author" content={author} />
+      <meta name="robots" content="index, follow" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta httpEquiv="Content-Language" content="fr" />
+      
+      {/* Canonical URL */}
+      <link rel="canonical" href={fullUrl} />
+      
+      {/* Open Graph Meta Tags */}
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={fullImage} />
+      <meta property="og:url" content={fullUrl} />
+      <meta property="og:type" content={type} />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content="fr_FR" />
+      
+      {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+      {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+      {author && <meta property="article:author" content={author} />}
+      
+      {/* Twitter Card Meta Tags */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={fullImage} />
+      <meta name="twitter:url" content={fullUrl} />
+      
+      {/* Additional SEO Meta Tags */}
+      <meta name="geo.region" content="CM" />
+      <meta name="geo.country" content="Cameroon" />
+      <meta name="geo.placename" content="Cameroun" />
+      
+      {/* JSON-LD Structured Data */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "name": siteName,
+          "url": fullUrl,
+          "description": description,
+          "inLanguage": "fr",
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": `${fullUrl}/browse?q={search_term_string}`,
+            "query-input": "required name=search_term_string"
+          },
+          "publisher": {
+            "@type": "Organization",
+            "name": siteName,
+            "url": fullUrl,
+            "logo": {
+              "@type": "ImageObject",
+              "url": fullImage
+            }
+          }
+        })}
+      </script>
+    </Helmet>
+  );
 };
 
 export default SEO;

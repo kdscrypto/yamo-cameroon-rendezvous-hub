@@ -14,11 +14,6 @@ const ResetPassword = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  console.log('🔧 ResetPassword: Component loaded');
-  console.log('🔧 ResetPassword: Current URL:', window.location.href);
-  console.log('🔧 ResetPassword: Hash:', window.location.hash);
-  console.log('🔧 ResetPassword: Search:', window.location.search);
-
   // Vérification et validation des tokens directement depuis l'URL
   useEffect(() => {
     const validateAndSetSession = async () => {
@@ -76,11 +71,11 @@ const ResetPassword = () => {
           return;
         }
 
-        // Pour les recovery tokens, utiliser verifyOtp au lieu de setSession
-        console.log('ResetPassword: Vérification du token de récupération');
-        const { data, error } = await supabase.auth.verifyOtp({
-          token_hash: accessToken,
-          type: 'recovery'
+        // Tenter de créer une session avec les tokens
+        console.log('ResetPassword: Création de session avec les tokens');
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken || ''
         });
 
         if (error) {

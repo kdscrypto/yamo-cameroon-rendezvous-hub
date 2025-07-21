@@ -23,7 +23,7 @@ const Login = () => {
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
       
-      <div className="flex-1 flex items-center justify-center px-4 py-8">
+      <div className="flex-1 flex items-center justify-center container-spacing section-spacing">
         <div className="w-full max-w-md">
           <LoginHeader />
           <LoginForm />

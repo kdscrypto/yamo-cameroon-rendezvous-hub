@@ -1,4 +1,5 @@
-import * as React from 'react';
+
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 interface SEOConfig {
@@ -10,18 +11,18 @@ interface SEOConfig {
 
 const defaultSEO: Record<string, SEOConfig> = {
   '/': {
-    title: "Yamo - Plateforme d'annonces adultes au Cameroun",
-    description: "Découvrez Yamo, la plateforme de référence pour les annonces adultes au Cameroun. Rencontres, massages, produits adultes en toute discrétion et sécurité.",
+    title: 'Yamo - Plateforme d\'annonces adultes au Cameroun',
+    description: 'Découvrez Yamo, la plateforme de référence pour les annonces adultes au Cameroun. Rencontres, massages, produits adultes en toute discrétion et sécurité.',
     keywords: 'annonces adultes, Cameroun, rencontres, massages, escort, Douala, Yaoundé, plateforme sécurisée'
   },
   '/browse': {
     title: 'Parcourir les annonces - Yamo',
-    description: "Parcourez notre sélection d'annonces adultes vérifiées au Cameroun. Trouvez ce que vous cherchez en toute sécurité.",
+    description: 'Parcourez notre sélection d\'annonces adultes vérifiées au Cameroun. Trouvez ce que vous cherchez en toute sécurité.',
     keywords: 'parcourir annonces, recherche, annonces adultes Cameroun'
   },
   '/rencontres': {
     title: 'Rencontres et Escorts au Cameroun - Yamo',
-    description: "Découvrez des annonces de rencontres discrètes et d'escorts professionnelles au Cameroun. Sécurité et discrétion garanties.",
+    description: 'Découvrez des annonces de rencontres discrètes et d\'escorts professionnelles au Cameroun. Sécurité et discrétion garanties.',
     keywords: 'rencontres Cameroun, escort Douala, escort Yaoundé, rencontres discrètes'
   },
   '/massages': {
@@ -53,7 +54,7 @@ export const useSEO = () => {
     return defaultSEO[path] || defaultSEO['/'];
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const seo = getSEOForPath(location.pathname);
     
     // Update page title

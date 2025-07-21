@@ -169,13 +169,21 @@ function toast({ ...props }: Toast) {
 }
 
 function useToast() {
-  // Version sans hooks React pour éviter les problèmes d'initialisation
+  const [state, setState] = React.useState<State>(memoryState)
+
+  React.useEffect(() => {
+    listeners.push(setState)
+    return () => {
+      const index = listeners.indexOf(setState)
+      if (index > -1) {
+        listeners.splice(index, 1)
+      }
+    }
+  }, [state])
+
   return {
-    toasts: memoryState.toasts,
-    toast: (props: Toast) => {
-      console.log('Toast:', props.title, props.description);
-      return toast(props);
-    },
+    ...state,
+    toast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
   }
 }

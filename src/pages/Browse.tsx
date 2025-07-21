@@ -4,8 +4,8 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import SimpleHeader from '@/components/SimpleHeader';
-import SimpleFooter from '@/components/SimpleFooter';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import SearchResults from '@/components/SearchResults';
 import SEO from '@/components/SEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
@@ -90,7 +90,7 @@ const Browse = () => {
   if (error) {
     return (
       <div className="min-h-screen flex flex-col bg-background">
-        <SimpleHeader />
+        <Header />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <h2 className="text-2xl font-bold mb-4">Erreur de chargement</h2>
@@ -99,7 +99,7 @@ const Browse = () => {
             </p>
           </div>
         </div>
-        <SimpleFooter />
+        <Footer />
       </div>
     );
   }
@@ -113,7 +113,7 @@ const Browse = () => {
         url="/browse"
       />
       <div className="min-h-screen flex flex-col bg-background">
-        <SimpleHeader />
+        <Header />
         
         <div className="flex-1 px-4 py-8">
           <div className="container mx-auto">
@@ -201,7 +201,7 @@ const Browse = () => {
           </div>
         </div>
         
-        <SimpleFooter />
+        <Footer />
       </div>
     </>
   );

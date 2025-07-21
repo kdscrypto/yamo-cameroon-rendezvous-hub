@@ -1,11 +1,9 @@
 
-import * as React from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
-// import { useToast } from "@/hooks/use-toast"; // Temporairement désactivé
+import { useToast } from "@/hooks/use-toast";
 import { useGetUnreadMessagesCount } from "@/hooks/useGetUnreadMessagesCount";
 import { useIsMobile } from "@/hooks/use-mobile";
-import AdContainer from "./ads/AdContainer";
-import AdBanner from "./ads/AdBanner";
 import Logo from "./Header/Logo";
 import SearchBar from "./Header/SearchBar";
 import AuthButtons from "./Header/AuthButtons";
@@ -15,25 +13,27 @@ import MobileHeader from "./Header/MobileHeader";
 
 const Header = () => {
   const { user, signOut } = useAuth();
-  // const { toast } = useToast(); // Temporairement désactivé
-  const { unreadCount = 0 } = useGetUnreadMessagesCount();
+  const { toast } = useToast();
+  const { unreadCount } = useGetUnreadMessagesCount();
   const isMobile = useIsMobile();
-  const [isMounted, setIsMounted] = React.useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setIsMounted(true);
   }, []);
 
   const handleLogout = async () => {
     const { error } = await signOut();
     if (error) {
-      console.error("Erreur lors de la déconnexion:", error);
-      // Toast temporairement remplacé par console.log
-      console.log("Toast: Erreur lors de la déconnexion");
+      toast({
+        title: "Erreur",
+        description: "Impossible de se déconnecter pour le moment.",
+        variant: "destructive",
+      });
     } else {
-      console.log("Vous êtes déconnecté.");
-      // Toast temporairement remplacé par console.log  
-      console.log("Toast: Vous êtes déconnecté");
+      toast({
+        description: "Vous êtes déconnecté.",
+      });
     }
   };
 
@@ -80,13 +80,6 @@ const Header = () => {
               />
             )}
           </div>
-        </div>
-        
-        {/* Header Advertisement */}
-        <div className="py-2">
-          <AdContainer variant="transparent">
-            <AdBanner placement="header" />
-          </AdContainer>
         </div>
       </div>
     </header>

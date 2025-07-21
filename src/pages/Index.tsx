@@ -1,18 +1,24 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import SimpleHeader from '@/components/SimpleHeader';
-import SimpleFooter from '@/components/SimpleFooter';
+import React, { useEffect, useState } from 'react';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import AgeVerification from '@/components/AgeVerification';
+import HeroSection from '@/components/Homepage/HeroSection';
+import CategoriesSection from '@/components/Homepage/CategoriesSection';
+import OptimizedAdSections from '@/components/Homepage/OptimizedAdSections';
+import SafetySection from '@/components/Homepage/SafetySection';
+import AdBanner from '@/components/ads/AdBanner';
+import AdContainer from '@/components/ads/AdContainer';
 import SEO from '@/components/SEO';
-import { Button } from '@/components/ui/button';
+import { useSEO } from '@/hooks/useSEO';
 import { useGoogleAds } from '@/hooks/useGoogleAds';
 
 const Index = React.memo(() => {
-  const [ageVerified, setAgeVerified] = React.useState(false);
+  const [ageVerified, setAgeVerified] = useState(false);
+  const { getSEOForPath } = useSEO();
   const { refreshAds } = useGoogleAds();
 
   // Check age verification with enhanced security
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('Index: Checking age verification status');
     
     // Check sessionStorage instead of localStorage
@@ -47,6 +53,8 @@ const Index = React.memo(() => {
     setTimeout(() => refreshAds(), 1000);
   }, [refreshAds]);
 
+  const seoConfig = getSEOForPath('/');
+
   // If age not verified, show verification page
   if (!ageVerified) {
     return (
@@ -64,90 +72,35 @@ const Index = React.memo(() => {
   return (
     <>
       <SEO 
-        title="Yamo - Plateforme d'annonces adultes au Cameroun"
-        description="Découvrez Yamo, la plateforme de référence pour les annonces adultes au Cameroun. Rencontres, massages, produits adultes en toute discrétion et sécurité."
-        keywords="annonces adultes, Cameroun, rencontres, massages, escort, Douala, Yaoundé, plateforme sécurisée"
+        title={seoConfig.title}
+        description={seoConfig.description}
+        keywords={seoConfig.keywords}
         type="website"
         url="/"
       />
       <div className="min-h-screen flex flex-col bg-background">
-        <SimpleHeader />
+        <Header />
         
-        <section className="py-20">
+        {/* Header Ad Banner */}
+        <AdContainer variant="transparent" title="">
+          <AdBanner placement="header" />
+        </AdContainer>
+        
+        <HeroSection />
+        <CategoriesSection />
+        
+        {/* Content Ad between sections */}
+        <section className="py-4">
           <div className="container mx-auto px-4">
-            {/* Hero Section */}
-            <div className="text-center mb-16">
-              <h1 className="text-5xl font-bold mb-6 bg-gradient-to-r from-amber-400 via-orange-500 to-red-600 bg-clip-text text-transparent">
-                Bienvenue sur Yamo
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-                La plateforme de référence pour les annonces adultes au Cameroun. 
-                Rencontres, massages, produits adultes en toute discrétion et sécurité.
-              </p>
-              <div className="flex gap-4 justify-center flex-wrap">
-                <Link to="/browse">
-                  <Button size="lg" className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700">
-                    Parcourir les annonces
-                  </Button>
-                </Link>
-                <Link to="/create-ad">
-                  <Button size="lg" variant="outline">
-                    Créer une annonce
-                  </Button>
-                </Link>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
-                <div className="p-6 bg-card rounded-xl border">
-                  <h3 className="text-xl font-semibold mb-3">🔒 Sécurisé</h3>
-                  <p className="text-muted-foreground">
-                    Plateforme sécurisée avec vérification d'identité
-                  </p>
-                </div>
-                <div className="p-6 bg-card rounded-xl border">
-                  <h3 className="text-xl font-semibold mb-3">🛡️ Privé</h3>
-                  <p className="text-muted-foreground">
-                    Vos données et conversations restent privées
-                  </p>
-                </div>
-                <div className="p-6 bg-card rounded-xl border">
-                  <h3 className="text-xl font-semibold mb-3">👤 Discret</h3>
-                  <p className="text-muted-foreground">
-                    Navigation anonyme et discrète garantie
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Status Section */}
-            <div className="text-center bg-card/50 rounded-xl p-8 border">
-              <h2 className="text-2xl font-bold mb-4 text-green-600">✅ Application restaurée avec succès !</h2>
-              <p className="text-muted-foreground mb-6">
-                Toutes les fonctionnalités principales ont été restaurées et testées.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-green-600 text-xl">✅</span>
-                  <span>Navigation complète</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-green-600 text-xl">✅</span>
-                  <span>Authentification opérationnelle</span>
-                </div>
-                <div className="flex items-center justify-center space-x-2">
-                  <span className="text-green-600 text-xl">✅</span>
-                  <span>Dashboard et création d'annonces</span>
-                </div>
-              </div>
-              <Link to="/test-navigation">
-                <Button variant="outline" size="lg">
-                  🧪 Tester la navigation complète
-                </Button>
-              </Link>
-            </div>
+            <AdContainer variant="subtle">
+              <AdBanner placement="content" />
+            </AdContainer>
           </div>
         </section>
         
-        <SimpleFooter />
+        <OptimizedAdSections />
+        <SafetySection />
+        <Footer />
       </div>
     </>
   );

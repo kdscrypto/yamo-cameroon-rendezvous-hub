@@ -1,20 +1,20 @@
 
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Shield, Lock, Eye, Sparkles } from 'lucide-react';
-// import { Link } from 'react-router-dom'; // Temporarily disabled
+import { Link } from 'react-router-dom';
 
 interface AgeVerificationProps {
   onConfirm: () => void;
 }
 
 const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
-  const [isExiting, setIsExiting] = React.useState(false);
-  const [buttonEnabled, setButtonEnabled] = React.useState(false);
-  const [countdown, setCountdown] = React.useState(3);
+  const [isExiting, setIsExiting] = useState(false);
+  const [buttonEnabled, setButtonEnabled] = useState(false);
+  const [countdown, setCountdown] = useState(3);
 
   // Security delay before button becomes clickable
-  React.useEffect(() => {
+  useEffect(() => {
     console.log('AgeVerification: Component mounted, starting security delay');
     
     const timer = setInterval(() => {
@@ -177,12 +177,12 @@ const AgeVerification = ({ onConfirm }: AgeVerificationProps) => {
                 </p>
               </div>
               <p className="text-sm text-white/70 leading-relaxed mb-4">
-                Notre <a 
-                  href="/controle-parental" 
+                Notre <Link 
+                  to="/controle-parental" 
                   className="text-amber-400 hover:text-amber-300 underline transition-colors duration-200 font-medium"
                 >
                   page de contrôle parental
-                </a> vous explique comment bloquer facilement l'accès à ce site.
+                </Link> vous explique comment bloquer facilement l'accès à ce site.
               </p>
             </div>
           </div>

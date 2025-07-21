@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-// import { useToast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { isPhoneNumberFormat } from '@/utils/phoneUtils';
 import IdentifierField from './IdentifierField';
@@ -16,7 +16,7 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [identifierError, setIdentifierError] = useState('');
   const { signIn } = useAuth();
-  // const { toast } = useToast();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   // Validate identifier format
@@ -55,7 +55,11 @@ const LoginForm = () => {
     }
 
     if (!password.trim()) {
-      console.log("Erreur: Le mot de passe est requis.");
+      toast({
+        title: "Erreur",
+        description: "Le mot de passe est requis.",
+        variant: "destructive"
+      });
       return;
     }
 
@@ -85,15 +89,26 @@ const LoginForm = () => {
           errorMessage = error.message;
         }
 
-        console.log("Erreur de connexion:", errorMessage);
+        toast({
+          title: "Erreur de connexion",
+          description: errorMessage,
+          variant: "destructive"
+        });
       } else {
         console.log('Login successful');
-        console.log("Connexion réussie: Vous êtes maintenant connecté.");
+        toast({
+          title: "Connexion réussie",
+          description: "Vous êtes maintenant connecté."
+        });
         navigate('/');
       }
     } catch (error) {
       console.error('Unexpected login error:', error);
-      console.log("Erreur: Une erreur inattendue s'est produite.");
+      toast({
+        title: "Erreur",
+        description: "Une erreur inattendue s'est produite.",
+        variant: "destructive"
+      });
     } finally {
       setIsLoading(false);
     }

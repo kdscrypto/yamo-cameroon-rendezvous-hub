@@ -40,7 +40,7 @@ const Dashboard = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">Tableau de bord</h1>
+            <h1 className="text-3xl font-bold mb-2 text-gradient-luxe">Tableau de bord</h1>
             <p className="text-muted-foreground">Gérez vos annonces et messages depuis votre espace personnel</p>
           </div>
 

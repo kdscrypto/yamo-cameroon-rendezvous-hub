@@ -4,7 +4,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-// import { useToast } from '@/hooks/use-toast'; // Temporairement désactivé
+import { useToast } from '@/hooks/use-toast';
 
 export interface FormData {
   title: string;
@@ -33,7 +33,7 @@ export const useCreateAdForm = () => {
 
   const { user } = useAuth();
   const navigate = useNavigate();
-  // const { toast } = useToast(); // Temporairement désactivé
+  const { toast } = useToast();
 
   const createAdMutation = useMutation({
     mutationFn: async (formDataParam: FormData) => {
@@ -106,12 +106,19 @@ export const useCreateAdForm = () => {
     },
     onSuccess: (data) => {
       console.log('Ad creation success:', data);
-      console.log('Toast: Annonce créée avec succès - Votre annonce a été soumise pour modération');
+      toast({
+        title: "Annonce créée avec succès",
+        description: "Votre annonce a été soumise pour modération. Elle sera visible dès qu'elle sera approuvée par notre équipe.",
+      });
       navigate('/dashboard');
     },
     onError: (error) => {
       console.error('Error creating ad:', error);
-      console.error('Toast: Erreur - Impossible de créer l\'annonce');
+      toast({
+        title: "Erreur",
+        description: "Impossible de créer l'annonce. Veuillez réessayer.",
+        variant: "destructive",
+      });
     }
   });
 

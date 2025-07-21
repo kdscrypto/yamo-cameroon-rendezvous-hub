@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import AdPreviewModal from './AdPreviewModal';
-// import { toast } from 'sonner'; // Temporairement désactivé
+import { toast } from 'sonner';
 
 interface Ad {
   id: string;
@@ -46,7 +46,7 @@ const UserAds = () => {
       
       if (error) {
         console.error('Error fetching user ads:', error);
-        console.error('Toast: Erreur lors du chargement des annonces');
+        toast.error('Erreur lors du chargement des annonces');
         return [];
       }
       
@@ -75,7 +75,7 @@ const UserAds = () => {
         (payload) => {
           console.log('User ads updated:', payload);
           refetch();
-          console.log('Toast: Vos annonces ont été mises à jour');
+          toast.success('Vos annonces ont été mises à jour');
         }
       )
       .subscribe();
@@ -136,7 +136,7 @@ const UserAds = () => {
 
   const handleEditAd = (ad: Ad) => {
     console.log('Edit ad:', ad.id);
-    console.log('Toast: Fonctionnalité de modification en cours de développement');
+    toast.info('Fonctionnalité de modification en cours de développement');
     // TODO: Implement edit functionality
   };
 
@@ -153,14 +153,14 @@ const UserAds = () => {
       
       if (error) {
         console.error('Error deleting ad:', error);
-        console.error('Toast: Erreur lors de la suppression de l\'annonce');
+        toast.error('Erreur lors de la suppression de l\'annonce');
       } else {
-        console.log('Toast: Annonce supprimée avec succès');
+        toast.success('Annonce supprimée avec succès');
         refetch();
       }
     } catch (error) {
       console.error('Unexpected error:', error);
-      console.error('Toast: Erreur inattendue lors de la suppression');
+      toast.error('Erreur inattendue lors de la suppression');
     }
   };
 

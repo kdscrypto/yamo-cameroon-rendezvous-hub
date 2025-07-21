@@ -1,8 +1,8 @@
 
-import * as React from 'react';
+import { useEffect } from 'react';
 
 export const useGoogleAds = () => {
-  React.useEffect(() => {
+  useEffect(() => {
     // Ne pas charger le script en mode développement
     if (process.env.NODE_ENV === 'development') {
       console.log('useGoogleAds: Mode développement - script AdSense non chargé');

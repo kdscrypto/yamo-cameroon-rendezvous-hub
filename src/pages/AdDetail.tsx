@@ -3,8 +3,8 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import SimpleHeader from '@/components/SimpleHeader';
-import SimpleFooter from '@/components/SimpleFooter';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import SEO from '@/components/SEO';
@@ -92,14 +92,14 @@ const AdDetail = () => {
   if (isLoading) {
     return (
       <>
-        <SimpleHeader />
+        <Header />
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-muted-foreground">Chargement de l'annonce...</p>
           </div>
         </div>
-        <SimpleFooter />
+        <Footer />
       </>
     );
   }
@@ -107,7 +107,7 @@ const AdDetail = () => {
   if (error || !ad) {
     return (
       <>
-        <SimpleHeader />
+        <Header />
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center max-w-md mx-auto px-4">
             <h1 className="text-2xl font-bold mb-4">Annonce introuvable</h1>
@@ -120,7 +120,7 @@ const AdDetail = () => {
             </Button>
           </div>
         </div>
-        <SimpleFooter />
+        <Footer />
       </>
     );
   }
@@ -136,7 +136,7 @@ const AdDetail = () => {
         type="article"
       />
       <div className="min-h-screen flex flex-col bg-background">
-        <SimpleHeader />
+        <Header />
         
         <main className="flex-1 container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
@@ -182,7 +182,7 @@ const AdDetail = () => {
           </div>
         </main>
 
-        <SimpleFooter />
+        <Footer />
       </div>
     </>
   );
