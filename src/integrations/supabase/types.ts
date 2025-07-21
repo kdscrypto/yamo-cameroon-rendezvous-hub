@@ -470,6 +470,10 @@ export type Database = {
         Args: { _referred_user_id: string; _referral_code: string }
         Returns: undefined
       }
+      user_has_moderation_rights: {
+        Args: { _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
