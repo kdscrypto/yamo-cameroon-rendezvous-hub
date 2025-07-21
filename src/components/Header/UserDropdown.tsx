@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { User as UserIcon, LogOut, LayoutDashboard, Gift } from "lucide-react";
+import { User as UserIcon, LogOut, LayoutDashboard, Gift, BarChart3 } from "lucide-react";
 import { NotificationBadge } from "@/components/ui/notification-badge";
 
 interface UserDropdownProps {
@@ -94,6 +94,15 @@ const UserDropdown = ({ user, unreadCount, onLogout }: UserDropdownProps) => {
           >
             <Gift className="mr-2 h-4 w-4" />
             <span className="font-medium">Parrainage</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link 
+            to="/analytics" 
+            className="cursor-pointer text-yellow-200 hover:text-yellow-100 hover:bg-yellow-400/10 focus:bg-yellow-400/10 focus:text-yellow-100 transition-colors"
+          >
+            <BarChart3 className="mr-2 h-4 w-4" />
+            <span className="font-medium">Analytics</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-yellow-400/20" />

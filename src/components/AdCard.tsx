@@ -2,6 +2,7 @@
 import { Heart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 interface AdCardProps {
   id: string;
@@ -24,8 +25,22 @@ const AdCard = ({
   category, 
   isVip = false 
 }: AdCardProps) => {
+  const { trackAdInteraction } = useAnalytics();
+
+  const handleCardClick = () => {
+    trackAdInteraction(id, 'view');
+  };
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    trackAdInteraction(id, 'like');
+  };
+
   return (
-    <Card className="group card-elevated bg-card/98 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-300 hover:shadow-medium hover:shadow-primary/10 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden">
+    <Card 
+      onClick={handleCardClick}
+      className="group card-elevated bg-card/98 backdrop-blur-sm border-border/40 hover:border-primary/30 transition-all duration-300 hover:shadow-medium hover:shadow-primary/10 cursor-pointer transform hover:scale-[1.02] active:scale-[0.98] overflow-hidden"
+    >
       {isVip && (
         <div className="gradient-luxe text-black text-xs font-bold px-3 py-1.5 text-center animate-pulse-subtle">
           ⭐ VIP
@@ -48,6 +63,7 @@ const AdCard = ({
         <Button 
           size="sm" 
           variant="ghost" 
+          onClick={handleLikeClick}
           className="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white p-2 h-auto backdrop-blur-sm border border-white/20 transition-all duration-300 hover:scale-110"
         >
           <Heart className="w-3.5 h-3.5" />
