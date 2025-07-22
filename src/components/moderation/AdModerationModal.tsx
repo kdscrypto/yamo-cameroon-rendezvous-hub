@@ -1,5 +1,5 @@
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
@@ -16,6 +16,7 @@ interface AdModerationModalProps {
 
 const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdModerationModalProps) => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: moderationReasons } = useQuery({
     queryKey: ['moderation-reasons'],
@@ -89,6 +90,12 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
       return { action, isVip };
     },
     onSuccess: (data, variables) => {
+      // Invalidate relevant queries to refresh UI
+      queryClient.invalidateQueries({ queryKey: ['moderation-ads'] });
+      queryClient.invalidateQueries({ queryKey: ['approved-ads'] });
+      queryClient.invalidateQueries({ queryKey: ['ads'] });
+      queryClient.invalidateQueries({ queryKey: ['pending-ads'] });
+      
       const { action, isVip } = data;
       let message = '';
       
@@ -123,15 +130,15 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2 text-primary">
             Modération d'annonce
             {isVip && (
-              <span className="text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
+              <span className="text-sm bg-primary text-primary-foreground px-2 py-1 rounded-full font-medium">
                 VIP
               </span>
             )}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-muted-foreground">
             Examinez l'annonce et prenez une décision de modération
             {isVip && ' (Cette annonce bénéficiera d\'une mise en avant prioritaire si approuvée)'}
           </DialogDescription>

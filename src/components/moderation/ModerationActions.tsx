@@ -37,13 +37,13 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
 
   if (ad.moderation_status !== 'pending') {
     return (
-      <div className="p-4 bg-muted rounded-lg">
-        <p className="text-sm text-muted-foreground">
+      <div className="p-4 bg-card border border-border rounded-lg">
+        <p className="text-sm text-card-foreground">
           Cette annonce a déjà été modérée le {new Date(ad.moderated_at).toLocaleDateString('fr-FR')}.
         </p>
         {ad.moderation_status === 'rejected' && ad.moderation_notes && (
-          <div className="mt-3 p-3 bg-muted/50 border border-muted rounded">
-            <p className="text-sm font-medium text-foreground mb-1">Raison du rejet :</p>
+          <div className="mt-3 p-3 bg-muted border border-border rounded">
+            <p className="text-sm font-medium text-primary mb-1">Raison du rejet :</p>
             <p className="text-sm text-muted-foreground">{ad.moderation_notes}</p>
           </div>
         )}
@@ -53,7 +53,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold">Action de modération</h3>
+      <h3 className="text-lg font-semibold text-primary">Action de modération</h3>
 
       <div className="grid grid-cols-2 gap-2">
         <Button
@@ -69,9 +69,9 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
           Approuver
         </Button>
         <Button
-          variant={moderationAction === 'reject' ? 'outline' : 'outline'}
+          variant={moderationAction === 'reject' ? 'destructive' : 'outline'}
           onClick={() => setModerationAction('reject')}
-          className="flex items-center gap-2 text-foreground hover:text-muted-foreground border-muted hover:bg-muted"
+          className="flex items-center gap-2"
         >
           <X className="w-4 h-4" />
           Rejeter
@@ -79,8 +79,8 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       </div>
 
       {moderationAction === 'reject' && (
-        <div className="space-y-4 p-4 border border-muted rounded-lg bg-muted/20">
-          <div className="flex items-center gap-2 text-foreground mb-2">
+        <div className="space-y-4 p-4 border border-border rounded-lg bg-card">
+          <div className="flex items-center gap-2 text-primary mb-2">
             <AlertCircle className="w-4 h-4" />
             <span className="font-medium">Raisons du rejet</span>
           </div>
@@ -117,7 +117,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
           </div>
 
           {!selectedReason && !customNotes.trim() && (
-            <div className="text-sm text-foreground flex items-center gap-2">
+            <div className="text-sm text-destructive flex items-center gap-2">
               <AlertCircle className="w-4 h-4" />
               Veuillez sélectionner une raison ou saisir un message explicatif
             </div>
@@ -126,12 +126,12 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       )}
 
       {moderationAction === 'approve' && (
-        <div className="p-4 border border-green-200 rounded-lg bg-green-50">
-          <div className="flex items-center gap-2 text-green-800">
+        <div className="p-4 border border-border rounded-lg bg-card">
+          <div className="flex items-center gap-2 text-primary">
             <Check className="w-4 h-4" />
             <span className="font-medium">Approbation de l'annonce</span>
           </div>
-          <p className="text-sm text-green-700 mt-2">
+          <p className="text-sm text-card-foreground mt-2">
             Cette annonce sera approuvée et deviendra visible publiquement.
           </p>
         </div>
@@ -143,7 +143,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
             <Button
               onClick={handleSubmit}
               disabled={isSubmitting || !canSubmit()}
-              className={moderationAction === 'approve' ? 'bg-green-600 hover:bg-green-700' : 'bg-muted hover:bg-muted/80 text-foreground'}
+              variant={moderationAction === 'approve' ? 'default' : 'destructive'}
             >
               {isSubmitting ? 'Traitement...' : 
                moderationAction === 'approve' ? 'Confirmer l\'approbation' : 'Confirmer le rejet'}

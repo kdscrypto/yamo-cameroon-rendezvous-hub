@@ -85,15 +85,15 @@ export function ThemeProvider({
 
   const value = React.useMemo(() => ({
     theme,
-    setTheme: (theme: Theme) => {
+    setTheme: (newTheme: Theme) => {
       try {
         if (typeof window !== 'undefined') {
-          localStorage.setItem(storageKey, theme);
+          localStorage.setItem(storageKey, newTheme);
         }
-        setTheme(theme);
+        setTheme(newTheme);
       } catch (error) {
         console.warn('Failed to save theme to localStorage:', error);
-        setTheme(theme);
+        setTheme(newTheme);
       }
     },
   }), [theme, storageKey]);
