@@ -2,59 +2,10 @@
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
-import { useState } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
+import ContactForm from '@/components/ContactForm';
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: formData
-      });
-
-      if (error) {
-        throw error;
-      }
-
-      toast({
-        title: "Message envoyé",
-        description: "Nous vous répondrons dans les plus brefs délais."
-      });
-      setFormData({ name: '', email: '', subject: '', message: '' });
-    } catch (error: any) {
-      console.error('Error sending contact email:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -153,72 +104,7 @@ const Contact = () => {
                 <CardTitle className="text-yellow-400">Envoyez-nous un message</CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name" className="text-white">Nom complet</Label>
-                      <Input
-                        id="name"
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        placeholder="Votre nom"
-                        required
-                        disabled={isLoading}
-                        className="text-white"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="email" className="text-white">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        placeholder="votre@email.com"
-                        required
-                        disabled={isLoading}
-                        className="text-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="subject" className="text-white">Sujet</Label>
-                    <Input
-                      id="subject"
-                      type="text"
-                      value={formData.subject}
-                      onChange={(e) => handleInputChange('subject', e.target.value)}
-                      placeholder="Objet de votre message"
-                      required
-                      disabled={isLoading}
-                      className="text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <Label htmlFor="message" className="text-white">Message</Label>
-                    <Textarea
-                      id="message"
-                      value={formData.message}
-                      onChange={(e) => handleInputChange('message', e.target.value)}
-                      placeholder="Décrivez votre demande en détail..."
-                      rows={6}
-                      required
-                      disabled={isLoading}
-                      className="text-white"
-                    />
-                  </div>
-
-                  <Button 
-                    type="submit" 
-                    className="w-full gradient-gold text-black hover:opacity-90"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? 'Envoi en cours...' : 'Envoyer le message'}
-                  </Button>
-                </form>
+                <ContactForm />
 
                 <div className="mt-6 p-4 bg-muted rounded-lg">
                   <p className="text-sm text-white">
