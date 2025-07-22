@@ -50,6 +50,24 @@ const CreateAd = () => {
     createAdMutation.mutate(formData);
   };
 
+  const handlePreview = () => {
+    console.log('CreateAd: Preview function called');
+    console.log('CreateAd: Current form data:', formData);
+    console.log('CreateAd: Is form valid:', isFormValid);
+    
+    if (!isFormValid) {
+      toast({
+        title: "Formulaire incomplet",
+        description: "Veuillez remplir tous les champs obligatoires avant de prévisualiser.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    console.log('CreateAd: Setting showPreview to true');
+    setShowPreview(true);
+  };
+
   const openWhatsApp = (number: string) => {
     const cleanNumber = number.replace(/\D/g, '');
     const message = encodeURIComponent(`Bonjour, je suis intéressé(e) par votre annonce "${formData.title}"`);
@@ -77,11 +95,16 @@ const CreateAd = () => {
     return null;
   }
 
+  console.log('CreateAd: Rendering, showPreview:', showPreview);
+
   if (showPreview) {
     return (
       <PreviewPage
         formData={formData}
-        onBack={() => setShowPreview(false)}
+        onBack={() => {
+          console.log('CreateAd: Going back from preview');
+          setShowPreview(false);
+        }}
         onSubmit={handleSubmit}
         getVipPrice={getVipPrice}
         isSubmitting={createAdMutation.isPending}
@@ -94,9 +117,10 @@ const CreateAd = () => {
     <CreateAdLayout
       formData={formData}
       onInputChange={handleInputChange}
-      onPreview={() => setShowPreview(true)}
+      onPreview={handlePreview}
       onSubmit={handleSubmit}
       getVipPrice={getVipPrice}
+      isFormValid={isFormValid}
     />
   );
 };

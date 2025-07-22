@@ -39,12 +39,14 @@ export const useCreateAdForm = () => {
     mutationFn: async (formDataParam: FormData) => {
       if (!user) throw new Error('User not authenticated');
 
-      console.log('Creating ad with VIP option:', formData.vipOption);
+      console.log('Creating ad with form data:', formDataParam);
+      console.log('VIP option:', formDataParam.vipOption);
 
       // Upload images first if any
       let imageUrls: string[] = [];
-      if (formData.photos.length > 0) {
-        const uploadPromises = formData.photos.map(async (photo, index) => {
+      if (formDataParam.photos.length > 0) {
+        console.log('Uploading images:', formDataParam.photos.length);
+        const uploadPromises = formDataParam.photos.map(async (photo, index) => {
           const fileExt = photo.name.split('.').pop();
           const fileName = `${user.id}/${Date.now()}_${index}.${fileExt}`;
           
@@ -52,12 +54,16 @@ export const useCreateAdForm = () => {
             .from('ad-images')
             .upload(fileName, photo);
           
-          if (error) throw error;
+          if (error) {
+            console.error('Image upload error:', error);
+            throw error;
+          }
           
           const { data: { publicUrl } } = supabase.storage
             .from('ad-images')
             .getPublicUrl(fileName);
           
+          console.log('Image uploaded:', publicUrl);
           return publicUrl;
         });
         
@@ -66,21 +72,21 @@ export const useCreateAdForm = () => {
 
       // Determine expiration for VIP ads
       let expiresAt = null;
-      if (formData.vipOption === '24h') {
+      if (formDataParam.vipOption === '24h') {
         expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
-      } else if (formData.vipOption === '7days') {
+      } else if (formDataParam.vipOption === '7days') {
         expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
       }
 
       // Create the ad with contact information
       const newAdData = {
-        title: formData.title,
-        description: formData.description,
-        category: formData.category,
-        location: formData.location,
-        price: formData.price ? parseFloat(formData.price) : null,
-        phone: formData.phone,
-        whatsapp: formData.whatsapp || null,
+        title: formDataParam.title,
+        description: formDataParam.description,
+        category: formDataParam.category,
+        location: formDataParam.location,
+        price: formDataParam.price ? parseFloat(formDataParam.price) : null,
+        phone: formDataParam.phone,
+        whatsapp: formDataParam.whatsapp || null,
         images: imageUrls,
         expires_at: expiresAt,
         user_id: user.id,
@@ -123,6 +129,7 @@ export const useCreateAdForm = () => {
   });
 
   const handleInputChange = (field: string, value: string | boolean | File[]) => {
+    console.log('Input change:', field, value);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
@@ -134,7 +141,22 @@ export const useCreateAdForm = () => {
     }
   };
 
-  const isFormValid = formData.title && formData.description && formData.category && formData.location && formData.phone;
+  const isFormValid = !!(
+    formData.title.trim() && 
+    formData.description.trim() && 
+    formData.category && 
+    formData.location && 
+    formData.phone.trim()
+  );
+
+  console.log('Form validation:', {
+    title: !!formData.title.trim(),
+    description: !!formData.description.trim(),
+    category: !!formData.category,
+    location: !!formData.location,
+    phone: !!formData.phone.trim(),
+    isValid: isFormValid
+  });
 
   return {
     formData,

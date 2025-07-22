@@ -12,6 +12,7 @@ interface CreateAdLayoutProps {
   onPreview: () => void;
   onSubmit: (e: React.FormEvent) => void;
   getVipPrice: () => string;
+  isFormValid: boolean;
 }
 
 const CreateAdLayout = ({ 
@@ -19,8 +20,15 @@ const CreateAdLayout = ({
   onInputChange, 
   onPreview, 
   onSubmit, 
-  getVipPrice 
+  getVipPrice,
+  isFormValid 
 }: CreateAdLayoutProps) => {
+  const handlePreview = () => {
+    console.log('CreateAdLayout: Preview clicked with form data:', formData);
+    console.log('CreateAdLayout: Is form valid:', isFormValid);
+    onPreview();
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
@@ -39,9 +47,10 @@ const CreateAdLayout = ({
               <AdForm
                 formData={formData}
                 onInputChange={onInputChange}
-                onPreview={onPreview}
+                onPreview={handlePreview}
                 onSubmit={onSubmit}
                 getVipPrice={getVipPrice}
+                isFormValid={isFormValid}
               />
             </div>
 

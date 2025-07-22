@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Eye } from 'lucide-react';
 import GeneralInfoSection from './GeneralInfoSection';
@@ -23,10 +22,15 @@ interface AdFormProps {
   onPreview: () => void;
   onSubmit: (e: React.FormEvent) => void;
   getVipPrice: () => string;
+  isFormValid: boolean;
 }
 
-const AdForm = ({ formData, onInputChange, onPreview, onSubmit, getVipPrice }: AdFormProps) => {
-  const isFormValid = formData.title && formData.description && formData.category && formData.location && formData.phone;
+const AdForm = ({ formData, onInputChange, onPreview, onSubmit, getVipPrice, isFormValid }: AdFormProps) => {
+  const handlePreviewClick = () => {
+    console.log('Preview button clicked, form data:', formData);
+    console.log('Form valid:', isFormValid);
+    onPreview();
+  };
 
   return (
     <form onSubmit={onSubmit} className="space-y-6">
@@ -41,7 +45,7 @@ const AdForm = ({ formData, onInputChange, onPreview, onSubmit, getVipPrice }: A
           variant="outline" 
           size="lg" 
           className="flex-1 bg-yellow-600 hover:bg-yellow-700 text-white border-yellow-500 font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
-          onClick={onPreview}
+          onClick={handlePreviewClick}
           disabled={!isFormValid}
         >
           <Eye className="w-5 h-5 mr-2" />
