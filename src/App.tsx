@@ -26,7 +26,7 @@ import Events from "./pages/Events";
 import ParentalControl from "./pages/ParentalControl";
 import Referral from "@/pages/Referral";
 import UpdatePassword from "./pages/UpdatePassword";
-import Analytics from "./pages/Analytics";
+
 import { PageTracker } from "@/components/analytics/PageTracker";
 
 // Create QueryClient outside component to prevent recreation
@@ -67,7 +67,7 @@ function App() {
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/parental-control" element={<ParentalControl />} />
                   <Route path="/events" element={<Events />} />
-                  <Route path="/analytics" element={<Analytics />} />
+                  
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
