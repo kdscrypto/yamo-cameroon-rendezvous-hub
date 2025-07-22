@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Mail, Phone, MapPin, Clock } from 'lucide-react';
 import ContactForm from '@/components/ContactForm';
+import ResendTestButton from '@/components/ResendTestButton';
 
 const Contact = () => {
   return (
@@ -112,6 +113,11 @@ const Contact = () => {
                     les messages dans les 24h ouvrées. Pour les demandes urgentes, 
                     utilisez notre ligne téléphonique.
                   </p>
+                </div>
+
+                {/* Bouton de test Resend pour vérification */}
+                <div className="mt-6">
+                  <ResendTestButton />
                 </div>
               </CardContent>
             </Card>
