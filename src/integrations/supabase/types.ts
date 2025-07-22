@@ -151,6 +151,36 @@ export type Database = {
           },
         ]
       }
+      email_events: {
+        Row: {
+          created_at: string
+          email_id: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          recipient: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email_id: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          recipient: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email_id?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          recipient?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       event_waitlist: {
         Row: {
           city: string | null

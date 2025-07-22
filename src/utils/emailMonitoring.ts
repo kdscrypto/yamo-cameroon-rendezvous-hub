@@ -23,7 +23,7 @@ export interface EmailTrackingData {
  */
 export const trackEmailEvent = async (data: EmailTrackingData): Promise<{ success: boolean; error?: string }> => {
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('email_events')
       .insert([{
         email_id: data.emailId,
@@ -62,7 +62,7 @@ export const getEmailStats = async (days: number = 30): Promise<{
   
   try {
     // Récupération des événements email pour la période
-    const { data: events, error } = await supabase
+    const { data: events, error } = await (supabase as any)
       .from('email_events')
       .select('event_type')
       .gte('created_at', startDate.toISOString());
@@ -80,10 +80,10 @@ export const getEmailStats = async (days: number = 30): Promise<{
     }
 
     // Comptage des différents types d'événements
-    const sent = events.filter(e => e.event_type === 'sent').length;
-    const delivered = events.filter(e => e.event_type === 'delivered').length;
-    const bounced = events.filter(e => e.event_type === 'bounced').length;
-    const failed = events.filter(e => e.event_type === 'failed').length;
+    const sent = events?.filter((e: any) => e.event_type === 'sent').length || 0;
+    const delivered = events?.filter((e: any) => e.event_type === 'delivered').length || 0;
+    const bounced = events?.filter((e: any) => e.event_type === 'bounced').length || 0;
+    const failed = events?.filter((e: any) => e.event_type === 'failed').length || 0;
 
     // Calcul des taux
     const bounceRate = sent > 0 ? (bounced / sent) * 100 : 0;
