@@ -2,7 +2,7 @@
 import React, { StrictMode } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
+// import { TooltipProvider } from "@/components/ui/tooltip"; // Désactivé temporairement
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -45,7 +45,7 @@ function App() {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
-          <TooltipProvider delayDuration={0}>
+          {/* <TooltipProvider delayDuration={0}> */}
             <BrowserRouter>
               <div className="min-h-screen bg-background">
                 <Routes>
@@ -76,7 +76,7 @@ function App() {
               <Toaster />
               <Sonner />
             </BrowserRouter>
-          </TooltipProvider>
+          {/* </TooltipProvider> */}
         </ThemeProvider>
       </QueryClientProvider>
     </StrictMode>
