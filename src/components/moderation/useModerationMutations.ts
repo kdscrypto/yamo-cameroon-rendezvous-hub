@@ -22,37 +22,22 @@ export const useModerationMutations = () => {
         console.log('=== DÉBUT APPROBATION ANNONCE ===');
         console.log('ID annonce à approuver:', adId);
         console.log('Utilisateur actuel:', user?.id);
-        console.log('Navigator online:', navigator.onLine);
-        console.log('Window location:', window.location.href);
         
         if (!user?.id) {
           throw new Error('Utilisateur non connecté');
         }
 
-        // Test de connectivité Supabase
-        console.log('Test de connectivité Supabase...');
-        const { data: testConnection, error: testError } = await supabase
-          .from('ads')
-          .select('id')
-          .limit(1);
-        
-        if (testError) {
-          console.error('Erreur test connectivité:', testError);
-          throw new Error(`Problème de connexion Supabase: ${testError.message}`);
-        }
-        console.log('Connectivité Supabase OK');
-
-        // First, get the ad details to check if it's VIP
+        // First, get the ad details to check if it's VIP and current status
         console.log('Récupération des détails de l\'annonce...');
         const { data: adData, error: fetchError } = await supabase
           .from('ads')
-          .select('expires_at, title, moderation_status')
+          .select('expires_at, title, moderation_status, status, user_id')
           .eq('id', adId)
           .single();
         
         if (fetchError) {
           console.error('Erreur lors de la récupération:', fetchError);
-          throw fetchError;
+          throw new Error(`Impossible de récupérer l'annonce: ${fetchError.message}`);
         }
 
         console.log('Détails de l\'annonce:', adData);
@@ -75,21 +60,34 @@ export const useModerationMutations = () => {
 
         console.log('Données de mise à jour:', updateData);
         
+        // Use explicit where conditions and return the updated row
         const { data: updateResult, error: updateError } = await supabase
           .from('ads')
           .update(updateData)
           .eq('id', adId)
-          .select();
+          .eq('moderation_status', 'pending') // Only update if still pending
+          .select('id, moderation_status, status, moderated_at, moderated_by')
+          .single();
         
         if (updateError) {
           console.error('Erreur lors de la mise à jour:', updateError);
-          throw updateError;
+          throw new Error(`Échec de l'approbation: ${updateError.message}`);
+        }
+        
+        if (!updateResult) {
+          throw new Error('Aucune ligne mise à jour - l\'annonce a peut-être déjà été modérée');
         }
         
         console.log('Résultat de la mise à jour:', updateResult);
+        
+        // Verify the update was successful
+        if (updateResult.moderation_status !== 'approved' || updateResult.status !== 'active') {
+          throw new Error('La mise à jour a échoué - statut incorrect après mise à jour');
+        }
+        
         console.log('=== APPROBATION RÉUSSIE ===');
         
-        return { isVip, alreadyApproved: false };
+        return { isVip, alreadyApproved: false, updatedAd: updateResult };
       } catch (error) {
         console.error('=== ERREUR LORS DE L\'APPROBATION ===');
         console.error('Erreur complète:', error);
