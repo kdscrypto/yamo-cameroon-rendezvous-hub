@@ -214,33 +214,58 @@ const handler = async (req: Request): Promise<Response> => {
     const cleanSubject = subject.replace(/[<>]/g, '').trim();
     const cleanMessage = message.replace(/[<>]/g, '').trim();
 
-    // Send email using verified domain avec contenu sécurisé
+    // Send email using the new dedicated contact address
     const emailResponse = await resend.emails.send({
-      from: "Yamo Contact <noreply@yamo.chat>",
+      from: "Yamo Contact <contact@yamo.chat>",
       to: ["contactyamoo@gmail.com"],
       subject: `[Contact Yamo] ${cleanSubject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px;">Nouveau message de contact</h2>
-          <div style="background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p><strong>Nom:</strong> ${cleanName}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Sujet:</strong> ${cleanSubject}</p>
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
+            <h1 style="color: white; margin: 0; font-size: 24px;">📧 Nouveau message de contact</h1>
+            <p style="color: rgba(255,255,255,0.9); margin: 10px 0 0 0;">Reçu via contact@yamo.chat</p>
           </div>
-          <h3 style="color: #333;">Message:</h3>
-          <div style="background: white; padding: 15px; border-left: 4px solid #007cba; margin: 20px 0;">
-            <p style="white-space: pre-wrap; line-height: 1.6;">${cleanMessage}</p>
+          
+          <div style="background: #f9f9f9; padding: 20px; border-radius: 0 0 8px 8px;">
+            <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+              <h2 style="color: #333; margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid #ddd;">Informations du contact</h2>
+              <div style="display: grid; gap: 10px;">
+                <p style="margin: 5px 0;"><strong>👤 Nom:</strong> ${cleanName}</p>
+                <p style="margin: 5px 0;"><strong>📧 Email:</strong> <a href="mailto:${email}" style="color: #667eea;">${email}</a></p>
+                <p style="margin: 5px 0;"><strong>📝 Sujet:</strong> ${cleanSubject}</p>
+              </div>
+            </div>
+            
+            <div style="background: white; padding: 20px; border-radius: 8px;">
+              <h3 style="color: #333; margin-top: 0;">💬 Message:</h3>
+              <div style="background: #f8f9fa; padding: 15px; border-left: 4px solid #667eea; border-radius: 4px;">
+                <p style="white-space: pre-wrap; line-height: 1.6; margin: 0;">${cleanMessage}</p>
+              </div>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #e8f4f8; border-radius: 8px; border-left: 4px solid #17a2b8;">
+              <h4 style="color: #0c5460; margin-top: 0;">🛡️ Sécurité et suivi</h4>
+              <div style="font-size: 12px; color: #0c5460;">
+                <p style="margin: 5px 0;">✅ Message vérifié par les filtres anti-spam</p>
+                <p style="margin: 5px 0;">🔒 Envoyé via système sécurisé contact@yamo.chat</p>
+                <p style="margin: 5px 0;">📊 ID de suivi: <code>${emailId}</code></p>
+                <p style="margin: 5px 0;">⏰ Reçu le ${new Date().toLocaleString('fr-FR')}</p>
+              </div>
+            </div>
           </div>
-          <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-          <p style="color: #666; font-size: 12px;">
-            <em>Message envoyé depuis le site Yamo (yamo.chat) le ${new Date().toLocaleString('fr-FR')}</em><br>
-            <em>ID de suivi: ${emailId}</em>
-          </p>
+          
+          <div style="text-align: center; margin-top: 20px; padding: 15px; background: #f1f3f4; border-radius: 8px;">
+            <p style="color: #666; font-size: 12px; margin: 0;">
+              <strong>Email automatique depuis Yamo (yamo.chat)</strong><br>
+              Cette adresse de contact professionnelle protège votre email personnel<br>
+              et maintient la sécurité de la plateforme.
+            </p>
+          </div>
         </div>
       `,
       reply_to: email,
       text: `
-Nouveau message de contact Yamo
+Nouveau message de contact Yamo (via contact@yamo.chat)
 
 Nom: ${cleanName}
 Email: ${email}  
@@ -250,23 +275,28 @@ Message:
 ${cleanMessage}
 
 ---
-Envoyé le ${new Date().toLocaleString('fr-FR')}
-ID: ${emailId}
+Sécurité et suivi:
+✅ Vérifié par filtres anti-spam
+🔒 Envoyé via contact@yamo.chat
+📊 ID: ${emailId}
+⏰ ${new Date().toLocaleString('fr-FR')}
       `,
       headers: {
         "X-Email-Id": emailId,
         "X-Email-Source": "contact-form-production",
         "X-Client-Id": identifier,
-        "X-Yamo-Version": "1.0.0"
+        "X-Yamo-Version": "1.0.0",
+        "X-Contact-Method": "dedicated-address"
       }
     });
 
-    console.log("Contact email sent successfully:", emailResponse);
+    console.log("Contact email sent successfully via contact@yamo.chat:", emailResponse);
 
     return new Response(JSON.stringify({ 
       success: true, 
       id: emailResponse.id,
-      trackingId: emailId
+      trackingId: emailId,
+      contactMethod: "contact@yamo.chat"
     }), {
       status: 200,
       headers: {

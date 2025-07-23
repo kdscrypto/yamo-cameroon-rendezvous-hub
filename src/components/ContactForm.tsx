@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { AlertCircle, CheckCircle, Shield } from 'lucide-react';
+import { AlertCircle, CheckCircle, Shield, Mail } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { EmailValidator, SecurityUtils, rateLimiter } from '@/utils/productionConfig';
@@ -111,12 +111,13 @@ const ContactForm = ({ className }: ContactFormProps) => {
 
       SecurityUtils.secureLog('info', 'Email de contact envoyé avec succès', { 
         trackingId: data?.trackingId,
-        clientId 
+        clientId,
+        contactMethod: data?.contactMethod 
       });
 
       toast({
         title: "Message envoyé ✅",
-        description: `Votre message a été envoyé avec succès. ID de suivi: ${data?.trackingId?.slice(-8)}`
+        description: `Votre message a été envoyé avec succès via ${data?.contactMethod || 'contact@yamo.chat'}. ID: ${data?.trackingId?.slice(-8)}`
       });
       
       // Réinitialiser le formulaire
@@ -154,10 +155,16 @@ const ContactForm = ({ className }: ContactFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className={`space-y-6 ${className || ''}`}>
-      {/* Indicateur de sécurité */}
-      <div className="flex items-center gap-2 text-sm text-neutral-400 bg-neutral-800/50 rounded-lg p-3">
-        <Shield className="w-4 h-4 text-green-500" />
-        <span>Formulaire sécurisé avec protection anti-spam et chiffrement</span>
+      {/* Indicateur de sécurité avec nouvelle adresse professionnelle */}
+      <div className="flex items-center gap-3 text-sm text-neutral-400 bg-neutral-800/50 rounded-lg p-4">
+        <div className="flex items-center gap-2">
+          <Shield className="w-4 h-4 text-green-500" />
+          <span>Formulaire sécurisé</span>
+        </div>
+        <div className="flex items-center gap-2 text-blue-400">
+          <Mail className="w-4 h-4" />
+          <span className="font-mono text-xs">contact@yamo.chat</span>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -261,7 +268,7 @@ const ContactForm = ({ className }: ContactFormProps) => {
         className="w-full gradient-gold text-black hover:opacity-90 disabled:opacity-50"
         disabled={isLoading || (emailValidation && !emailValidation.isValid) || Object.keys(fieldErrors).length > 0}
       >
-        {isLoading ? 'Envoi sécurisé en cours...' : 'Envoyer le message'}
+        {isLoading ? 'Envoi via contact@yamo.chat...' : 'Envoyer le message'}
       </Button>
 
       <div className="mt-2 text-sm text-neutral-400 space-y-2">
@@ -269,9 +276,15 @@ const ContactForm = ({ className }: ContactFormProps) => {
           En soumettant ce formulaire, vous acceptez notre politique de confidentialité.
           Nous ne transmettrons jamais votre email à des tiers.
         </p>
-        <div className="flex items-center gap-2 text-xs">
-          <Shield className="w-3 h-3 text-green-500" />
-          <span className="text-green-400">Protection anti-spam active • Limite: 5 messages/heure</span>
+        <div className="flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2">
+            <Shield className="w-3 h-3 text-green-500" />
+            <span className="text-green-400">Protection anti-spam active • Limite: 5 messages/heure</span>
+          </div>
+          <div className="flex items-center gap-1 text-blue-400">
+            <Mail className="w-3 h-3" />
+            <span className="font-mono">contact@yamo.chat</span>
+          </div>
         </div>
       </div>
     </form>
