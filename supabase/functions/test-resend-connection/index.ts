@@ -38,9 +38,9 @@ const handler = async (req: Request): Promise<Response> => {
     
     const resend = new Resend(apiKey);
 
-    // Test avec le domaine personnalisé
+    // Test avec le domaine par défaut en attendant la vérification
     const testEmailResponse = await resend.emails.send({
-      from: "Test Yamo <noreply@send.yamo.chat>",
+      from: "Test Yamo <onboarding@resend.dev>",
       to: ["contactyamoo@gmail.com"],
       subject: "Test de connexion Resend - Domaine personnalisé",
       html: `
