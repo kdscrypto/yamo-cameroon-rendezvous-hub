@@ -106,7 +106,7 @@ const validateEmail = (email: string): ValidationResult => {
   return result;
 };
 
-// Fonction pour envoyer un email de test
+// Fonction pour envoyer un email de test avec domaine personnalisé
 const sendTestEmail = async (email: string): Promise<{
   success: boolean;
   id?: string;
@@ -114,13 +114,14 @@ const sendTestEmail = async (email: string): Promise<{
 }> => {
   try {
     const emailResponse = await resend.emails.send({
-      from: "Yamo Email Test <onboarding@resend.dev>",
+      from: "Test Yamo <noreply@send.yamo.chat>",
       to: [email],
       subject: "Test de délivrabilité d'email - Yamo",
       html: `
         <h2>Test de délivrabilité d'email</h2>
         <p>Cet email est un test automatique pour vérifier la validité de votre adresse email.</p>
         <p>Si vous recevez ce message, cela signifie que votre adresse email est valide et peut recevoir des messages de notre part.</p>
+        <p><strong>Domaine d'envoi:</strong> send.yamo.chat</p>
         <hr>
         <p><em>Message envoyé depuis le système de test Yamo</em></p>
         <p>Date et heure: ${new Date().toISOString()}</p>
@@ -185,7 +186,8 @@ const handler = async (req: Request): Promise<Response> => {
       
       return new Response(JSON.stringify({
         ...sendResult,
-        validationResult
+        validationResult,
+        customDomain: "send.yamo.chat"
       }), {
         status: sendResult.success ? 200 : 500,
         headers: {

@@ -60,9 +60,9 @@ const handler = async (req: Request): Promise<Response> => {
     // Identifiant unique pour suivi de cet email
     const emailId = crypto.randomUUID();
 
-    // Send email to the application's email address
+    // Send email using custom domain
     const emailResponse = await resend.emails.send({
-      from: "Yamo Contact <onboarding@resend.dev>",
+      from: "Yamo Contact <noreply@send.yamo.chat>",
       to: ["contactyamoo@gmail.com"],
       subject: `[Contact Yamo] ${subject}`,
       html: `
@@ -76,8 +76,7 @@ const handler = async (req: Request): Promise<Response> => {
         <hr>
         <p><em>Message envoyé depuis le site Yamo</em></p>
       `,
-      reply_to: email, // Allow replying directly to the sender
-      // Ajouter des identifiants de suivi
+      reply_to: email,
       text: `ID: ${emailId}`,
       headers: {
         "X-Email-Id": emailId,
@@ -86,8 +85,6 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     console.log("Contact email sent successfully:", emailResponse);
-
-    // Si un webhook pour le suivi était configuré, on pourrait l'appeler ici
 
     return new Response(JSON.stringify({ 
       success: true, 
