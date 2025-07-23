@@ -22,10 +22,25 @@ export const useModerationMutations = () => {
         console.log('=== DÉBUT APPROBATION ANNONCE ===');
         console.log('ID annonce à approuver:', adId);
         console.log('Utilisateur actuel:', user?.id);
+        console.log('Navigator online:', navigator.onLine);
+        console.log('Window location:', window.location.href);
         
         if (!user?.id) {
           throw new Error('Utilisateur non connecté');
         }
+
+        // Test de connectivité Supabase
+        console.log('Test de connectivité Supabase...');
+        const { data: testConnection, error: testError } = await supabase
+          .from('ads')
+          .select('id')
+          .limit(1);
+        
+        if (testError) {
+          console.error('Erreur test connectivité:', testError);
+          throw new Error(`Problème de connexion Supabase: ${testError.message}`);
+        }
+        console.log('Connectivité Supabase OK');
 
         // First, get the ad details to check if it's VIP
         console.log('Récupération des détails de l\'annonce...');
