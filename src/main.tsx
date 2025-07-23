@@ -4,9 +4,13 @@ import { HelmetProvider } from 'react-helmet-async';
 import App from "./App.tsx";
 import "./index.css";
 import { optimizeForProduction } from './utils/environmentUtils';
+import { ProductionUtils } from './utils/productionMonitoring';
 
 // Optimiser pour la production
 optimizeForProduction();
+
+// Démarrer le monitoring de production
+ProductionUtils.startProductionMonitoring();
 
 // Ensure we have a root element before rendering
 const rootElement = document.getElementById("root");
