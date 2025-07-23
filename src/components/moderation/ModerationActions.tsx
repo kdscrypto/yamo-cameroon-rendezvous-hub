@@ -19,7 +19,16 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
   const [customNotes, setCustomNotes] = useState('');
 
   const handleSubmit = () => {
-    if (!moderationAction) return;
+    console.log('🔥 HANDLE SUBMIT CALLED');
+    console.log('📋 Current form state:', { moderationAction, selectedReason, customNotes });
+    console.log('✅ Can submit:', canSubmit());
+    
+    if (!moderationAction) {
+      console.error('❌ No moderation action selected');
+      return;
+    }
+    
+    console.log('🚀 Calling onSubmit with:', { moderationAction, selectedReason, customNotes });
     onSubmit(moderationAction, selectedReason, customNotes);
   };
 

@@ -36,58 +36,74 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
 
   const moderationMutation = useMutation({
     mutationFn: async ({ action, reason, notes }: { action: 'approve' | 'reject'; reason?: string; notes?: string }) => {
-      console.log('Processing moderation:', { action, reason, notes, adId: ad.id });
+      console.log('🚀 STARTING MODERATION PROCESS:', { action, reason, notes, adId: ad.id });
+      console.log('📊 AD DATA:', ad);
+      console.log('👤 USER ID:', user?.id);
       
-      // Check if the ad is VIP (has expires_at and it's in the future)
-      const isVip = ad.expires_at && new Date(ad.expires_at) > new Date();
-      console.log('Is VIP ad:', isVip);
+      // Validate user authentication
+      if (!user?.id) {
+        console.error('❌ NO USER ID - User not authenticated');
+        throw new Error('Utilisateur non authentifié');
+      }
       
-      const updateData: any = {
-        moderation_status: action === 'approve' ? 'approved' : 'rejected',
-        status: action === 'approve' ? 'active' : 'inactive',
-        moderated_at: new Date().toISOString(),
-        moderated_by: user?.id
-      };
-
-      if (action === 'reject') {
-        let moderationNotes = '';
+      try {
+        // Check if the ad is VIP (has expires_at and it's in the future)
+        const isVip = ad.expires_at && new Date(ad.expires_at) > new Date();
+        console.log('⭐ Is VIP ad:', isVip);
         
-        if (reason) {
-          const reasonObj = moderationReasons?.find(r => r.id === reason);
-          if (reasonObj) {
-            moderationNotes = reasonObj.name;
-            if (notes) {
-              moderationNotes += ` - ${notes}`;
+        const updateData: any = {
+          moderation_status: action === 'approve' ? 'approved' : 'rejected',
+          status: action === 'approve' ? 'active' : 'inactive',
+          moderated_at: new Date().toISOString(),
+          moderated_by: user.id
+        };
+
+        if (action === 'reject') {
+          let moderationNotes = '';
+          
+          if (reason) {
+            const reasonObj = moderationReasons?.find(r => r.id === reason);
+            if (reasonObj) {
+              moderationNotes = reasonObj.name;
+              if (notes) {
+                moderationNotes += ` - ${notes}`;
+              }
             }
+          } else if (notes) {
+            moderationNotes = notes;
+          } else {
+            moderationNotes = 'Annonce rejetée par le modérateur';
           }
-        } else if (notes) {
-          moderationNotes = notes;
-        } else {
-          moderationNotes = 'Annonce rejetée par le modérateur';
+          
+          updateData.moderation_notes = moderationNotes;
+          console.log('📝 Setting moderation notes:', moderationNotes);
+        }
+
+        console.log('📤 SENDING UPDATE TO SUPABASE:', updateData);
+
+        const { data, error } = await supabase
+          .from('ads')
+          .update(updateData)
+          .eq('id', ad.id)
+          .select();
+        
+        if (error) {
+          console.error('❌ SUPABASE ERROR:', error);
+          throw error;
         }
         
-        updateData.moderation_notes = moderationNotes;
-        console.log('Setting moderation notes:', moderationNotes);
-      }
-
-      console.log('Updating ad with data:', updateData);
-
-      const { error } = await supabase
-        .from('ads')
-        .update(updateData)
-        .eq('id', ad.id);
-      
-      if (error) {
-        console.error('Error updating ad:', error);
+        console.log('✅ SUPABASE UPDATE SUCCESS:', data);
+        
+        const statusMessage = action === 'approve' 
+          ? (isVip ? 'Annonce VIP approuvée - visible avec mise en avant prioritaire' : 'Annonce approuvée - maintenant visible sur le site')
+          : 'Annonce rejetée';
+        
+        console.log('🎉 Ad moderation completed successfully:', statusMessage);
+        return { action, isVip };
+      } catch (error) {
+        console.error('💥 MUTATION ERROR:', error);
         throw error;
       }
-      
-      const statusMessage = action === 'approve' 
-        ? (isVip ? 'Annonce VIP approuvée - visible avec mise en avant prioritaire' : 'Annonce approuvée - maintenant visible sur le site')
-        : 'Annonce rejetée';
-      
-      console.log('Ad moderation completed successfully:', statusMessage);
-      return { action, isVip };
     },
     onSuccess: (data, variables) => {
       // Invalidate relevant queries to refresh UI
@@ -117,8 +133,19 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
   });
 
   const handleModerationSubmit = (action: 'approve' | 'reject', reason?: string, notes?: string) => {
-    console.log('Submitting moderation decision:', { action, reason, notes });
-    moderationMutation.mutate({ action, reason, notes });
+    console.log('🎯 MODAL SUBMIT HANDLER CALLED:', { action, reason, notes });
+    console.log('🔄 Mutation state:', { 
+      isPending: moderationMutation.isPending, 
+      isError: moderationMutation.isError,
+      error: moderationMutation.error 
+    });
+    
+    try {
+      console.log('🚀 CALLING MUTATION...');
+      moderationMutation.mutate({ action, reason, notes });
+    } catch (error) {
+      console.error('💥 ERROR IN SUBMIT HANDLER:', error);
+    }
   };
 
   if (!ad) return null;
