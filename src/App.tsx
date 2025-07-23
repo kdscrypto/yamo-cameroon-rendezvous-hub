@@ -26,6 +26,7 @@ import Events from "./pages/Events";
 import ParentalControl from "./pages/ParentalControl";
 import Referral from "@/pages/Referral";
 import UpdatePassword from "./pages/UpdatePassword";
+import EmailTest from "./pages/EmailTest";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
 
@@ -67,6 +68,7 @@ function App() {
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/parental-control" element={<ParentalControl />} />
                   <Route path="/events" element={<Events />} />
+                  <Route path="/email-test" element={<EmailTest />} />
                   
                   <Route path="/auth/callback" element={<AuthCallback />} />
                   <Route path="*" element={<NotFound />} />
