@@ -60,9 +60,9 @@ const handler = async (req: Request): Promise<Response> => {
     // Identifiant unique pour suivi de cet email
     const emailId = crypto.randomUUID();
 
-    // Send email using custom domain
+    // Send email using verified domain
     const emailResponse = await resend.emails.send({
-      from: "Yamo Contact <noreply@send.yamo.chat>",
+      from: "Yamo Contact <noreply@yamo.chat>",
       to: ["contactyamoo@gmail.com"],
       subject: `[Contact Yamo] ${subject}`,
       html: `

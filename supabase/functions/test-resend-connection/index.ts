@@ -15,7 +15,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    console.log("Testing Resend connection with custom domain...");
+    console.log("Testing Resend connection with verified domain...");
     
     // Vérifier si la clé API existe
     const apiKey = Deno.env.get("RESEND_API_KEY");
@@ -38,26 +38,26 @@ const handler = async (req: Request): Promise<Response> => {
     
     const resend = new Resend(apiKey);
 
-    // Test avec le domaine par défaut en attendant la vérification
+    // Test avec le domaine vérifié yamo.chat
     const testEmailResponse = await resend.emails.send({
-      from: "Test Yamo <onboarding@resend.dev>",
+      from: "Test Yamo <noreply@yamo.chat>",
       to: ["contactyamoo@gmail.com"],
-      subject: "Test de connexion Resend - Domaine personnalisé",
+      subject: "Test de connexion Resend - Domaine vérifié",
       html: `
-        <h2>✅ Test de connexion Resend avec domaine personnalisé réussi !</h2>
+        <h2>✅ Test de connexion Resend avec domaine vérifié réussi !</h2>
         <p>Cet email confirme que:</p>
         <ul>
           <li>✅ La clé API Resend est correctement configurée</li>
-          <li>✅ Le domaine personnalisé send.yamo.chat est fonctionnel</li>
+          <li>✅ Le domaine vérifié yamo.chat est fonctionnel</li>
           <li>✅ Les enregistrements DNS sont correctement configurés</li>
           <li>✅ L'intégration est opérationnelle</li>
         </ul>
-        <p><strong>Domaine utilisé:</strong> send.yamo.chat</p>
+        <p><strong>Domaine utilisé:</strong> yamo.chat</p>
         <p><em>Email de test envoyé le ${new Date().toLocaleString('fr-FR')}</em></p>
       `,
     });
 
-    console.log("Test email sent successfully with custom domain:", testEmailResponse);
+    console.log("Test email sent successfully with verified domain:", testEmailResponse);
 
     return new Response(JSON.stringify({ 
       success: true,
@@ -65,9 +65,9 @@ const handler = async (req: Request): Promise<Response> => {
       resendResponse: testEmailResponse,
       details: {
         emailId: testEmailResponse.id,
-        customDomain: "send.yamo.chat",
+        verifiedDomain: "yamo.chat",
         timestamp: new Date().toISOString(),
-        message: "Connexion Resend testée avec succès sur domaine personnalisé"
+        message: "Connexion Resend testée avec succès sur domaine vérifié"
       }
     }), {
       status: 200,
@@ -88,7 +88,7 @@ const handler = async (req: Request): Promise<Response> => {
           errorType: error.constructor.name,
           timestamp: new Date().toISOString(),
           suggestion: error.message.includes('domain') ? 
-            "Vérifiez la configuration DNS de votre domaine send.yamo.chat" : 
+            "Vérifiez la configuration DNS de votre domaine yamo.chat" : 
             error.message.includes('API') ? 
             "Vérifiez votre clé API Resend" : 
             "Problème de connexion ou de configuration"

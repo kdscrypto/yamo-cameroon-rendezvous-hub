@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -38,7 +39,7 @@ const EmailTest = () => {
       if (data.success) {
         toast({
           title: "✅ Test réussi !",
-          description: "Email envoyé avec succès depuis send.yamo.chat",
+          description: "Email envoyé avec succès depuis yamo.chat",
         });
       } else {
         toast({
@@ -77,10 +78,10 @@ const EmailTest = () => {
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2 text-primary">
               <Mail className="w-6 h-6" />
-              Test Email Domaine Personnalisé
+              Test Email Domaine Vérifié
             </CardTitle>
             <p className="text-muted-foreground">
-              Testez l'envoi d'emails depuis send.yamo.chat
+              Testez l'envoi d'emails depuis yamo.chat
             </p>
           </CardHeader>
           
@@ -88,10 +89,10 @@ const EmailTest = () => {
             <div className="text-center space-y-2">
               <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-sm font-medium">send.yamo.chat</span>
+                <span className="text-sm font-medium">yamo.chat</span>
               </div>
               <p className="text-sm text-muted-foreground">
-                Domaine personnalisé configuré et vérifié
+                Domaine vérifié et configuré dans Resend
               </p>
             </div>
 
@@ -132,7 +133,7 @@ const EmailTest = () => {
                     <p className="text-green-600 font-medium">✅ Email envoyé avec succès !</p>
                     <div className="text-sm text-muted-foreground space-y-1">
                       <p>📧 Destinataire: contactyamoo@gmail.com</p>
-                      <p>🌐 Domaine: {testResult.details?.customDomain}</p>
+                      <p>🌐 Domaine: {testResult.details?.verifiedDomain}</p>
                       {testResult.details?.emailId && (
                         <p>🆔 ID Email: {testResult.details.emailId}</p>
                       )}
@@ -151,7 +152,7 @@ const EmailTest = () => {
             <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-lg">
               <p className="font-medium mb-2">Ce test vérifie :</p>
               <ul className="space-y-1">
-                <li>✓ Configuration DNS du domaine send.yamo.chat</li>
+                <li>✓ Configuration DNS du domaine yamo.chat</li>
                 <li>✓ Authentification DKIM/SPF</li>
                 <li>✓ Fonctionnement de l'API Resend</li>
                 <li>✓ Livraison des emails</li>
