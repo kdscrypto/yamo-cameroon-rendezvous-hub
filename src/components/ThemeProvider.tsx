@@ -27,35 +27,32 @@ export function ThemeProvider({
   storageKey = 'yamo-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Check if we're in a browser environment
-    if (typeof window === 'undefined') {
-      return defaultTheme;
-    }
-    
+  // CHANGEMENT 1 : Initialisation simple et sûre de l'état.
+  // On ne lit plus localStorage ici. On utilise la valeur par défaut.
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+
+  // CHANGEMENT 2 : Un seul useEffect pour gérer la logique côté client.
+  useEffect(() => {
+    // Ce code ne s'exécute que sur le client, après le montage du composant.
+    let initialTheme: Theme;
     try {
-      const stored = localStorage.getItem(storageKey) as Theme;
-      return stored || defaultTheme;
-    } catch (error) {
-      console.warn('Failed to access localStorage:', error);
-      return defaultTheme;
+      initialTheme = (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+    } catch (e) {
+      console.warn('Failed to access localStorage:', e);
+      initialTheme = defaultTheme;
     }
-  });
+    setTheme(initialTheme);
+  }, [defaultTheme, storageKey]);
+
 
   useEffect(() => {
-    // Check if we're in a browser environment
-    if (typeof window === 'undefined') {
-      return;
-    }
-
+    // Ce useEffect est conservé, il applique la classe au document.
     const root = window.document.documentElement;
-
-    // Clear existing theme classes
-    root.classList.remove('light', 'dark');
     
+    root.classList.remove('light', 'dark');
+
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
-        .matches
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
         ? 'dark'
         : 'light';
       root.classList.add(systemTheme);
@@ -64,35 +61,16 @@ export function ThemeProvider({
     }
   }, [theme]);
 
-  // Set default dark theme on component mount
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const root = window.document.documentElement;
-    root.classList.add('dark');
-    
-    // Set default theme if none is set
-    try {
-      if (!localStorage.getItem(storageKey)) {
-        localStorage.setItem(storageKey, 'dark');
-      }
-    } catch (error) {
-      console.warn('Failed to set localStorage:', error);
-    }
-  }, [storageKey]);
 
   const value = useMemo(() => ({
     theme,
     setTheme: (newTheme: Theme) => {
       try {
-        if (typeof window !== 'undefined') {
-          localStorage.setItem(storageKey, newTheme);
-        }
+        localStorage.setItem(storageKey, newTheme);
         setTheme(newTheme);
-      } catch (error) {
-        console.warn('Failed to save theme to localStorage:', error);
+      } catch (e) {
+        console.warn('Failed to save theme to localStorage:', e);
+        // On met quand même à jour l'état même si localStorage échoue.
         setTheme(newTheme);
       }
     },
