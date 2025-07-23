@@ -114,8 +114,8 @@ export const AnalyticsDashboard = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center flex-wrap gap-4">
         <div>
-          <h1 className="text-hierarchy-primary">Analytics Dashboard</h1>
-          <p className="text-hierarchy-body">Monitor your website's performance and user behavior</p>
+          <h1 className="text-hierarchy-primary text-yellow-400">Analytics Dashboard</h1>
+          <p className="text-white">Monitor your website's performance and user behavior</p>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-sm text-muted-foreground">
@@ -145,47 +145,47 @@ export const AnalyticsDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="card-enhanced">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-hierarchy-tertiary">Page Views</CardTitle>
+            <CardTitle className="text-yellow-400">Page Views</CardTitle>
             <Eye className="w-4 h-4 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-hierarchy-secondary">{totalPageViews.toLocaleString()}</div>
-            <Badge variant="secondary" className="text-hierarchy-caption">Total visits</Badge>
+            <div className="text-2xl font-bold text-white">{totalPageViews.toLocaleString()}</div>
+            <Badge variant="secondary" className="text-white bg-gray-800/50">Total visits</Badge>
           </CardContent>
         </Card>
 
         <Card className="card-enhanced">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-hierarchy-tertiary">Unique Sessions</CardTitle>
+            <CardTitle className="text-yellow-400">Unique Sessions</CardTitle>
             <Users className="w-4 h-4 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-hierarchy-secondary">{totalSessions.toLocaleString()}</div>
-            <Badge variant="secondary" className="text-hierarchy-caption">Active users</Badge>
+            <div className="text-2xl font-bold text-white">{totalSessions.toLocaleString()}</div>
+            <Badge variant="secondary" className="text-white bg-gray-800/50">Active users</Badge>
           </CardContent>
         </Card>
 
         <Card className="card-enhanced">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-hierarchy-tertiary">Ad Interactions</CardTitle>
+            <CardTitle className="text-yellow-400">Ad Interactions</CardTitle>
             <MousePointer className="w-4 h-4 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-hierarchy-secondary">{totalInteractions.toLocaleString()}</div>
-            <Badge variant="secondary" className="text-hierarchy-caption">User engagement</Badge>
+            <div className="text-2xl font-bold text-white">{totalInteractions.toLocaleString()}</div>
+            <Badge variant="secondary" className="text-white bg-gray-800/50">User engagement</Badge>
           </CardContent>
         </Card>
 
         <Card className="card-enhanced">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-hierarchy-tertiary">Conversion Rate</CardTitle>
+            <CardTitle className="text-yellow-400">Conversion Rate</CardTitle>
             <TrendingUp className="w-4 h-4 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-hierarchy-secondary">
+            <div className="text-2xl font-bold text-white">
               {totalSessions > 0 ? ((totalInteractions / totalSessions) * 100).toFixed(1) : '0.0'}%
             </div>
-            <Badge variant="secondary" className="text-hierarchy-caption">Engagement rate</Badge>
+            <Badge variant="secondary" className="text-white bg-gray-800/50">Engagement rate</Badge>
           </CardContent>
         </Card>
       </div>
@@ -194,8 +194,8 @@ export const AnalyticsDashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="card-enhanced">
           <CardHeader>
-            <CardTitle className="text-hierarchy-tertiary">Daily Page Views</CardTitle>
-            <CardDescription className="text-hierarchy-body">Page views over the selected time period</CardDescription>
+            <CardTitle className="text-yellow-400">Daily Page Views</CardTitle>
+            <CardDescription className="text-white">Page views over the selected time period</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -218,8 +218,8 @@ export const AnalyticsDashboard = () => {
 
         <Card className="card-enhanced">
           <CardHeader>
-            <CardTitle className="text-hierarchy-tertiary">Metrics Distribution</CardTitle>
-            <CardDescription className="text-hierarchy-body">Breakdown of different metric types</CardDescription>
+            <CardTitle className="text-yellow-400">Metrics Distribution</CardTitle>
+            <CardDescription className="text-white">Breakdown of different metric types</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -258,8 +258,8 @@ export const AnalyticsDashboard = () => {
       {/* Detailed Metrics Table */}
       <Card className="card-enhanced">
         <CardHeader>
-          <CardTitle className="text-hierarchy-tertiary">Detailed Metrics</CardTitle>
-          <CardDescription className="text-hierarchy-body">Complete breakdown of all tracked metrics</CardDescription>
+          <CardTitle className="text-yellow-400">Detailed Metrics</CardTitle>
+          <CardDescription className="text-white">Complete breakdown of all tracked metrics</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -268,15 +268,15 @@ export const AnalyticsDashboard = () => {
                 <div className="flex items-center space-x-3">
                   <span className="text-yellow-400">{getMetricIcon(metric.metric_type)}</span>
                   <div>
-                    <h3 className="font-medium capitalize text-yellow-300">{metric.metric_type.replace('_', ' ')}</h3>
-                    <p className="text-sm text-hierarchy-body">
+                    <h3 className="font-medium capitalize text-yellow-400">{metric.metric_type.replace('_', ' ')}</h3>
+                    <p className="text-sm text-white">
                       {metric.unique_sessions} unique sessions
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-hierarchy-secondary">{metric.total_count.toLocaleString()}</div>
-                  <Badge variant="outline" className="text-hierarchy-caption">Total events</Badge>
+                  <div className="text-2xl font-bold text-white">{metric.total_count.toLocaleString()}</div>
+                  <Badge variant="outline" className="text-white border-yellow-400/30">Total events</Badge>
                 </div>
               </div>
             ))}
