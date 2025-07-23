@@ -18,51 +18,68 @@ export const useModerationMutations = () => {
 
   const quickApproveMutation = useMutation({
     mutationFn: async (adId: string) => {
-      console.log('Quick approving ad:', adId);
-      
-      // First, get the ad details to check if it's VIP
-      const { data: adData, error: fetchError } = await supabase
-        .from('ads')
-        .select('expires_at')
-        .eq('id', adId)
-        .single();
-      
-      if (fetchError) {
-        console.error('Error fetching ad details:', fetchError);
-        throw fetchError;
-      }
+      try {
+        console.log('=== DÉBUT APPROBATION ANNONCE ===');
+        console.log('ID annonce à approuver:', adId);
+        console.log('Utilisateur actuel:', user?.id);
+        
+        if (!user?.id) {
+          throw new Error('Utilisateur non connecté');
+        }
 
-      console.log('Ad details:', adData);
-      
-      // Check if the ad is VIP (has expires_at and it's in the future)
-      const isVip = adData.expires_at && new Date(adData.expires_at) > new Date();
-      console.log('Is VIP ad:', isVip);
-      
-      const updateData = {
-        moderation_status: 'approved',
-        status: 'active',
-        moderated_at: new Date().toISOString(),
-        moderated_by: user?.id
-      };
+        // First, get the ad details to check if it's VIP
+        console.log('Récupération des détails de l\'annonce...');
+        const { data: adData, error: fetchError } = await supabase
+          .from('ads')
+          .select('expires_at, title, moderation_status')
+          .eq('id', adId)
+          .single();
+        
+        if (fetchError) {
+          console.error('Erreur lors de la récupération:', fetchError);
+          throw fetchError;
+        }
 
-      console.log('Updating ad with data:', updateData);
-      
-      const { error } = await supabase
-        .from('ads')
-        .update(updateData)
-        .eq('id', adId);
-      
-      if (error) {
-        console.error('Error approving ad:', error);
+        console.log('Détails de l\'annonce:', adData);
+        
+        if (adData.moderation_status === 'approved') {
+          console.log('Annonce déjà approuvée');
+          return { isVip: false, alreadyApproved: true };
+        }
+        
+        // Check if the ad is VIP (has expires_at and it's in the future)
+        const isVip = adData.expires_at && new Date(adData.expires_at) > new Date();
+        console.log('Annonce VIP:', isVip);
+        
+        const updateData = {
+          moderation_status: 'approved' as const,
+          status: 'active' as const,
+          moderated_at: new Date().toISOString(),
+          moderated_by: user.id
+        };
+
+        console.log('Données de mise à jour:', updateData);
+        
+        const { data: updateResult, error: updateError } = await supabase
+          .from('ads')
+          .update(updateData)
+          .eq('id', adId)
+          .select();
+        
+        if (updateError) {
+          console.error('Erreur lors de la mise à jour:', updateError);
+          throw updateError;
+        }
+        
+        console.log('Résultat de la mise à jour:', updateResult);
+        console.log('=== APPROBATION RÉUSSIE ===');
+        
+        return { isVip, alreadyApproved: false };
+      } catch (error) {
+        console.error('=== ERREUR LORS DE L\'APPROBATION ===');
+        console.error('Erreur complète:', error);
         throw error;
       }
-      
-      const statusMessage = isVip 
-        ? 'Annonce VIP approuvée avec succès et maintenant visible sur le site avec mise en avant prioritaire'
-        : 'Annonce approuvée avec succès et maintenant visible sur le site';
-      
-      console.log('Ad approved successfully:', statusMessage);
-      return { isVip };
     },
     onSuccess: (data) => {
       invalidateQueries();
