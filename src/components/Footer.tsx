@@ -95,7 +95,7 @@ const Footer = () => {
               </a>
               
               <a 
-                href="mailto:contactyamoo@gmail.com" 
+                href="mailto:contact@yamo.chat" 
                 className="flex items-center space-x-2 text-white hover:text-primary transition-colors group"
               >
                 <Mail className="w-4 h-4 group-hover:scale-110 transition-transform" />
