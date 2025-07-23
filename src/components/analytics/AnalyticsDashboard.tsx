@@ -23,24 +23,34 @@ export const AnalyticsDashboard = () => {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   const fetchAnalytics = useCallback(async () => {
+    console.log('🔍 Fetching analytics data...');
     setLoading(true);
     try {
       const startDate = new Date();
       startDate.setDate(startDate.getDate() - parseInt(timeRange));
+      
+      console.log('📊 Analytics query params:', {
+        p_start_date: startDate.toISOString().split('T')[0],
+        p_end_date: new Date().toISOString().split('T')[0],
+        timeRange
+      });
       
       const { data, error } = await supabase.rpc('get_analytics_summary', {
         p_start_date: startDate.toISOString().split('T')[0],
         p_end_date: new Date().toISOString().split('T')[0]
       });
 
+      console.log('📈 Analytics response:', { data, error });
+
       if (error) {
-        console.error('Error fetching analytics:', error);
+        console.error('❌ Error fetching analytics:', error);
       } else {
+        console.log('✅ Setting analytics data:', data);
         setAnalytics(data || []);
         setLastUpdate(new Date());
       }
     } catch (error) {
-      console.error('Error fetching analytics:', error);
+      console.error('💥 Error fetching analytics:', error);
     } finally {
       setLoading(false);
     }
