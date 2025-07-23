@@ -1,7 +1,7 @@
 
 export const ADS_CONFIG = {
-  // Remplacez par votre véritable ID d'éditeur Google AdSense
-  PUBLISHER_ID: 'ca-pub-YOUR_PUBLISHER_ID',
+  // ID d'éditeur Google AdSense
+  PUBLISHER_ID: 'ca-pub-2990055052325980',
   
   // Slots publicitaires - remplacez par vos véritables ID de slots
   AD_SLOTS: {

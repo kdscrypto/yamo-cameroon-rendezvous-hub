@@ -20,7 +20,7 @@ export const useGoogleAds = () => {
     
     // Charger le script Google AdSense
     const script = document.createElement('script');
-    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_PUBLISHER_ID';
+    script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2990055052325980';
     script.async = true;
     script.crossOrigin = 'anonymous';
     
