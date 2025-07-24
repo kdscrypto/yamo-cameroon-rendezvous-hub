@@ -3,7 +3,7 @@
  * Utilitaires pour la validation d'emails et la prévention des bounces
  */
 
-// Domaines email temporaires/jetables courants à éviter
+// Domaines email temporaires/jetables courants à éviter (liste étendue)
 const DISPOSABLE_EMAIL_DOMAINS = [
   '10minutemail.com',
   'guerrillamail.com',
@@ -14,8 +14,41 @@ const DISPOSABLE_EMAIL_DOMAINS = [
   'yopmail.com',
   'maildrop.cc',
   '0-mail.com',
-  '33mail.com'
+  '33mail.com',
+  'sharklasers.com',
+  'guerrillamailblock.com',
+  'pokemail.net',
+  'spam4.me',
+  'bccto.me',
+  'chacuo.net',
+  'dispostable.com',
+  'fake-mail.ml',
+  'getairmail.com',
+  'getnada.com',
+  'inboxkitten.com',
+  'mail-temporaire.fr',
+  'mohmal.com',
+  'rootfest.net',
+  'spambox.us',
+  'tempmailaddress.com',
+  'trashmail.com',
+  'wegwerfmail.de',
+  'emailondeck.com',
+  'mintemail.com',
+  'disposablemail.com'
 ];
+
+// Domaines populaires avec leurs variantes de typos courantes
+const COMMON_DOMAIN_TYPOS = {
+  'gmail.com': ['gmai.com', 'gmailcom', 'gmail.co', 'gmaill.com', 'gmial.com', 'gmail.cm'],
+  'outlook.com': ['outlok.com', 'outlook.co', 'outloo.com', 'outlookcom'],
+  'hotmail.com': ['hotmailcom', 'hotmai.com', 'hotmail.co', 'hotmial.com'],
+  'yahoo.com': ['yahooo.com', 'yahoo.co', 'yahoocom', 'yaho.com'],
+  'icloud.com': ['icloudcom', 'icloud.co', 'icoud.com'],
+  'live.com': ['live.co', 'livecom', 'liv.com'],
+  'msn.com': ['msncom', 'msn.co'],
+  'aol.com': ['aolcom', 'aol.co']
+};
 
 // Domaines avec des problèmes de délivrabilité connus
 const PROBLEMATIC_DOMAINS = [
@@ -54,6 +87,12 @@ export const validateEmail = (email: string): { isValid: boolean; reason?: strin
   // Vérifier le nom de domaine
   const domain = email.split('@')[1];
   
+  // Vérifier les typos de domaines courants
+  const correctDomain = detectDomainTypo(domain);
+  if (correctDomain) {
+    return { isValid: false, reason: `Voulez-vous dire ${correctDomain} ?` };
+  }
+  
   // Vérifier les domaines jetables
   if (DISPOSABLE_EMAIL_DOMAINS.includes(domain)) {
     return { isValid: false, reason: "Les emails temporaires ne sont pas acceptés" };
@@ -70,7 +109,52 @@ export const validateEmail = (email: string): { isValid: boolean; reason?: strin
     return { isValid: false, reason: "Domaine email invalide" };
   }
 
+  // Analyse comportementale pour détecter les bots
+  const behaviorAnalysis = analyzeSuspiciousBehavior(email);
+  if (behaviorAnalysis.isSuspicious) {
+    return { isValid: false, reason: behaviorAnalysis.reason };
+  }
+
   return { isValid: true };
+};
+
+/**
+ * Détecte les typos dans les domaines email populaires
+ */
+const detectDomainTypo = (domain: string): string | null => {
+  for (const [correctDomain, typos] of Object.entries(COMMON_DOMAIN_TYPOS)) {
+    if (typos.includes(domain)) {
+      return correctDomain;
+    }
+  }
+  return null;
+};
+
+/**
+ * Analyse comportementale pour détecter les comptes suspects
+ */
+const analyzeSuspiciousBehavior = (email: string): { isSuspicious: boolean; reason?: string } => {
+  const localPart = email.split('@')[0];
+  
+  // Détecter les séquences numériques très longues (8+ chiffres consécutifs)
+  const longNumericRegex = /\d{8,}/;
+  if (longNumericRegex.test(localPart)) {
+    return { isSuspicious: true, reason: "Adresse email suspecte (séquence numérique trop longue)" };
+  }
+  
+  // Détecter les patterns de bot (combinaisons répétitives)
+  const botPatternRegex = /^[a-z]{1,3}\d{6,}$|^[a-z]+\d+[a-z]+\d+$/;
+  if (botPatternRegex.test(localPart)) {
+    return { isSuspicious: true, reason: "Adresse email suspecte (pattern automatisé détecté)" };
+  }
+  
+  // Détecter les caractères répétés excessifs
+  const excessiveRepeatRegex = /(.)\1{5,}/;
+  if (excessiveRepeatRegex.test(localPart)) {
+    return { isSuspicious: true, reason: "Adresse email suspecte (caractères répétés excessifs)" };
+  }
+  
+  return { isSuspicious: false };
 };
 
 /**

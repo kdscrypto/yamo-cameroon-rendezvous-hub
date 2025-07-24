@@ -2,3 +2,6 @@ project_id = "lusovklxvtzhluekhwvu"
 
 [functions.test-resend-connection]
 verify_jwt = false
+
+[functions.email-monitoring]
+verify_jwt = true
