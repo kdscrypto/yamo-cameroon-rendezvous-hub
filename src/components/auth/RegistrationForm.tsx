@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
 import ReferralInput from '@/components/referral/ReferralInput';
+import { validateEmail } from '@/utils/emailValidation';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -30,6 +31,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [phoneError, setPhoneError] = useState('');
+  const [emailError, setEmailError] = useState('');
   
   const { signUp } = useAuth();
   const { toast } = useToast();
@@ -54,6 +56,21 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     }
   };
 
+  const handleEmailChange = (value: string) => {
+    setFormData(prev => ({ ...prev, email: value }));
+    
+    if (value.trim()) {
+      const emailValidation = validateEmail(value);
+      if (!emailValidation.isValid) {
+        setEmailError(emailValidation.reason || 'Adresse email invalide');
+      } else {
+        setEmailError('');
+      }
+    } else {
+      setEmailError('');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -70,6 +87,17 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       toast({
         title: "Erreur",
         description: "Vous devez accepter les conditions et certifier avoir plus de 18 ans.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validation finale de l'email
+    const emailValidation = validateEmail(formData.email);
+    if (!emailValidation.isValid) {
+      toast({
+        title: "Erreur",
+        description: emailValidation.reason || "Adresse email invalide.",
         variant: "destructive"
       });
       return;
@@ -136,6 +164,8 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   const handleInputChange = (field: string, value: string | boolean) => {
     if (field === 'phone') {
       handlePhoneChange(value as string);
+    } else if (field === 'email') {
+      handleEmailChange(value as string);
     } else {
       setFormData(prev => ({ ...prev, [field]: value }));
     }
@@ -172,8 +202,16 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
           onChange={(e) => handleInputChange('email', e.target.value)}
           required
           disabled={isLoading}
-          className="h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200"
+          className={`h-12 bg-neutral-800/80 border-neutral-600 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20 transition-all duration-200 ${
+            emailError ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20' : ''
+          }`}
         />
+        {emailError && (
+          <div className="flex items-center gap-2 text-red-400 text-sm">
+            <AlertCircle className="w-4 h-4" />
+            {emailError}
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -302,7 +340,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       <Button 
         type="submit" 
         className="w-full h-14 text-lg font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-0 rounded-xl mt-6"
-        disabled={!formData.acceptTerms || !formData.isAdult || isLoading || !!phoneError}
+        disabled={!formData.acceptTerms || !formData.isAdult || isLoading || !!phoneError || !!emailError}
       >
         {isLoading ? (
           <div className="flex items-center gap-3">

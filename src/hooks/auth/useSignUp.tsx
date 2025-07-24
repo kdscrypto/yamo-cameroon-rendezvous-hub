@@ -1,10 +1,20 @@
 
 import { supabase } from '@/integrations/supabase/client';
 import { normalizePhoneNumber, isValidPhoneNumber } from '@/utils/phoneUtils';
+import { validateEmail } from '@/utils/emailValidation';
 
 export const useSignUp = () => {
   const signUp = async (email: string, password: string, fullName?: string, phone?: string, referralCode?: string) => {
     const redirectUrl = `${window.location.origin}/`;
+    
+    // Validation de l'email
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.isValid) {
+      return { 
+        data: null, 
+        error: { message: emailValidation.reason || "Adresse email invalide." }
+      };
+    }
     
     // Validation et normalisation du numéro de téléphone si fourni
     let normalizedPhone: string | undefined = undefined;
