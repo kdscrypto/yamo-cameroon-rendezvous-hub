@@ -4,18 +4,13 @@ export const normalizePhoneNumber = (phone: string): string => {
   // Supprime tous les espaces, tirets et parenthèses
   let normalized = phone.replace(/[\s\-\(\)]/g, '');
   
-  // Si le numéro commence par 6 ou 2 (numéros locaux camerounais), ajoute +237
-  if (/^[62]\d{8}$/.test(normalized)) {
-    normalized = '+237' + normalized;
-  }
-  
   // Si le numéro commence par 237 sans +, ajoute le +
   if (normalized.startsWith('237') && !normalized.startsWith('+237')) {
     normalized = '+' + normalized;
   }
   
-  // Si le numéro ne commence pas par + et a 9 chiffres, ajoute +237 par défaut
-  if (!normalized.startsWith('+') && /^\d{9}$/.test(normalized)) {
+  // Si le numéro a 9 chiffres et ne commence pas par +, ajoute +237
+  if (/^\d{9}$/.test(normalized)) {
     normalized = '+237' + normalized;
   }
   
@@ -25,8 +20,8 @@ export const normalizePhoneNumber = (phone: string): string => {
 // Validation stricte des numéros de téléphone camerounais
 export const isValidPhoneNumber = (phone: string): boolean => {
   const normalized = normalizePhoneNumber(phone);
-  // Format camerounais: +237 suivi de 9 chiffres (généralement commençant par 6 ou 2)
-  const cameroonPhoneRegex = /^\+237[62]\d{8}$/;
+  // Format camerounais: +237 suivi de 9 chiffres
+  const cameroonPhoneRegex = /^\+237\d{9}$/;
   return cameroonPhoneRegex.test(normalized);
 };
 
