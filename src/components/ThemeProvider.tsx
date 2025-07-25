@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type Theme = 'dark' | 'light' | 'system';
 
@@ -27,26 +27,19 @@ export function ThemeProvider({
   storageKey = 'yamo-theme',
   ...props
 }: ThemeProviderProps) {
-  // CHANGEMENT 1 : Initialisation simple et sûre de l'état.
-  // On ne lit plus localStorage ici. On utilise la valeur par défaut.
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
-
-  // CHANGEMENT 2 : Un seul useEffect pour gérer la logique côté client.
-  useEffect(() => {
-    // Ce code ne s'exécute que sur le client, après le montage du composant.
-    let initialTheme: Theme;
-    try {
-      initialTheme = (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-    } catch (e) {
-      console.warn('Failed to access localStorage:', e);
-      initialTheme = defaultTheme;
+  const [theme, setTheme] = useState<Theme>(() => {
+    // Initialisation sécurisée avec localStorage
+    if (typeof window !== 'undefined') {
+      try {
+        return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
+      } catch {
+        return defaultTheme;
+      }
     }
-    setTheme(initialTheme);
-  }, [defaultTheme, storageKey]);
-
+    return defaultTheme;
+  });
 
   useEffect(() => {
-    // Ce useEffect est conservé, il applique la classe au document.
     const root = window.document.documentElement;
     
     root.classList.remove('light', 'dark');
@@ -61,20 +54,19 @@ export function ThemeProvider({
     }
   }, [theme]);
 
+  const handleSetTheme = (newTheme: Theme) => {
+    try {
+      localStorage.setItem(storageKey, newTheme);
+    } catch (e) {
+      console.warn('Failed to save theme to localStorage:', e);
+    }
+    setTheme(newTheme);
+  };
 
-  const value = useMemo(() => ({
+  const value = {
     theme,
-    setTheme: (newTheme: Theme) => {
-      try {
-        localStorage.setItem(storageKey, newTheme);
-        setTheme(newTheme);
-      } catch (e) {
-        console.warn('Failed to save theme to localStorage:', e);
-        // On met quand même à jour l'état même si localStorage échoue.
-        setTheme(newTheme);
-      }
-    },
-  }), [theme, storageKey]);
+    setTheme: handleSetTheme,
+  };
 
   return (
     <ThemeProviderContext.Provider {...props} value={value}>

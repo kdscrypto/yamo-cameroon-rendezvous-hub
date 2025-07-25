@@ -15,7 +15,7 @@ export const useSignIn = () => {
     if (isPhoneNumberFormat(cleanIdentifier)) {
       try {
         const normalizedPhone = normalizePhoneNumber(cleanIdentifier);
-        console.log('Recherche du numéro de téléphone normalisé:', normalizedPhone);
+        console.log('🔍 Recherche du numéro de téléphone normalisé:', normalizedPhone);
         
         // Chercher l'email associé à ce numéro de téléphone
         const { data: profile, error: profileError } = await supabase
@@ -24,10 +24,10 @@ export const useSignIn = () => {
           .eq('phone', normalizedPhone)
           .maybeSingle();
         
-        console.log('Résultat de la recherche de profil:', { profile, profileError });
+        console.log('📋 Résultat de la recherche de profil:', { profile, profileError });
         
         if (profileError) {
-          console.error('Erreur lors de la recherche du profil:', profileError);
+          console.error('❌ Erreur lors de la recherche du profil:', profileError);
           return { 
             data: null, 
             error: { message: "Erreur lors de la recherche du compte." }
@@ -35,14 +35,14 @@ export const useSignIn = () => {
         }
         
         if (!profile?.email) {
-          console.log('Aucun profil trouvé pour le numéro de téléphone:', normalizedPhone);
+          console.log('⚠️ Aucun profil trouvé pour le numéro de téléphone:', normalizedPhone);
           return { 
             data: null, 
             error: { message: "Aucun compte trouvé avec ce numéro de téléphone." }
           };
         }
         
-        console.log('Email trouvé pour le numéro de téléphone:', profile.email);
+        console.log('✅ Email trouvé pour le numéro de téléphone:', profile.email);
         
         // Utiliser l'email trouvé pour se connecter
         const signInResult = await supabase.auth.signInWithPassword({
@@ -50,7 +50,7 @@ export const useSignIn = () => {
           password
         });
         
-        console.log('Résultat de la connexion par téléphone:', signInResult);
+        console.log('🔐 Résultat de la connexion par téléphone:', signInResult);
         return signInResult;
         
       } catch (error) {
