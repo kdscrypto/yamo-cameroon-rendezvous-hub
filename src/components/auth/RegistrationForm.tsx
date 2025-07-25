@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
 import ReferralInput from '@/components/referral/ReferralInput';
 import { validateEmail } from '@/utils/emailValidation';
+import { isValidPhoneNumber } from '@/utils/phoneUtils';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -37,20 +38,19 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Fonction de validation du numéro de téléphone
+  // Fonction de validation du numéro de téléphone camerounais
   const validatePhoneNumber = (phone: string): boolean => {
     if (!phone.trim()) return true; // Le téléphone est optionnel
 
-    // Formats acceptés : +33123456789, 0123456789, 01 23 45 67 89, +33 1 23 45 67 89
-    const phoneRegex = /^(\+33|0)[1-9](\d{8}|\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{2})$/;
-    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
+    // Utilise la fonction utilitaire pour valider le format camerounais
+    return isValidPhoneNumber(phone);
   };
 
   const handlePhoneChange = (value: string) => {
     setFormData(prev => ({ ...prev, phone: value }));
     
     if (value.trim() && !validatePhoneNumber(value)) {
-      setPhoneError('Format invalide. Ex: +33123456789 ou 0123456789');
+      setPhoneError('Format invalide. Ex: +237694564763 ou 694564763');
     } else {
       setPhoneError('');
     }
@@ -222,7 +222,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         <Input
           id="phone"
           type="tel"
-          placeholder="+33 6 12 34 56 78 ou 06 12 34 56 78"
+          placeholder="+237 6 94 56 47 63 ou 694564763"
           value={formData.phone}
           onChange={(e) => handleInputChange('phone', e.target.value)}
           disabled={isLoading}
