@@ -45,7 +45,7 @@ const IdentifierField = ({ identifier, onIdentifierChange, error, isLoading }: I
       <Input
         id="identifier"
         type="text"
-        placeholder="exemple@email.com ou +33 6 12 34 56 78"
+        placeholder="exemple@email.com ou +237 6 12 34 56 78"
         value={identifier}
         onChange={(e) => onIdentifierChange(e.target.value)}
         required
