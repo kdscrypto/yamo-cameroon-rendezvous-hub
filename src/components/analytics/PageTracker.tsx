@@ -9,12 +9,12 @@ export const PageTracker = () => {
   useEffect(() => {
     // Track page view on route change
     trackPageView();
-  }, [location.pathname, trackPageView]);
+  }, [location.pathname]); // Enlever trackPageView des dépendances
 
   useEffect(() => {
     // Track user session on app load
     trackUserSession();
-  }, [trackUserSession]);
+  }, []); // Enlever trackUserSession des dépendances
 
   return null;
 };
