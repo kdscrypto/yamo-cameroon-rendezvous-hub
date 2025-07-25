@@ -50,7 +50,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     setFormData(prev => ({ ...prev, phone: value }));
     
     if (value.trim() && !validatePhoneNumber(value)) {
-      setPhoneError('Format invalide. Ex: +237694564763 ou 694564763');
+      setPhoneError('Format invalide. Ex: +237612345678 ou 612345678');
     } else {
       setPhoneError('');
     }
@@ -222,7 +222,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         <Input
           id="phone"
           type="tel"
-          placeholder="+237 6 94 56 47 63 ou 694564763"
+          placeholder="+237 6 12 34 56 78 ou 612345678"
           value={formData.phone}
           onChange={(e) => handleInputChange('phone', e.target.value)}
           disabled={isLoading}
