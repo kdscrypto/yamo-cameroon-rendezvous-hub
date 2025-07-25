@@ -85,7 +85,12 @@ const LocationAdsSection = React.memo(({
             </Link>
           </Button>
         </div>
-        <AdGrid ads={locationAds} maxItems={6} />
+        <AdGrid 
+          ads={locationAds} 
+          maxItems={6} 
+          seeMoreHref={`/browse?location=${city}`}
+          seeMoreText={`Voir plus à ${displayName}`}
+        />
       </div>
     </section>
   );

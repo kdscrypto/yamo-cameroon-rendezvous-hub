@@ -44,7 +44,12 @@ const RecentAdsSection = React.memo(() => {
             </Link>
           </Button>
         </div>
-        <AdCarousel ads={recentAds} maxItems={12} />
+        <AdCarousel 
+          ads={recentAds} 
+          maxItems={12} 
+          seeMoreHref="/browse"
+          seeMoreText="Voir plus d'annonces récentes"
+        />
       </div>
     </section>
   );

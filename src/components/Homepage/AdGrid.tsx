@@ -2,13 +2,21 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import OptimizedAdCard from '@/components/OptimizedAdCard';
+import SeeMoreAdsCard from '@/components/SeeMoreAdsCard';
 
 interface AdGridProps {
   ads: any[];
   maxItems?: number;
+  seeMoreHref?: string;
+  seeMoreText?: string;
 }
 
-const AdGrid = React.memo(({ ads, maxItems = 6 }: AdGridProps) => {
+const AdGrid = React.memo(({ 
+  ads, 
+  maxItems = 6, 
+  seeMoreHref = "/browse",
+  seeMoreText = "Voir plus d'annonces"
+}: AdGridProps) => {
   const navigate = useNavigate();
   
   const displayedAds = React.useMemo(() => 
@@ -49,6 +57,16 @@ const AdGrid = React.memo(({ ads, maxItems = 6 }: AdGridProps) => {
           />
         </div>
       ))}
+      {/* See More Ads Card */}
+      <div 
+        className="animate-slide-up w-full"
+        style={{ 
+          animationDelay: `${displayedAds.length * 100}ms`,
+          animationFillMode: 'both'
+        }}
+      >
+        <SeeMoreAdsCard href={seeMoreHref} text={seeMoreText} />
+      </div>
     </div>
   );
 });

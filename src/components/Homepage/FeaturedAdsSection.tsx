@@ -48,7 +48,12 @@ const FeaturedAdsSection = React.memo(() => {
             </Link>
           </Button>
         </div>
-        <AdGrid ads={featuredAds} maxItems={6} />
+        <AdGrid 
+          ads={featuredAds} 
+          maxItems={6} 
+          seeMoreHref="/browse?featured=true"
+          seeMoreText="Voir plus d'annonces premium"
+        />
       </div>
     </section>
   );

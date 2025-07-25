@@ -3,14 +3,27 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import OptimizedAdCard from '@/components/OptimizedAdCard';
+import SeeMoreAdsCard from '@/components/SeeMoreAdsCard';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface AdCarouselProps {
   ads: any[];
   maxItems?: number;
+  seeMoreHref?: string;
+  seeMoreText?: string;
 }
 
-const AdCarousel = React.memo(({ ads, maxItems = 8 }: AdCarouselProps) => {
+const AdCarousel = React.memo(({ 
+  ads, 
+  maxItems = 8, 
+  seeMoreHref = "/browse",
+  seeMoreText = "Voir plus d'annonces"
+}: AdCarouselProps) => {
   const navigate = useNavigate();
+  
+  const autoplayPlugin = React.useRef(
+    Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true })
+  );
   
   const displayedAds = React.useMemo(() => 
     ads.slice(0, maxItems), 
@@ -40,12 +53,15 @@ const AdCarousel = React.memo(({ ads, maxItems = 8 }: AdCarouselProps) => {
   return (
     <div className="relative animate-fade-in">
       <Carousel 
+        plugins={[autoplayPlugin.current]}
         opts={{
           align: "start",
           loop: true,
           slidesToScroll: 1,
         }}
         className="w-full"
+        onMouseEnter={() => autoplayPlugin.current.stop()}
+        onMouseLeave={() => autoplayPlugin.current.play()}
       >
         <CarouselContent className="-ml-2 md:-ml-4">
           {displayedAds.map((ad, index) => (
@@ -67,6 +83,18 @@ const AdCarousel = React.memo(({ ads, maxItems = 8 }: AdCarouselProps) => {
               </div>
             </CarouselItem>
           ))}
+          {/* See More Ads Card */}
+          <CarouselItem className="pl-2 md:pl-4 basis-full xs:basis-1/2 sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 2xl:basis-1/6">
+            <div 
+              className="animate-slide-up w-full"
+              style={{ 
+                animationDelay: `${displayedAds.length * 100}ms`,
+                animationFillMode: 'both'
+              }}
+            >
+              <SeeMoreAdsCard href={seeMoreHref} text={seeMoreText} />
+            </div>
+          </CarouselItem>
         </CarouselContent>
         <CarouselPrevious className="hidden sm:flex -left-6 bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500" />
         <CarouselNext className="hidden sm:flex -right-6 bg-yellow-500 hover:bg-yellow-600 text-black border-yellow-500" />
