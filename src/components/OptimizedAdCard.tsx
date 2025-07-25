@@ -1,7 +1,8 @@
 
 import React from 'react';
-import { MapPin, Star } from 'lucide-react';
+import { MapPin, Star, ImageIcon } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 interface OptimizedAdCardProps {
   id: string;
@@ -27,62 +28,74 @@ const OptimizedAdCard = React.memo(({
 }: OptimizedAdCardProps) => {
   return (
     <Card 
-      className="overflow-hidden cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20 bg-card border-border"
+      className="group relative overflow-hidden transition-all duration-300 hover:shadow-lg cursor-pointer bg-card border-border/40 h-full"
       onClick={onClick}
     >
-      {/* Image Section */}
-      <div className="relative aspect-square overflow-hidden">
+      <div className="relative">
         {imageUrl ? (
-          <img 
-            src={imageUrl}
-            alt={title}
-            className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
-            loading="lazy"
-          />
+          <div className="aspect-[5/4] sm:aspect-[4/3] overflow-hidden bg-muted">
+            <img 
+              src={imageUrl} 
+              alt={title}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              loading="lazy"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                target.nextElementSibling?.classList.remove('hidden');
+              }}
+            />
+            <div className="hidden aspect-[5/4] sm:aspect-[4/3] bg-muted flex items-center justify-center">
+              <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
+            </div>
+          </div>
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-neutral-800 to-neutral-900 flex items-center justify-center">
-            <span className="text-6xl opacity-20">📷</span>
+          <div className="aspect-[5/4] sm:aspect-[4/3] bg-muted flex items-center justify-center">
+            <ImageIcon className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
           </div>
         )}
         
-        {/* VIP Badge */}
         {isVip && (
-          <div className="absolute top-2 left-2 bg-yellow-500 text-black px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-            <Star className="w-3 h-3 fill-current" />
+          <Badge 
+            variant="secondary" 
+            className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-semibold shadow-lg text-xs"
+          >
             VIP
-          </div>
-        )}
-        
-        {/* Price Badge */}
-        {price && (
-          <div className="absolute top-2 right-2 bg-black/70 text-yellow-400 px-2 py-1 rounded text-xs font-semibold">
-            {price}
-          </div>
+          </Badge>
         )}
       </div>
 
-      {/* Content Section */}
-      <CardContent className="p-3 space-y-2">
-        {/* Title - En jaune */}
-        <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-yellow-400 hover:text-yellow-300 transition-colors">
-          {title}
-        </h3>
-        
-        {/* Description - En blanc */}
-        <p className="text-xs text-white opacity-80 line-clamp-2 leading-relaxed">
-          {description}
-        </p>
-        
-        {/* Location and Category */}
-        <div className="flex items-center justify-between text-xs">
-          <div className="flex items-center gap-1 text-yellow-500">
-            <MapPin className="w-3 h-3" />
-            <span className="capitalize">{location}</span>
-          </div>
-          <span className="text-yellow-400 bg-yellow-500/10 px-2 py-1 rounded text-xs font-medium capitalize">
-            {category}
-          </span>
+      <CardContent className="p-2 sm:p-3 space-y-1.5 sm:space-y-2">
+        <div className="space-y-0.5 sm:space-y-1">
+          <h3 className="font-semibold text-xs sm:text-sm leading-tight line-clamp-2 text-foreground group-hover:text-primary transition-colors">
+            {title}
+          </h3>
+          
+          {description && (
+            <p className="text-xs text-muted-foreground line-clamp-1 sm:line-clamp-2 leading-relaxed hidden sm:block">
+              {description}
+            </p>
+          )}
         </div>
+
+        <div className="flex items-center justify-between">
+          <div className="flex items-center text-xs text-muted-foreground min-w-0 flex-1 mr-2">
+            <MapPin className="w-3 h-3 mr-1 flex-shrink-0" />
+            <span className="truncate">{location}</span>
+          </div>
+          
+          <Badge variant="outline" className="text-xs px-1.5 sm:px-2 py-0.5 border-border/60 flex-shrink-0">
+            {category}
+          </Badge>
+        </div>
+
+        {price && (
+          <div className="pt-1 border-t border-border/40">
+            <p className="font-bold text-primary text-sm">
+              {price}
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
