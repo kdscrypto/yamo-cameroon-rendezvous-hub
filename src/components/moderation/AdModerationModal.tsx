@@ -5,7 +5,9 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import AdPreviewSection from './AdPreviewSection';
+import AdFullPreview from './AdFullPreview';
 import ModerationActions from './ModerationActions';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface AdModerationModalProps {
   ad: any;
@@ -155,8 +157,8 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto bg-background">
+        <DialogHeader className="border-b border-border pb-4">
           <DialogTitle className="flex items-center gap-2 text-primary">
             Modération d'annonce
             {isVip && (
@@ -171,15 +173,32 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
           </DialogDescription>
         </DialogHeader>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AdPreviewSection ad={ad} />
-          <ModerationActions 
-            ad={ad}
-            moderationReasons={moderationReasons}
-            onSubmit={handleModerationSubmit}
-            isSubmitting={moderationMutation.isPending}
-          />
-        </div>
+        <Tabs defaultValue="preview" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 bg-muted">
+            <TabsTrigger value="preview" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-primary">
+              Aperçu public
+            </TabsTrigger>
+            <TabsTrigger value="moderation" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-primary">
+              Modération
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="preview" className="mt-6">
+            <AdFullPreview ad={ad} />
+          </TabsContent>
+          
+          <TabsContent value="moderation" className="mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <AdPreviewSection ad={ad} />
+              <ModerationActions 
+                ad={ad}
+                moderationReasons={moderationReasons}
+                onSubmit={handleModerationSubmit}
+                isSubmitting={moderationMutation.isPending}
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

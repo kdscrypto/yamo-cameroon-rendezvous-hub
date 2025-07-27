@@ -10,10 +10,10 @@ interface AdPreviewSectionProps {
 const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'approved': return 'bg-green-100 text-green-800';
-      case 'rejected': return 'bg-muted text-foreground border-muted';
-      default: return 'bg-muted text-foreground border-muted';
+      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800';
+      case 'approved': return 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400 border border-green-200 dark:border-green-800';
+      case 'rejected': return 'bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400 border border-red-200 dark:border-red-800';
+      default: return 'bg-muted text-foreground border border-border';
     }
   };
 
@@ -48,34 +48,34 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 bg-card border border-border rounded-lg p-4">
       <div className="flex justify-between items-start">
-        <h3 className="text-lg font-semibold">{ad.title}</h3>
+        <h3 className="text-lg font-semibold text-card-foreground">{ad.title}</h3>
         <Badge className={getStatusColor(ad.moderation_status)}>
           {ad.moderation_status === 'pending' ? 'En attente' :
            ad.moderation_status === 'approved' ? 'Approuvée' : 'Rejetée'}
         </Badge>
       </div>
 
-      <div className="text-sm text-muted-foreground">
-        <p>{getCategoryDisplay(ad.category)} • {getLocationDisplay(ad.location)}</p>
+      <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
+        <p className="text-foreground font-medium">{getCategoryDisplay(ad.category)} • {getLocationDisplay(ad.location)}</p>
         <p>Créée le {new Date(ad.created_at).toLocaleDateString('fr-FR')}</p>
         {ad.price && <p className="text-lg font-semibold text-primary mt-2">{ad.price} FCFA</p>}
       </div>
 
       <div className="space-y-2">
-        <Label>Description</Label>
-        <div className="p-3 bg-muted rounded-md max-h-32 overflow-y-auto">
-          <p className="text-sm whitespace-pre-wrap">{ad.description}</p>
+        <Label className="text-foreground font-medium">Description</Label>
+        <div className="p-3 bg-muted/50 border border-border rounded-md max-h-32 overflow-y-auto">
+          <p className="text-sm text-foreground whitespace-pre-wrap">{ad.description}</p>
         </div>
       </div>
 
       {ad.images && ad.images.length > 0 ? (
         <div className="space-y-2">
-          <Label>Images ({ad.images.length})</Label>
-          <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto">
+          <Label className="text-foreground font-medium">Images ({ad.images.length})</Label>
+          <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border border-border rounded-md p-2 bg-muted/30">
             {ad.images.map((imageUrl: string, index: number) => (
-              <div key={index} className="aspect-square bg-muted rounded-lg overflow-hidden">
+              <div key={index} className="aspect-square bg-muted border border-border rounded-lg overflow-hidden">
                 <img 
                   src={imageUrl} 
                   alt={`Image ${index + 1}`}
@@ -91,8 +91,8 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
         </div>
       ) : (
         <div className="space-y-2">
-          <Label>Images</Label>
-          <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+          <Label className="text-foreground font-medium">Images</Label>
+          <div className="aspect-video bg-muted/30 border border-border rounded-lg flex items-center justify-center">
             <div className="text-center">
               <User className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">Aucune image</p>
@@ -103,9 +103,9 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
 
       {ad.moderation_notes && (
         <div className="space-y-2">
-          <Label>Notes de modération précédentes</Label>
-          <div className="p-3 bg-muted border border-border rounded-md">
-            <p className="text-sm text-foreground">{ad.moderation_notes}</p>
+          <Label className="text-foreground font-medium">Notes de modération précédentes</Label>
+          <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <p className="text-sm text-foreground font-medium">{ad.moderation_notes}</p>
           </div>
         </div>
       )}

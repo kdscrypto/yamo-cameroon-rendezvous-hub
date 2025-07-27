@@ -61,20 +61,20 @@ const QuickModerationDialog = ({
 
         <div className="space-y-4">
           {action === 'approve' ? (
-            <div className="p-4 border border-green-200 rounded-lg bg-green-50">
-              <div className="flex items-center gap-2 text-green-800">
+            <div className="p-4 border border-green-200 dark:border-green-800 rounded-lg bg-green-50 dark:bg-green-900/20">
+              <div className="flex items-center gap-2 text-green-800 dark:text-green-400">
                 <Check className="w-4 h-4" />
                 <span className="font-medium">Cette annonce sera approuvée</span>
               </div>
-              <p className="text-sm text-green-700 mt-2">
+              <p className="text-sm text-green-700 dark:text-green-300 mt-2">
                 L'annonce deviendra visible publiquement.
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="p-4 border border-muted rounded-lg bg-muted/20">
+              <div className="p-4 border border-border rounded-lg bg-muted/50">
                 <div className="flex items-center gap-2 text-foreground mb-2">
-                  <AlertCircle className="w-4 h-4" />
+                  <AlertCircle className="w-4 h-4 text-destructive" />
                   <span className="font-medium">Cette annonce sera rejetée</span>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -83,14 +83,14 @@ const QuickModerationDialog = ({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="rejection-message">Message d'explication *</Label>
+                <Label htmlFor="rejection-message" className="text-foreground font-medium">Message d'explication *</Label>
                 <Textarea
                   id="rejection-message"
                   placeholder="Expliquez clairement pourquoi cette annonce est rejetée..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={3}
-                  className="resize-none"
+                  className="resize-none bg-background text-foreground border-border"
                 />
                 <p className="text-xs text-muted-foreground">
                   Ce message sera visible par l'annonceur
@@ -98,7 +98,7 @@ const QuickModerationDialog = ({
               </div>
 
               {!message.trim() && (
-                <div className="text-sm text-foreground flex items-center gap-2">
+                <div className="text-sm text-destructive flex items-center gap-2 bg-destructive/10 p-2 rounded-md border border-destructive/20">
                   <AlertCircle className="w-4 h-4" />
                   Un message d'explication est requis pour le rejet
                 </div>
@@ -111,14 +111,14 @@ const QuickModerationDialog = ({
               onClick={handleConfirm}
               disabled={isSubmitting || (action === 'reject' && !message.trim())}
               className={action === 'approve' 
-                ? 'bg-green-600 hover:bg-green-700' 
-                : 'bg-muted hover:bg-muted/80'
+                ? 'bg-green-600 hover:bg-green-700 text-white' 
+                : 'bg-destructive hover:bg-destructive/90 text-destructive-foreground'
               }
             >
               {isSubmitting ? 'Traitement...' : 
                action === 'approve' ? 'Confirmer l\'approbation' : 'Confirmer le rejet'}
             </Button>
-            <Button variant="outline" onClick={handleCancel} disabled={isSubmitting}>
+            <Button variant="outline" onClick={handleCancel} disabled={isSubmitting} className="text-foreground border-border">
               Annuler
             </Button>
           </div>
