@@ -1,8 +1,8 @@
 import React from 'react';
-import { SecurityDashboardPhase4 } from './SecurityDashboardPhase4';
+import { SecurityDashboardPhase5 } from './SecurityDashboardPhase5';
 
 const SecurityDashboard: React.FC = () => {
-  return <SecurityDashboardPhase4 />;
+  return <SecurityDashboardPhase5 />;
 };
 
 export default SecurityDashboard;
