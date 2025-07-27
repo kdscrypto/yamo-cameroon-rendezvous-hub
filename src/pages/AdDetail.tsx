@@ -21,7 +21,12 @@ const AdDetail = () => {
   const { data: ad, isLoading, error } = useQuery({
     queryKey: ['ad-detail', id],
     queryFn: async () => {
-      if (!id) throw new Error('No ad ID provided');
+      if (!id) {
+        console.error('No ad ID provided in URL params');
+        throw new Error('No ad ID provided');
+      }
+      
+      console.log('Fetching ad detail for ID:', id);
       
       const { data, error } = await supabase
         .from('ads')
@@ -29,16 +34,24 @@ const AdDetail = () => {
         .eq('id', id)
         .eq('moderation_status', 'approved')
         .eq('status', 'active')
-        .single();
+        .maybeSingle();
 
       if (error) {
         console.error('Error fetching ad detail:', error);
         throw error;
       }
 
+      if (!data) {
+        console.warn('Ad not found or not approved:', id);
+        throw new Error('Ad not found or not available');
+      }
+
+      console.log('Ad detail fetched successfully:', data.title);
       return data;
     },
     enabled: !!id,
+    retry: 1,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Query to get contact information only if user is authenticated
@@ -47,16 +60,23 @@ const AdDetail = () => {
     queryFn: async () => {
       if (!id || !user) return null;
       
+      console.log('Fetching contact info for ad:', id);
+      
       const { data, error } = await supabase
         .from('ads')
         .select('phone, whatsapp')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching contact info:', error);
+        throw error;
+      }
+      
       return data;
     },
     enabled: !!id && !!user,
+    retry: 1,
   });
 
   const getCategoryDisplay = (category: string) => {
@@ -104,20 +124,31 @@ const AdDetail = () => {
     );
   }
 
-  if (error || !ad) {
+  if (error || (!isLoading && !ad)) {
+    console.error('Ad not found or error occurred:', { error, ad, id });
+    
     return (
       <>
+        <SEO 
+          title="Annonce introuvable - Yamo"
+          description="Cette annonce n'existe pas ou n'est plus disponible."
+        />
         <Header />
         <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center max-w-md mx-auto px-4">
             <h1 className="text-2xl font-bold mb-4">Annonce introuvable</h1>
             <p className="text-muted-foreground mb-6">
-              Cette annonce n'existe pas ou n'est plus disponible.
+              {error?.message || "Cette annonce n'existe pas ou n'est plus disponible."}
             </p>
-            <Button onClick={() => navigate('/')}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Retour à l'accueil
-            </Button>
+            <div className="space-y-3">
+              <Button onClick={() => navigate('/')} className="w-full">
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Retour à l'accueil
+              </Button>
+              <Button variant="outline" onClick={() => window.location.reload()} className="w-full">
+                Actualiser la page
+              </Button>
+            </div>
           </div>
         </div>
         <Footer />

@@ -31,8 +31,10 @@ export function ThemeProvider({
     // Initialisation sécurisée avec localStorage
     if (typeof window !== 'undefined') {
       try {
-        return (localStorage.getItem(storageKey) as Theme) || defaultTheme;
-      } catch {
+        const savedTheme = localStorage.getItem(storageKey) as Theme;
+        return savedTheme && ['dark', 'light', 'system'].includes(savedTheme) ? savedTheme : defaultTheme;
+      } catch (error) {
+        console.warn('Failed to read theme from localStorage:', error);
         return defaultTheme;
       }
     }

@@ -3,6 +3,7 @@ import { Heart, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useAdNavigation } from '@/hooks/useAdNavigation';
 
 interface AdCardProps {
   id: string;
@@ -26,9 +27,12 @@ const AdCard = ({
   isVip = false 
 }: AdCardProps) => {
   const { trackAdInteraction } = useAnalytics();
+  const { navigateToAd } = useAdNavigation();
 
-  const handleCardClick = () => {
+  const handleCardClick = async () => {
+    console.log('AdCard clicked:', { id, title });
     trackAdInteraction(id, 'view');
+    await navigateToAd(id, title);
   };
 
   const handleLikeClick = (e: React.MouseEvent) => {

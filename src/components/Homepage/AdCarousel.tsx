@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import OptimizedAdCard from '@/components/OptimizedAdCard';
 import SeeMoreAdsCard from '@/components/SeeMoreAdsCard';
+import { useAdNavigation } from '@/hooks/useAdNavigation';
 import Autoplay from 'embla-carousel-autoplay';
 
 interface AdCarouselProps {
@@ -19,7 +19,7 @@ const AdCarousel = React.memo(({
   seeMoreHref = "/browse",
   seeMoreText = "Voir plus d'annonces"
 }: AdCarouselProps) => {
-  const navigate = useNavigate();
+  const { navigateToAd } = useAdNavigation();
   
   const autoplayPlugin = React.useRef(
     Autoplay({ delay: 3000, stopOnInteraction: true, stopOnMouseEnter: true })
@@ -41,10 +41,10 @@ const AdCarousel = React.memo(({
     isVip: !!ad.expires_at && new Date(ad.expires_at) > new Date()
   }), []);
 
-  const handleAdClick = React.useCallback((adId: string) => {
-    console.log('Navigating to ad:', adId);
-    navigate(`/ad/${adId}`);
-  }, [navigate]);
+  const handleAdClick = React.useCallback(async (adId: string, adTitle?: string) => {
+    console.log('AdCarousel - Navigating to ad:', { adId, adTitle });
+    await navigateToAd(adId, adTitle);
+  }, [navigateToAd]);
 
   if (displayedAds.length === 0) {
     return null;
@@ -78,7 +78,7 @@ const AdCarousel = React.memo(({
               >
                 <OptimizedAdCard 
                   {...convertAdToCardProps(ad)}
-                  onClick={() => handleAdClick(ad.id)}
+                  onClick={() => handleAdClick(ad.id, ad.title)}
                 />
               </div>
             </CarouselItem>

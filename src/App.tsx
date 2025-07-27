@@ -35,6 +35,7 @@ import Analytics from "./pages/Analytics";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
 import ErrorBoundary from "@/components/ErrorBoundary";
+import AdNavigationDebugger from "@/components/debug/AdNavigationDebugger";
 
 // Create optimized QueryClient
 const queryClient = createOptimizedQueryClient();
@@ -78,6 +79,7 @@ const AppContent = () => {
               <Route path="*" element={<NotFound />} />
             </Routes>
             <PageTracker />
+            <AdNavigationDebugger />
           </div>
           <Toaster />
           <Sonner />
