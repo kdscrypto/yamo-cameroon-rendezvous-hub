@@ -8,11 +8,11 @@ import RealTimeMessages from '@/components/dashboard/RealTimeMessages';
 import AdContainer from '@/components/ads/AdContainer';
 import AdBanner from '@/components/ads/AdBanner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useGoogleAds } from '@/hooks/useGoogleAds';
+import { useAdsterra } from '@/hooks/useAdsterra';
 
 const Dashboard = () => {
   const { user, loading } = useAuth();
-  const { refreshAds } = useGoogleAds();
+  const { refreshAds } = useAdsterra();
 
   if (loading) {
     return (

@@ -1,7 +1,7 @@
 
 import React from 'react';
-import GoogleAdUnit from './GoogleAdUnit';
-import { getAdSlot, ADS_CONFIG } from '@/config/adsConfig';
+import AdsterraAdUnit from './AdsterraAdUnit';
+import { getAdsterraBanner, ADSTERRA_CONFIG } from '@/config/adsterraConfig';
 
 interface AdBannerProps {
   placement: 'header' | 'footer' | 'sidebar' | 'content';
@@ -12,33 +12,33 @@ const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' }) => {
   const getAdConfig = () => {
     switch (placement) {
       case 'header':
+        const headerBanner = getAdsterraBanner('HEADER_BANNER');
         return {
-          adSlot: getAdSlot('HEADER_BANNER'),
-          adFormat: 'horizontal' as const,
+          banner: headerBanner,
           className: 'w-full max-w-4xl mx-auto my-4'
         };
       case 'sidebar':
+        const sidebarBanner = getAdsterraBanner('SIDEBAR_RECTANGLE');
         return {
-          adSlot: getAdSlot('SIDEBAR_RECTANGLE'),
-          adFormat: 'vertical' as const,
+          banner: sidebarBanner,
           className: 'w-full max-w-xs'
         };
       case 'content':
+        const contentBanner = getAdsterraBanner('CONTENT_RECTANGLE');
         return {
-          adSlot: getAdSlot('CONTENT_RECTANGLE'),
-          adFormat: 'rectangle' as const,
+          banner: contentBanner,
           className: 'w-full max-w-md mx-auto my-6'
         };
       case 'footer':
+        const footerBanner = getAdsterraBanner('FOOTER_BANNER');
         return {
-          adSlot: getAdSlot('FOOTER_BANNER'),
-          adFormat: 'horizontal' as const,
+          banner: footerBanner,
           className: 'w-full max-w-4xl mx-auto my-4'
         };
       default:
+        const defaultBanner = getAdsterraBanner('HEADER_BANNER');
         return {
-          adSlot: getAdSlot('HEADER_BANNER'),
-          adFormat: 'auto' as const,
+          banner: defaultBanner,
           className: 'w-full'
         };
     }
@@ -48,11 +48,12 @@ const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' }) => {
 
   return (
     <div className={`ad-banner ${className}`}>
-      <GoogleAdUnit
-        adSlot={config.adSlot}
-        adFormat={config.adFormat}
+      <AdsterraAdUnit
+        adKey={config.banner.key}
+        width={config.banner.width}
+        height={config.banner.height}
+        format={config.banner.format as 'banner'}
         className={config.className}
-        fullWidthResponsive={ADS_CONFIG.SETTINGS.FULL_WIDTH_RESPONSIVE}
       />
     </div>
   );
