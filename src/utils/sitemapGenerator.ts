@@ -6,56 +6,76 @@ interface SitemapUrl {
   priority?: number;
 }
 
-export const generateSitemap = (baseUrl: string = 'https://yamo.lovable.app'): string => {
+export const generateSitemap = (baseUrl: string = 'https://yamo.lovable.app', dynamicAds: Array<{id: string, updated_at: string}> = []): string => {
+  const today = new Date().toISOString().split('T')[0];
+  
   const urls: SitemapUrl[] = [
     // Pages principales
     {
       url: `${baseUrl}/`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'daily',
       priority: 1.0
     },
     {
       url: `${baseUrl}/browse`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'hourly',
       priority: 0.9
     },
     {
       url: `${baseUrl}/login`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'monthly',
       priority: 0.7
     },
     {
       url: `${baseUrl}/register`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'monthly',
       priority: 0.7
+    },
+    {
+      url: `${baseUrl}/create-ad`,
+      lastmod: today,
+      changefreq: 'monthly',
+      priority: 0.6
+    },
+    {
+      url: `${baseUrl}/parental-control`,
+      lastmod: today,
+      changefreq: 'yearly',
+      priority: 0.4
     },
     
     // Pages de catégories
     {
       url: `${baseUrl}/rencontres`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'daily',
       priority: 0.8
     },
     {
       url: `${baseUrl}/massages`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'daily',
       priority: 0.8
     },
     {
       url: `${baseUrl}/produits`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'daily',
       priority: 0.8
     },
     {
       url: `${baseUrl}/evenements`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
+      changefreq: 'weekly',
+      priority: 0.7
+    },
+    {
+      url: `${baseUrl}/events`,
+      lastmod: today,
       changefreq: 'weekly',
       priority: 0.7
     },
@@ -63,23 +83,33 @@ export const generateSitemap = (baseUrl: string = 'https://yamo.lovable.app'): s
     // Pages légales
     {
       url: `${baseUrl}/terms`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'yearly',
       priority: 0.3
     },
     {
       url: `${baseUrl}/privacy`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'yearly',
       priority: 0.3
     },
     {
       url: `${baseUrl}/contact`,
-      lastmod: new Date().toISOString().split('T')[0],
+      lastmod: today,
       changefreq: 'monthly',
       priority: 0.5
     }
   ];
+
+  // Add dynamic ad pages
+  dynamicAds.forEach(ad => {
+    urls.push({
+      url: `${baseUrl}/ad/${ad.id}`,
+      lastmod: ad.updated_at ? new Date(ad.updated_at).toISOString().split('T')[0] : today,
+      changefreq: 'weekly',
+      priority: 0.6
+    });
+  });
 
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

@@ -27,6 +27,9 @@ import ParentalControl from "./pages/ParentalControl";
 import Referral from "@/pages/Referral";
 import UpdatePassword from "./pages/UpdatePassword";
 import EmailTest from "./pages/EmailTest";
+import Rencontres from "./pages/Rencontres";
+import Massages from "./pages/Massages";
+import Produits from "./pages/Produits";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
 
@@ -51,6 +54,9 @@ function App() {
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/browse" element={<Browse />} />
+                  <Route path="/rencontres" element={<Rencontres />} />
+                  <Route path="/massages" element={<Massages />} />
+                  <Route path="/produits" element={<Produits />} />
                   <Route path="/ad/:id" element={<AdDetail />} />
                   <Route path="/create-ad" element={<CreateAd />} />
                   <Route path="/login" element={<Login />} />

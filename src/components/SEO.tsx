@@ -37,9 +37,17 @@ const SEO = ({
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author} />
+      <meta name="generator" content="Yamo Platform" />
+      <meta name="application-name" content="Yamo" />
+      <meta name="theme-color" content="#8B5CF6" />
       <meta name="robots" content="index, follow" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Language" content="fr" />
+      
+      {/* Mobile Optimization */}
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       
       {/* Canonical URL */}
       <link rel="canonical" href={fullUrl} />
