@@ -52,7 +52,7 @@ const AdBanner: React.FC<AdBannerProps> = ({ placement, className = '' }) => {
         adKey={config.banner.key}
         width={config.banner.width}
         height={config.banner.height}
-        format={config.banner.format as 'banner'}
+        format={config.banner.format as 'banner' | 'iframe'}
         className={config.className}
       />
     </div>

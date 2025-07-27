@@ -4,7 +4,7 @@ interface AdsterraAdUnitProps {
   adKey: string;
   width: number;
   height: number;
-  format?: 'banner';
+  format?: 'banner' | 'iframe';
   className?: string;
   style?: React.CSSProperties;
 }
@@ -29,16 +29,26 @@ const AdsterraAdUnit: React.FC<AdsterraAdUnitProps> = ({
     if (adRef.current && adKey) {
       console.log('AdsterraAdUnit: Initialisation de la bannière Adsterra', { adKey, width, height });
       
-      // Pour les bannières Adsterra, vous devrez intégrer le code fourni par Adsterra
-      // Ceci est un exemple de structure - remplacez par le vrai code d'intégration
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
-      script.innerHTML = `
-        // Code d'intégration Adsterra à remplacer par le vrai code
-        console.log('Adsterra banner loaded with key: ${adKey}');
+      // Configuration Adsterra
+      const configScript = document.createElement('script');
+      configScript.type = 'text/javascript';
+      configScript.innerHTML = `
+        atOptions = {
+          'key' : '${adKey}',
+          'format' : '${format}',
+          'height' : ${height},
+          'width' : ${width},
+          'params' : {}
+        };
       `;
       
-      adRef.current.appendChild(script);
+      // Script d'invocation Adsterra
+      const invokeScript = document.createElement('script');
+      invokeScript.type = 'text/javascript';
+      invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      
+      adRef.current.appendChild(configScript);
+      adRef.current.appendChild(invokeScript);
     }
   }, [adKey, width, height]);
 

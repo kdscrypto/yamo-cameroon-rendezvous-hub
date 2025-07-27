@@ -11,11 +11,13 @@ import AdContainer from '@/components/ads/AdContainer';
 import SEO from '@/components/SEO';
 import { useSEO } from '@/hooks/useSEO';
 import { useGoogleAds } from '@/hooks/useGoogleAds';
+import { useAdsterra } from '@/hooks/useAdsterra';
 
 const Index = React.memo(() => {
   const [ageVerified, setAgeVerified] = useState(false);
   const { getSEOForPath } = useSEO();
   const { refreshAds } = useGoogleAds();
+  const { refreshAds: refreshAdsterra } = useAdsterra();
 
   // Check age verification with enhanced security
   useEffect(() => {
@@ -50,7 +52,10 @@ const Index = React.memo(() => {
     console.log('Index: Age verification completed, showing main content');
     setAgeVerified(true);
     // Refresh ads after age verification
-    setTimeout(() => refreshAds(), 1000);
+    setTimeout(() => {
+      refreshAds();
+      refreshAdsterra();
+    }, 1000);
   }, [refreshAds]);
 
   const seoConfig = getSEOForPath('/');

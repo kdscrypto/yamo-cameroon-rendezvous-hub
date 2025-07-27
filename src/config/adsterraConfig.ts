@@ -2,10 +2,10 @@ export const ADSTERRA_CONFIG = {
   // Configuration pour les bannières Adsterra
   BANNERS: {
     HEADER_BANNER: {
-      key: 'header-banner-key', // Remplacez par votre clé réelle
+      key: 'ea16b4d4359bf41430e0c1ad103b76af',
       width: 728,
       height: 90,
-      format: 'banner'
+      format: 'iframe'
     },
     SIDEBAR_RECTANGLE: {
       key: 'sidebar-rectangle-key', // Remplacez par votre clé réelle
