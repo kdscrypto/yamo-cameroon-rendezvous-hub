@@ -40,8 +40,8 @@ const queryClient = createOptimizedQueryClient();
 
 // Component interne pour utiliser les hooks de performance
 const AppContent = () => {
-  // Initialiser l'optimisation des performances
-  usePerformanceOptimization();
+  // Temporairement désactivé pour corriger les erreurs
+  // usePerformanceOptimization();
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">

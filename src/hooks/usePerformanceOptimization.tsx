@@ -1,5 +1,5 @@
 // Hook global d'optimisation des performances
-import { useEffect, useCallback, useMemo } from 'react';
+import React, { useEffect, useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { performanceCache, useCacheMetrics } from '@/utils/performanceCache';
 import { QueryOptimizations, queryPerformanceMonitor } from '@/utils/queryOptimization';
