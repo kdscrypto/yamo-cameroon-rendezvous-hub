@@ -65,7 +65,7 @@ class SecurityEnforcer {
   analyzeRequest(data: {
     url: string;
     method: string;
-    headers: Record<string, string>;
+    headers?: Record<string, string>;
     body?: any;
     userAgent?: string;
     ip?: string;

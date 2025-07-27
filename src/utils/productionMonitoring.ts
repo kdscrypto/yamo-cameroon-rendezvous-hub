@@ -3,7 +3,7 @@ import { SecurityUtils } from './productionConfig';
 
 // Types pour le monitoring
 interface SecurityEvent {
-  type: 'spam_detected' | 'rate_limit_exceeded' | 'invalid_email' | 'xss_attempt' | 'general_error' | 'application_error';
+  type: 'spam_detected' | 'rate_limit_exceeded' | 'invalid_email' | 'xss_attempt' | 'general_error' | 'application_error' | 'suspicious_pattern' | 'xss' | 'sql_injection' | 'csrf' | 'brute_force';
   timestamp: number;
   clientId: string;
   data?: any;

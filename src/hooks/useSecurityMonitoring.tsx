@@ -214,7 +214,6 @@ export const usePageSecurityMonitoring = (pageName: string) => {
       method: 'GET',
       headers: {},
       userAgent: navigator.userAgent,
-      ip: undefined // Sera géré côté serveur
     });
   }, [pageName, analyzeRequest]);
 
