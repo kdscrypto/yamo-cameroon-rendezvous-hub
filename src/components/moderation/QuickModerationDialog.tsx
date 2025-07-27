@@ -72,12 +72,12 @@ const QuickModerationDialog = ({
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="p-4 border border-border rounded-lg bg-muted/50">
+              <div className="p-4 border border-destructive/30 rounded-lg bg-destructive/10">
                 <div className="flex items-center gap-2 text-foreground mb-2">
                   <AlertCircle className="w-4 h-4 text-destructive" />
-                  <span className="font-medium">Cette annonce sera rejetée</span>
+                  <span className="font-medium text-foreground">Cette annonce sera rejetée</span>
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-foreground/80">
                   Veuillez expliquer la raison du rejet à l'annonceur.
                 </p>
               </div>
@@ -90,9 +90,9 @@ const QuickModerationDialog = ({
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={3}
-                  className="resize-none bg-background text-foreground border-border"
+                  className="resize-none bg-background text-foreground border-border focus:border-primary"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-foreground/70">
                   Ce message sera visible par l'annonceur
                 </p>
               </div>

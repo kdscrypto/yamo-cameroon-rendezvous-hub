@@ -88,9 +88,9 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       </div>
 
       {moderationAction === 'reject' && (
-        <div className="space-y-4 p-4 border border-destructive/20 rounded-lg bg-destructive/5">
-          <div className="flex items-center gap-2 text-destructive mb-2">
-            <AlertCircle className="w-4 h-4" />
+        <div className="space-y-4 p-4 border border-destructive/30 rounded-lg bg-destructive/10">
+          <div className="flex items-center gap-2 text-foreground mb-2">
+            <AlertCircle className="w-4 h-4 text-destructive" />
             <span className="font-medium">Raisons du rejet</span>
           </div>
           
@@ -118,9 +118,9 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
               value={customNotes}
               onChange={(e) => setCustomNotes(e.target.value)}
               rows={4}
-              className="resize-none bg-background text-foreground border-border"
+              className="resize-none bg-background text-foreground border-border focus:border-primary"
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-foreground/70">
               Ce message sera visible par l'annonceur dans son tableau de bord
             </p>
           </div>

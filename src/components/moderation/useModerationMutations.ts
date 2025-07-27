@@ -109,25 +109,50 @@ export const useModerationMutations = () => {
 
   const quickRejectMutation = useMutation({
     mutationFn: async ({ adId, message }: { adId: string; message: string }) => {
-      console.log('Quick rejecting ad:', adId, 'with message:', message);
+      console.log('=== DÉBUT REJET ANNONCE ===');
+      console.log('ID annonce à rejeter:', adId);
+      console.log('Message de rejet:', message);
+      console.log('Utilisateur actuel:', user?.id);
       
-      const { error } = await supabase
-        .from('ads')
-        .update({
-          moderation_status: 'rejected',
-          status: 'inactive',
-          moderated_at: new Date().toISOString(),
-          moderated_by: user?.id,
-          moderation_notes: message || 'Annonce rejetée par le modérateur'
-        })
-        .eq('id', adId);
-      
-      if (error) {
-        console.error('Error rejecting ad:', error);
-        throw error;
+      if (!user?.id) {
+        throw new Error('Utilisateur non connecté');
+      }
+
+      if (!message || !message.trim()) {
+        throw new Error('Le message de rejet est obligatoire');
       }
       
-      console.log('Ad rejected successfully');
+      const updateData = {
+        moderation_status: 'rejected' as const,
+        status: 'inactive' as const,
+        moderated_at: new Date().toISOString(),
+        moderated_by: user.id,
+        moderation_notes: message.trim()
+      };
+
+      console.log('Données de mise à jour:', updateData);
+      
+      const { data, error } = await supabase
+        .from('ads')
+        .update(updateData)
+        .eq('id', adId)
+        .eq('moderation_status', 'pending') // Only update if still pending
+        .select('id, moderation_status, status, moderated_at, moderated_by, moderation_notes')
+        .single();
+      
+      if (error) {
+        console.error('Erreur lors du rejet:', error);
+        throw new Error(`Échec du rejet: ${error.message}`);
+      }
+      
+      if (!data) {
+        throw new Error('Aucune ligne mise à jour - l\'annonce a peut-être déjà été modérée');
+      }
+      
+      console.log('Résultat du rejet:', data);
+      console.log('=== REJET RÉUSSI ===');
+      
+      return data;
     },
     onSuccess: () => {
       invalidateQueries();
