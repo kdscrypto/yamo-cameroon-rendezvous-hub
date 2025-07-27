@@ -31,6 +31,7 @@ import EmailTest from "./pages/EmailTest";
 import Rencontres from "./pages/Rencontres";
 import Massages from "./pages/Massages";
 import Produits from "./pages/Produits";
+import Analytics from "./pages/Analytics";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -64,6 +65,7 @@ const AppContent = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/referral" element={<Referral />} />
+              <Route path="/analytics" element={<Analytics />} />
               <Route path="/moderation" element={<Moderation />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/terms" element={<Terms />} />
