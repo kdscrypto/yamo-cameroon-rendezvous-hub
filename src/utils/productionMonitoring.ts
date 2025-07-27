@@ -1,5 +1,8 @@
 // Système de monitoring et gestion d'erreurs pour la production
+import { supabase } from '@/integrations/supabase/client';
 import { SecurityUtils } from './productionConfig';
+import { securityEnforcer } from './securityEnforcement';
+import { rateLimiter } from './rateLimiting';
 
 // Types pour le monitoring
 interface SecurityEvent {
