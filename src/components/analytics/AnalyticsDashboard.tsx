@@ -45,16 +45,16 @@ const AnalyticsDashboard = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-primary">Analytics Dashboard</h1>
-          <p className="text-muted-foreground">Monitor your website's performance and user behavior</p>
+          <h1 className="text-3xl font-bold text-yellow-300">Analytics Dashboard</h1>
+          <p className="text-yellow-400/90">Monitor your website's performance and user behavior</p>
         </div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">Last update: {lastUpdate}</span>
+          <span className="text-sm text-yellow-400/80">Last update: {lastUpdate}</span>
           <Button 
             variant="outline" 
             size="sm" 
             onClick={handleRefresh}
-            className="gap-2"
+            className="gap-2 border-yellow-400/50 text-yellow-300 hover:bg-yellow-400/10"
           >
             <RotateCcw className="h-4 w-4" />
             Refresh
@@ -66,6 +66,10 @@ const AnalyticsDashboard = () => {
                 variant={selectedPeriod === period ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedPeriod(period)}
+                className={selectedPeriod === period 
+                  ? "bg-yellow-400 text-brown-900 hover:bg-yellow-300" 
+                  : "border-yellow-400/50 text-yellow-300 hover:bg-yellow-400/10"
+                }
               >
                 {period}
               </Button>
@@ -76,47 +80,47 @@ const AnalyticsDashboard = () => {
 
       {/* Key Metrics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-semibold text-primary">Page Views</CardTitle>
-            <Eye className="h-6 w-6 text-primary" />
+            <CardTitle className="text-lg font-semibold text-yellow-300">Page Views</CardTitle>
+            <Eye className="h-6 w-6 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{mockData.pageViews.toLocaleString()}</div>
-            <p className="text-sm text-muted-foreground">Total visits</p>
+            <div className="text-3xl font-bold text-yellow-100">{mockData.pageViews.toLocaleString()}</div>
+            <p className="text-sm text-yellow-400/80">Total visits</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-semibold text-primary">Unique Sessions</CardTitle>
-            <Users className="h-6 w-6 text-primary" />
+            <CardTitle className="text-lg font-semibold text-yellow-300">Unique Sessions</CardTitle>
+            <Users className="h-6 w-6 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{mockData.uniqueSessions.toLocaleString()}</div>
-            <p className="text-sm text-muted-foreground">Active users</p>
+            <div className="text-3xl font-bold text-yellow-100">{mockData.uniqueSessions.toLocaleString()}</div>
+            <p className="text-sm text-yellow-400/80">Active users</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-semibold text-primary">Ad Interactions</CardTitle>
-            <MousePointer className="h-6 w-6 text-primary" />
+            <CardTitle className="text-lg font-semibold text-yellow-300">Ad Interactions</CardTitle>
+            <MousePointer className="h-6 w-6 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{mockData.adInteractions.toLocaleString()}</div>
-            <p className="text-sm text-muted-foreground">User engagement</p>
+            <div className="text-3xl font-bold text-yellow-100">{mockData.adInteractions.toLocaleString()}</div>
+            <p className="text-sm text-yellow-400/80">User engagement</p>
           </CardContent>
         </Card>
 
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-lg font-semibold text-primary">Conversion Rate</CardTitle>
-            <TrendingUp className="h-6 w-6 text-primary" />
+            <CardTitle className="text-lg font-semibold text-yellow-300">Conversion Rate</CardTitle>
+            <TrendingUp className="h-6 w-6 text-yellow-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-foreground">{mockData.conversionRate}%</div>
-            <p className="text-sm text-muted-foreground">Engagement rate</p>
+            <div className="text-3xl font-bold text-yellow-100">{mockData.conversionRate}%</div>
+            <p className="text-sm text-yellow-400/80">Engagement rate</p>
           </CardContent>
         </Card>
       </div>
@@ -124,24 +128,31 @@ const AnalyticsDashboard = () => {
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Daily Page Views Chart */}
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold text-primary">Daily Page Views</CardTitle>
-            <CardDescription>Page views over the selected time period</CardDescription>
+            <CardTitle className="text-xl font-semibold text-yellow-300">Daily Page Views</CardTitle>
+            <CardDescription className="text-yellow-400/80">Page views over the selected time period</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={mockData.dailyPageViews}>
-                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-                  <YAxis tick={{ fontSize: 12 }} />
-                  <Tooltip />
+                  <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#FCD34D' }} />
+                  <YAxis tick={{ fontSize: 12, fill: '#FCD34D' }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(40 28 16)', 
+                      border: '1px solid hsl(255 215 0 / 0.3)',
+                      borderRadius: '8px',
+                      color: '#FEF3C7'
+                    }}
+                  />
                   <Line 
                     type="monotone" 
                     dataKey="views" 
-                    stroke="hsl(var(--primary))" 
+                    stroke="#FCD34D" 
                     strokeWidth={3}
-                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                    dot={{ fill: "#FCD34D", strokeWidth: 2, r: 4 }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -150,10 +161,10 @@ const AnalyticsDashboard = () => {
         </Card>
 
         {/* Metrics Distribution Pie Chart */}
-        <Card className="bg-card/50 backdrop-blur border-border/50">
+        <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
           <CardHeader>
-            <CardTitle className="text-xl font-semibold text-primary">Metrics Distribution</CardTitle>
-            <CardDescription>Breakdown of different metric types</CardDescription>
+            <CardTitle className="text-xl font-semibold text-yellow-300">Metrics Distribution</CardTitle>
+            <CardDescription className="text-yellow-400/80">Breakdown of different metric types</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="h-80">
@@ -172,7 +183,14 @@ const AnalyticsDashboard = () => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(40 28 16)', 
+                      border: '1px solid hsl(255 215 0 / 0.3)',
+                      borderRadius: '8px',
+                      color: '#FEF3C7'
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -181,27 +199,27 @@ const AnalyticsDashboard = () => {
       </div>
 
       {/* Detailed Metrics */}
-      <Card className="bg-card/50 backdrop-blur border-border/50">
+      <Card className="bg-card/80 backdrop-blur border-yellow-400/20">
         <CardHeader>
-          <CardTitle className="text-xl font-semibold text-primary">Detailed Metrics</CardTitle>
-          <CardDescription>Complete breakdown of all tracked metrics</CardDescription>
+          <CardTitle className="text-xl font-semibold text-yellow-300">Detailed Metrics</CardTitle>
+          <CardDescription className="text-yellow-400/80">Complete breakdown of all tracked metrics</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">
             {mockData.detailedMetrics.map((metric, index) => {
               const IconComponent = metric.icon;
               return (
-                <div key={index} className="flex items-center justify-between p-4 border border-border/50 rounded-lg bg-muted/30">
+                <div key={index} className="flex items-center justify-between p-4 border border-yellow-400/30 rounded-lg bg-yellow-400/5">
                   <div className="flex items-center gap-4">
-                    <IconComponent className="h-6 w-6 text-primary" />
+                    <IconComponent className="h-6 w-6 text-yellow-400" />
                     <div>
-                      <h3 className="text-lg font-semibold text-primary">{metric.type}</h3>
-                      <p className="text-sm text-muted-foreground">{metric.uniqueSessions} unique sessions</p>
+                      <h3 className="text-lg font-semibold text-yellow-300">{metric.type}</h3>
+                      <p className="text-sm text-yellow-400/80">{metric.uniqueSessions} unique sessions</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-2xl font-bold text-foreground">{metric.totalEvents.toLocaleString()}</div>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Total events</span>
+                    <div className="text-2xl font-bold text-yellow-100">{metric.totalEvents.toLocaleString()}</div>
+                    <span className="text-xs text-yellow-400/80 bg-yellow-400/10 px-2 py-1 rounded">Total events</span>
                   </div>
                 </div>
               );
