@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import SearchResults from '@/components/SearchResults';
 import Breadcrumbs from '@/components/SEO/Breadcrumbs';
 import DynamicSEO from '@/components/SEO/DynamicSEO';
+import AdvancedSEO from '@/components/SEO/AdvancedSEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import SEO from '@/components/SEO';
 
@@ -51,6 +52,7 @@ const Rencontres = () => {
     <>
       <SEO {...seoConfig} />
       <DynamicSEO pageType="category" data={categoryData} />
+      <AdvancedSEO pageType="category" data={categoryData} />
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
