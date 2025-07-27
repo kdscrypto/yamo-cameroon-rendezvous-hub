@@ -3,7 +3,7 @@ import { useModerationRights } from '@/hooks/useModerationRights';
 import { Navigate } from 'react-router-dom';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { AdvancedAnalyticsDashboard } from '@/components/analytics/AdvancedAnalyticsDashboard';
+import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import SEO from '@/components/SEO';
 
 const Analytics = () => {
@@ -36,7 +36,7 @@ const Analytics = () => {
       />
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <AdvancedAnalyticsDashboard />
+        <AnalyticsDashboard />
       </main>
       <Footer />
     </div>

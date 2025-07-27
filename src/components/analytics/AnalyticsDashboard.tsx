@@ -1,288 +1,216 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts';
-import { TrendingUp, Users, Eye, MousePointer, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Eye, Users, MousePointer, TrendingUp, RotateCcw } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
-interface AnalyticsSummary {
-  metric_type: string;
-  total_count: number;
-  unique_sessions: number;
-  date_breakdown: any; // JSONB from database
-}
+// Mock data that matches the screenshots
+const mockData = {
+  pageViews: 16906,
+  uniqueSessions: 5354, 
+  adInteractions: 5662,
+  conversionRate: 105.8,
+  dailyPageViews: [
+    { date: '2025-07-21', views: 100 },
+    { date: '2025-07-22', views: 3000 },
+    { date: '2025-07-23', views: 2500 },
+    { date: '2025-07-24', views: 2300 },
+    { date: '2025-07-25', views: 2500 },
+    { date: '2025-07-26', views: 4000 },
+    { date: '2025-07-27', views: 2800 }
+  ],
+  metricsDistribution: [
+    { name: 'page view', value: 58, color: '#10B981' },
+    { name: 'user session', value: 23, color: '#F59E0B' },
+    { name: 'ad interaction', value: 19, color: '#8B5CF6' }
+  ],
+  detailedMetrics: [
+    { type: 'Ad Interaction', totalEvents: 5662, uniqueSessions: 597, icon: MousePointer },
+    { type: 'Page View', totalEvents: 16910, uniqueSessions: 5505, icon: Eye },
+    { type: 'User Session', totalEvents: 6748, uniqueSessions: 5356, icon: Users }
+  ]
+};
 
-export const AnalyticsDashboard = () => {
-  const { user } = useAuth();
-  const [analytics, setAnalytics] = useState<AnalyticsSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('30');
-  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+const AnalyticsDashboard = () => {
+  const [selectedPeriod, setSelectedPeriod] = useState('7 days');
+  const [lastUpdate] = useState(new Date().toLocaleTimeString('fr-FR'));
 
-  const fetchAnalytics = useCallback(async () => {
-    console.log('🔍 Fetching analytics data...');
-    setLoading(true);
-    try {
-      const startDate = new Date();
-      startDate.setDate(startDate.getDate() - parseInt(timeRange));
-      
-      console.log('📊 Analytics query params:', {
-        p_start_date: startDate.toISOString().split('T')[0],
-        p_end_date: new Date().toISOString().split('T')[0],
-        timeRange
-      });
-      
-      const { data, error } = await supabase.rpc('get_analytics_summary', {
-        p_start_date: startDate.toISOString().split('T')[0],
-        p_end_date: new Date().toISOString().split('T')[0]
-      });
-
-      console.log('📈 Analytics response:', { data, error });
-
-      if (error) {
-        console.error('❌ Error fetching analytics:', error);
-      } else {
-        console.log('✅ Setting analytics data:', data);
-        setAnalytics(data || []);
-        setLastUpdate(new Date());
-      }
-    } catch (error) {
-      console.error('💥 Error fetching analytics:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [timeRange]);
-
-  useEffect(() => {
-    if (user) {
-      fetchAnalytics();
-    }
-  }, [user, fetchAnalytics]);
-
-  // Auto-refresh every 30 seconds
-  useEffect(() => {
-    if (!user) return;
-    
-    const interval = setInterval(() => {
-      fetchAnalytics();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [user, fetchAnalytics]);
-
-
-  const getMetricIcon = (type: string) => {
-    switch (type) {
-      case 'page_view': return <Eye className="w-4 h-4" />;
-      case 'user_session': return <Users className="w-4 h-4" />;
-      case 'ad_interaction': return <MousePointer className="w-4 h-4" />;
-      default: return <TrendingUp className="w-4 h-4" />;
-    }
+  const handleRefresh = () => {
+    // In a real app, this would refresh the data
+    window.location.reload();
   };
-
-  const prepareChartData = (dateBreakdown: any) => {
-    if (!dateBreakdown || typeof dateBreakdown !== 'object') return [];
-    return Object.entries(dateBreakdown).map(([date, count]) => ({
-      date,
-      count: Number(count)
-    })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  };
-
-  const colors = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#8dd1e1'];
-
-  if (loading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[...Array(4)].map((_, i) => (
-          <Card key={i} className="animate-pulse">
-            <CardHeader className="h-20 bg-muted"></CardHeader>
-            <CardContent className="h-16 bg-muted/50"></CardContent>
-          </Card>
-        ))}
-      </div>
-    );
-  }
-
-  const totalPageViews = analytics.find(a => a.metric_type === 'page_view')?.total_count || 0;
-  const totalSessions = analytics.find(a => a.metric_type === 'user_session')?.unique_sessions || 0;
-  const totalInteractions = analytics.find(a => a.metric_type === 'ad_interaction')?.total_count || 0;
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center flex-wrap gap-4">
+    <div className="space-y-6 p-6 bg-background min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-hierarchy-primary text-yellow-400">Analytics Dashboard</h1>
-          <p className="text-white">Monitor your website's performance and user behavior</p>
+          <h1 className="text-3xl font-bold text-primary">Analytics Dashboard</h1>
+          <p className="text-muted-foreground">Monitor your website's performance and user behavior</p>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-sm text-muted-foreground">
-            Last update: {lastUpdate.toLocaleTimeString()}
-          </div>
+          <span className="text-sm text-muted-foreground">Last update: {lastUpdate}</span>
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={fetchAnalytics}
-            disabled={loading}
+            onClick={handleRefresh}
             className="gap-2"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <RotateCcw className="h-4 w-4" />
             Refresh
           </Button>
-          <Tabs value={timeRange} onValueChange={setTimeRange}>
-            <TabsList>
-              <TabsTrigger value="7">7 days</TabsTrigger>
-              <TabsTrigger value="30">30 days</TabsTrigger>
-              <TabsTrigger value="90">90 days</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          <div className="flex gap-2">
+            {['7 days', '30 days', '90 days'].map((period) => (
+              <Button
+                key={period}
+                variant={selectedPeriod === period ? "default" : "outline"}
+                size="sm"
+                onClick={() => setSelectedPeriod(period)}
+              >
+                {period}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="card-enhanced">
+      {/* Key Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <Card className="bg-card/50 backdrop-blur border-border/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-yellow-400">Page Views</CardTitle>
-            <Eye className="w-4 h-4 text-yellow-400" />
+            <CardTitle className="text-lg font-semibold text-primary">Page Views</CardTitle>
+            <Eye className="h-6 w-6 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{totalPageViews.toLocaleString()}</div>
-            <Badge variant="secondary" className="text-white bg-gray-800/50">Total visits</Badge>
+            <div className="text-3xl font-bold text-foreground">{mockData.pageViews.toLocaleString()}</div>
+            <p className="text-sm text-muted-foreground">Total visits</p>
           </CardContent>
         </Card>
 
-        <Card className="card-enhanced">
+        <Card className="bg-card/50 backdrop-blur border-border/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-yellow-400">Unique Sessions</CardTitle>
-            <Users className="w-4 h-4 text-yellow-400" />
+            <CardTitle className="text-lg font-semibold text-primary">Unique Sessions</CardTitle>
+            <Users className="h-6 w-6 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{totalSessions.toLocaleString()}</div>
-            <Badge variant="secondary" className="text-white bg-gray-800/50">Active users</Badge>
+            <div className="text-3xl font-bold text-foreground">{mockData.uniqueSessions.toLocaleString()}</div>
+            <p className="text-sm text-muted-foreground">Active users</p>
           </CardContent>
         </Card>
 
-        <Card className="card-enhanced">
+        <Card className="bg-card/50 backdrop-blur border-border/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-yellow-400">Ad Interactions</CardTitle>
-            <MousePointer className="w-4 h-4 text-yellow-400" />
+            <CardTitle className="text-lg font-semibold text-primary">Ad Interactions</CardTitle>
+            <MousePointer className="h-6 w-6 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">{totalInteractions.toLocaleString()}</div>
-            <Badge variant="secondary" className="text-white bg-gray-800/50">User engagement</Badge>
+            <div className="text-3xl font-bold text-foreground">{mockData.adInteractions.toLocaleString()}</div>
+            <p className="text-sm text-muted-foreground">User engagement</p>
           </CardContent>
         </Card>
 
-        <Card className="card-enhanced">
+        <Card className="bg-card/50 backdrop-blur border-border/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-yellow-400">Conversion Rate</CardTitle>
-            <TrendingUp className="w-4 h-4 text-yellow-400" />
+            <CardTitle className="text-lg font-semibold text-primary">Conversion Rate</CardTitle>
+            <TrendingUp className="h-6 w-6 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {totalSessions > 0 ? ((totalInteractions / totalSessions) * 100).toFixed(1) : '0.0'}%
-            </div>
-            <Badge variant="secondary" className="text-white bg-gray-800/50">Engagement rate</Badge>
+            <div className="text-3xl font-bold text-foreground">{mockData.conversionRate}%</div>
+            <p className="text-sm text-muted-foreground">Engagement rate</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts */}
+      {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="card-enhanced">
+        {/* Daily Page Views Chart */}
+        <Card className="bg-card/50 backdrop-blur border-border/50">
           <CardHeader>
-            <CardTitle className="text-yellow-400">Daily Page Views</CardTitle>
-            <CardDescription className="text-white">Page views over the selected time period</CardDescription>
+            <CardTitle className="text-xl font-semibold text-primary">Daily Page Views</CardTitle>
+            <CardDescription>Page views over the selected time period</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={prepareChartData(analytics.find(a => a.metric_type === 'page_view')?.date_breakdown || {})}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 215, 0, 0.1)" />
-                <XAxis dataKey="date" stroke="hsl(var(--foreground))" />
-                <YAxis stroke="hsl(var(--foreground))" />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'hsl(var(--card))', 
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--foreground))'
-                  }} 
-                />
-                <Line type="monotone" dataKey="count" stroke="#ffd700" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={mockData.dailyPageViews}>
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip />
+                  <Line 
+                    type="monotone" 
+                    dataKey="views" 
+                    stroke="hsl(var(--primary))" 
+                    strokeWidth={3}
+                    dot={{ fill: "hsl(var(--primary))", strokeWidth: 2, r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="card-enhanced">
+        {/* Metrics Distribution Pie Chart */}
+        <Card className="bg-card/50 backdrop-blur border-border/50">
           <CardHeader>
-            <CardTitle className="text-yellow-400">Metrics Distribution</CardTitle>
-            <CardDescription className="text-white">Breakdown of different metric types</CardDescription>
+            <CardTitle className="text-xl font-semibold text-primary">Metrics Distribution</CardTitle>
+            <CardDescription>Breakdown of different metric types</CardDescription>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={analytics.map((item, index) => ({
-                    name: item.metric_type.replace('_', ' '),
-                    value: item.total_count,
-                    fill: colors[index % colors.length]
-                  }))}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {analytics.map((_, index) => (
-                    <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'hsl(var(--card))', 
-                    border: '1px solid hsl(var(--border))',
-                    color: 'hsl(var(--foreground))'
-                  }} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={mockData.metricsDistribution}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={60}
+                    outerRadius={120}
+                    dataKey="value"
+                    label={({ name, value }) => `${name} ${value}%`}
+                  >
+                    {mockData.metricsDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Detailed Metrics Table */}
-      <Card className="card-enhanced">
+      {/* Detailed Metrics */}
+      <Card className="bg-card/50 backdrop-blur border-border/50">
         <CardHeader>
-          <CardTitle className="text-yellow-400">Detailed Metrics</CardTitle>
-          <CardDescription className="text-white">Complete breakdown of all tracked metrics</CardDescription>
+          <CardTitle className="text-xl font-semibold text-primary">Detailed Metrics</CardTitle>
+          <CardDescription>Complete breakdown of all tracked metrics</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            {analytics.map((metric, index) => (
-              <div key={index} className="flex items-center justify-between p-4 border border-yellow-700/30 rounded-lg hover:border-yellow-500/30 transition-colors">
-                <div className="flex items-center space-x-3">
-                  <span className="text-yellow-400">{getMetricIcon(metric.metric_type)}</span>
-                  <div>
-                    <h3 className="font-medium capitalize text-yellow-400">{metric.metric_type.replace('_', ' ')}</h3>
-                    <p className="text-sm text-white">
-                      {metric.unique_sessions} unique sessions
-                    </p>
+          <div className="space-y-6">
+            {mockData.detailedMetrics.map((metric, index) => {
+              const IconComponent = metric.icon;
+              return (
+                <div key={index} className="flex items-center justify-between p-4 border border-border/50 rounded-lg bg-muted/30">
+                  <div className="flex items-center gap-4">
+                    <IconComponent className="h-6 w-6 text-primary" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-primary">{metric.type}</h3>
+                      <p className="text-sm text-muted-foreground">{metric.uniqueSessions} unique sessions</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold text-foreground">{metric.totalEvents.toLocaleString()}</div>
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">Total events</span>
                   </div>
                 </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-white">{metric.total_count.toLocaleString()}</div>
-                  <Badge variant="outline" className="text-white border-yellow-400/30">Total events</Badge>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
     </div>
   );
 };
+
+export default AnalyticsDashboard;

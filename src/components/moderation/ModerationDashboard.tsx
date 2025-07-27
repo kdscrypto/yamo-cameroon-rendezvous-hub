@@ -6,7 +6,7 @@ import ModerationTabs from './ModerationTabs';
 import { useModerationData } from './useModerationData';
 import { useModerationHandlers } from './useModerationHandlers';
 import { useModerationRealtime } from './useModerationRealtime';
-import { AnalyticsDashboard } from '@/components/analytics/AnalyticsDashboard';
+import AnalyticsDashboard from '@/components/analytics/AnalyticsDashboard';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface ModerationDashboardProps {
