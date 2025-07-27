@@ -42,13 +42,33 @@ export const generateStructuredData = (pageType: string, data: any = {}) => {
         "url": `https://yamo.lovable.app/ad/${data.id}`,
         "datePublished": data.created_at,
         "dateModified": data.updated_at,
+        "image": data.photos && data.photos.length > 0 ? data.photos[0] : null,
         "offers": {
           "@type": "Offer",
           "price": data.price || "0",
           "priceCurrency": "XAF",
-          "availability": "https://schema.org/InStock"
+          "availability": "https://schema.org/InStock",
+          "priceValidUntil": new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
         },
-        "seller": baseOrganization
+        "seller": {
+          "@type": "Organization",
+          "name": "Yamo",
+          "url": "https://yamo.lovable.app"
+        },
+        "aggregateRating": data.rating ? {
+          "@type": "AggregateRating",
+          "ratingValue": data.rating,
+          "reviewCount": data.reviewCount || 1
+        } : undefined,
+        "location": data.location ? {
+          "@type": "Place",
+          "name": data.location,
+          "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "CM",
+            "addressRegion": data.location
+          }
+        } : undefined
       };
       
     case 'category':
@@ -60,11 +80,54 @@ export const generateStructuredData = (pageType: string, data: any = {}) => {
         "url": data.url || "https://yamo.lovable.app",
         "mainEntity": {
           "@type": "ItemList",
-          "name": data.title || "Liste d'annonces"
+          "name": data.title || "Liste d'annonces",
+          "numberOfItems": data.itemCount || 0,
+          "itemListElement": data.items?.map((item: any, index: number) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "Product",
+              "name": item.title,
+              "url": `https://yamo.lovable.app/ad/${item.id}`,
+              "description": item.description,
+              "offers": {
+                "@type": "Offer",
+                "price": item.price || "0",
+                "priceCurrency": "XAF"
+              }
+            }
+          })) || []
         },
         "breadcrumb": {
           "@type": "BreadcrumbList",
           "itemListElement": data.breadcrumbs || []
+        },
+        "isPartOf": {
+          "@type": "WebSite",
+          "name": "Yamo",
+          "url": "https://yamo.lovable.app"
+        }
+      };
+      
+    case 'search':
+      return {
+        "@context": "https://schema.org",
+        "@type": "SearchResultsPage",
+        "name": `Résultats de recherche: ${data.query || ''}`,
+        "description": `${data.totalResults || 0} résultats trouvés pour "${data.query || ''}"`,
+        "url": data.url || "https://yamo.lovable.app/browse",
+        "mainEntity": {
+          "@type": "ItemList",
+          "numberOfItems": data.totalResults || 0,
+          "itemListElement": data.results?.map((item: any, index: number) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+              "@type": "Product",
+              "name": item.title,
+              "url": `https://yamo.lovable.app/ad/${item.id}`
+            }
+          })) || []
         }
       };
       

@@ -2,6 +2,8 @@ import React, { useState, useMemo } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchResults from '@/components/SearchResults';
+import Breadcrumbs from '@/components/SEO/Breadcrumbs';
+import DynamicSEO from '@/components/SEO/DynamicSEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import SEO from '@/components/SEO';
 
@@ -26,21 +28,34 @@ const Rencontres = () => {
     type: 'website'
   };
 
+  const breadcrumbItems = [
+    { name: 'Accueil', url: '/' },
+    { name: 'Rencontres', url: '/rencontres' }
+  ];
+
+  const categoryData = {
+    title: 'Rencontres et Escorts au Cameroun',
+    description: seoConfig.description,
+    url: seoConfig.url,
+    itemCount: filteredAds.length,
+    items: filteredAds.slice(0, 10), // First 10 for structured data
+    breadcrumbs: breadcrumbItems.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 1,
+      "name": item.name,
+      "item": `https://yamo.lovable.app${item.url}`
+    }))
+  };
+
   return (
     <>
       <SEO {...seoConfig} />
+      <DynamicSEO pageType="category" data={categoryData} />
       <div className="min-h-screen bg-background flex flex-col">
         <Header />
         
         <main className="flex-1 container mx-auto px-4 py-8">
-          {/* Breadcrumbs */}
-          <nav className="mb-6" aria-label="Breadcrumb">
-            <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <li><a href="/" className="hover:text-foreground">Accueil</a></li>
-              <li>•</li>
-              <li className="text-foreground">Rencontres</li>
-            </ol>
-          </nav>
+          <Breadcrumbs items={breadcrumbItems} />
 
           {/* Page Header */}
           <div className="mb-8">

@@ -11,6 +11,7 @@ import SEO from '@/components/SEO';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import { useSEO } from '@/hooks/useSEO';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import useSEOMonitoring from '@/hooks/useSEOMonitoring';
 
 const Browse = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,6 +23,9 @@ const Browse = () => {
   const { getSEOForPath } = useSEO();
 
   const { data: ads = [], isLoading, error } = useApprovedAds();
+  
+  // Enable SEO monitoring
+  useSEOMonitoring(true);
   const seoConfig = getSEOForPath('/browse');
 
   // Handle events category redirection immediately
