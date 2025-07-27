@@ -32,6 +32,7 @@ import Massages from "./pages/Massages";
 import Produits from "./pages/Produits";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
+import ErrorBoundary from "@/components/ErrorBoundary";
 
 // Create QueryClient outside component to prevent recreation
 const queryClient = new QueryClient({
@@ -46,8 +47,9 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-        <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+          <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
           {/* <TooltipProvider delayDuration={0}> */}
             <BrowserRouter>
               <div className="min-h-screen bg-background">
@@ -86,6 +88,7 @@ function App() {
           {/* </TooltipProvider> */}
         </ThemeProvider>
       </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
