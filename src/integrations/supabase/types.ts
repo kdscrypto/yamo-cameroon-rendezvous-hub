@@ -14,6 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          error_message: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          new_values: Json | null
+          old_values: Json | null
+          resource_id: string | null
+          resource_type: string
+          success: boolean
+          target_user_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          success?: boolean
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_values?: Json | null
+          old_values?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          success?: boolean
+          target_user_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       ads: {
         Row: {
           category: string
@@ -491,6 +542,33 @@ export type Database = {
         }
         Relationships: []
       }
+      role_modification_limits: {
+        Row: {
+          action_count: number
+          admin_user_id: string
+          created_at: string
+          id: string
+          last_action: string
+          window_start: string
+        }
+        Insert: {
+          action_count?: number
+          admin_user_id: string
+          created_at?: string
+          id?: string
+          last_action?: string
+          window_start?: string
+        }
+        Update: {
+          action_count?: number
+          admin_user_id?: string
+          created_at?: string
+          id?: string
+          last_action?: string
+          window_start?: string
+        }
+        Relationships: []
+      }
       security_events: {
         Row: {
           created_at: string
@@ -625,6 +703,27 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      add_user_role: {
+        Args: {
+          _target_user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _ip_address?: string
+          _user_agent?: string
+        }
+        Returns: boolean
+      }
+      check_role_modification_rate_limit: {
+        Args: {
+          _admin_user_id: string
+          _max_actions?: number
+          _window_minutes?: number
+        }
+        Returns: boolean
+      }
+      cleanup_old_audit_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       cleanup_old_notifications: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -657,9 +756,33 @@ export type Database = {
         Args: { _user_id: string }
         Returns: undefined
       }
+      log_admin_action: {
+        Args: {
+          _admin_user_id: string
+          _target_user_id?: string
+          _action?: string
+          _resource_type?: string
+          _resource_id?: string
+          _old_values?: Json
+          _new_values?: Json
+          _metadata?: Json
+          _ip_address?: string
+          _user_agent?: string
+        }
+        Returns: string
+      }
       process_referral: {
         Args: { _referred_user_id: string; _referral_code: string }
         Returns: undefined
+      }
+      remove_user_role: {
+        Args: {
+          _target_user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+          _ip_address?: string
+          _user_agent?: string
+        }
+        Returns: boolean
       }
       track_metric: {
         Args: {
@@ -676,6 +799,15 @@ export type Database = {
       }
       user_has_moderation_rights: {
         Args: { _user_id: string }
+        Returns: boolean
+      }
+      validate_role_change: {
+        Args: {
+          _admin_user_id: string
+          _target_user_id: string
+          _new_role: Database["public"]["Enums"]["app_role"]
+          _action?: string
+        }
         Returns: boolean
       }
     }
