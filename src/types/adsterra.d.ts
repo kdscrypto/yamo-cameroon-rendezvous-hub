@@ -2,14 +2,14 @@ export interface AdsterraBannerConfig {
   key: string;
   width: number;
   height: number;
-  format: 'banner';
+  format: 'banner' | 'iframe';
 }
 
 export interface AdsterraAdProps {
   adKey: string;
   width: number;
   height: number;
-  format?: 'banner';
+  format?: 'banner' | 'iframe';
   className?: string;
   style?: React.CSSProperties;
 }

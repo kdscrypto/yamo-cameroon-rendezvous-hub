@@ -7,16 +7,15 @@ import CategoriesSection from '@/components/Homepage/CategoriesSection';
 import OptimizedAdSections from '@/components/Homepage/OptimizedAdSections';
 import SafetySection from '@/components/Homepage/SafetySection';
 import AdBanner from '@/components/ads/AdBanner';
+import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import AdContainer from '@/components/ads/AdContainer';
 import SEO from '@/components/SEO';
 import { useSEO } from '@/hooks/useSEO';
-import { useGoogleAds } from '@/hooks/useGoogleAds';
 import { useAdsterra } from '@/hooks/useAdsterra';
 
 const Index = React.memo(() => {
   const [ageVerified, setAgeVerified] = useState(false);
   const { getSEOForPath } = useSEO();
-  const { refreshAds } = useGoogleAds();
   const { refreshAds: refreshAdsterra } = useAdsterra();
 
   // Check age verification with enhanced security
@@ -53,10 +52,9 @@ const Index = React.memo(() => {
     setAgeVerified(true);
     // Refresh ads after age verification
     setTimeout(() => {
-      refreshAds();
       refreshAdsterra();
     }, 1000);
-  }, [refreshAds]);
+  }, [refreshAdsterra]);
 
   const seoConfig = getSEOForPath('/');
 
@@ -106,6 +104,7 @@ const Index = React.memo(() => {
         <OptimizedAdSections />
         <SafetySection />
         <Footer />
+        <AdsterraVerification />
       </div>
     </>
   );

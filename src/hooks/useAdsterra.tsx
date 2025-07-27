@@ -17,7 +17,7 @@ export const useAdsterra = () => {
 
     console.log('useAdsterra: Chargement des scripts Adsterra');
     
-    // Note: Adsterra ne nécessite pas de script global comme AdSense
+    // Note: Adsterra ne nécessite pas de script global
     // Les bannières sont chargées individuellement via leur code d'intégration
     
   }, []);
