@@ -37,7 +37,9 @@ export const useUserPresence = () => {
       setOnlineUsers(users);
     });
 
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [isInitialized]);
 
   // Mettre à jour le statut de l'utilisateur

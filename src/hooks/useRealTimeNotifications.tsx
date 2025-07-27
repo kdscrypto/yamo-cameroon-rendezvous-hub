@@ -109,7 +109,9 @@ export const useRealTimeNotifications = (options: NotificationOptions = {}) => {
     if (!user || !isInitialized) return;
 
     const unsubscribe = realtimeManager.onNotification(handleNewNotification);
-    return unsubscribe;
+    return () => {
+      unsubscribe();
+    };
   }, [user, isInitialized, handleNewNotification]);
 
   // Marquer une notification comme lue

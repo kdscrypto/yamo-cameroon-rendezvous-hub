@@ -219,11 +219,15 @@ class RealtimeManager {
     
     const channel = supabase
       .channel(`${table}_changes_${id}`)
-      .on('postgres_changes', {
-        event,
-        schema: 'public',
-        table
-      }, callback)
+      .on(
+        'postgres_changes' as any,
+        {
+          event,
+          schema: 'public',
+          table
+        },
+        callback
+      )
       .subscribe();
 
     const subscription: RealtimeSubscription = {
