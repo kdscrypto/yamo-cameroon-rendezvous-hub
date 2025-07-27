@@ -6,6 +6,7 @@ import { useOptimizedApprovedAds } from '@/hooks/useOptimizedAds';
 import FeaturedAdsSection from './FeaturedAdsSection';
 import RecentAdsSection from './RecentAdsSection';
 import LocationAdsSection from './LocationAdsSection';
+import LazyLoadContainer from '@/components/performance/LazyLoadContainer';
 
 const OptimizedAdSections = React.memo(() => {
   const { data: allAds = [], isLoading } = useOptimizedApprovedAds();
@@ -52,9 +53,15 @@ const OptimizedAdSections = React.memo(() => {
   return (
     <div className="space-y-0">
       <FeaturedAdsSection />
-      <RecentAdsSection />
-      <LocationAdsSection city="douala" displayName="Douala" emoji="🔥" />
-      <LocationAdsSection city="yaounde" displayName="Yaoundé" emoji="🔥" />
+      <LazyLoadContainer height={400}>
+        <RecentAdsSection />
+      </LazyLoadContainer>
+      <LazyLoadContainer height={400}>
+        <LocationAdsSection city="douala" displayName="Douala" emoji="🔥" />
+      </LazyLoadContainer>
+      <LazyLoadContainer height={400}>
+        <LocationAdsSection city="yaounde" displayName="Yaoundé" emoji="🔥" />
+      </LazyLoadContainer>
     </div>
   );
 });

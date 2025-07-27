@@ -1,6 +1,8 @@
 
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { performanceCache, CacheKeys } from '@/utils/performanceCache';
+import { queryPerformanceMonitor } from '@/utils/queryOptimization';
 
 export interface AdData {
   id: string;
@@ -20,11 +22,20 @@ export interface AdData {
 
 const ITEMS_PER_PAGE = 12;
 
-// Cache optimisé pour les annonces approuvées
+// Cache optimisé pour les annonces approuvées avec monitoring
 export const useOptimizedApprovedAds = () => {
   return useQuery({
     queryKey: ['approved-ads-optimized'],
     queryFn: async (): Promise<AdData[]> => {
+      const startTime = performance.now();
+      
+      // Vérifier le cache local d'abord
+      const cachedData = performanceCache.get<AdData[]>(CacheKeys.ADS_APPROVED);
+      if (cachedData) {
+        queryPerformanceMonitor.trackQuery(['approved-ads-optimized'], 0, true);
+        return cachedData;
+      }
+
       console.log('Fetching optimized approved ads...');
       
       const { data, error } = await supabase
@@ -35,23 +46,21 @@ export const useOptimizedApprovedAds = () => {
         .order('created_at', { ascending: false })
         .limit(50); // Limiter pour la performance
 
+      const duration = performance.now() - startTime;
+      queryPerformanceMonitor.trackQuery(['approved-ads-optimized'], duration, !error);
+
       if (error) {
         console.error('Error fetching optimized approved ads:', error);
         throw error;
       }
 
-      console.log('Optimized approved ads fetched:', data?.length || 0);
-      // Log some sample data for debugging
-      if (data && data.length > 0) {
-        console.log('Sample ads data:', data.slice(0, 3).map(ad => ({
-          id: ad.id,
-          title: ad.title,
-          location: ad.location,
-          expires_at: ad.expires_at,
-          category: ad.category
-        })));
-      }
-      return data || [];
+      const result = data || [];
+      
+      // Mettre en cache le résultat
+      performanceCache.set(CacheKeys.ADS_APPROVED, result, 10 * 60 * 1000);
+
+      console.log('Optimized approved ads fetched:', result.length);
+      return result;
     },
     staleTime: 10 * 60 * 1000, // Cache pendant 10 minutes
     gcTime: 30 * 60 * 1000, // Garde en mémoire 30 minutes
@@ -103,11 +112,23 @@ export const useInfiniteApprovedAds = (category?: string, location?: string) => 
   });
 };
 
-// Hook optimisé pour les annonces par catégorie avec cache
+// Hook optimisé pour les annonces par catégorie avec cache et monitoring
 export const useOptimizedAdsByCategory = (category?: string) => {
   return useQuery({
     queryKey: ['ads-by-category-optimized', category],
     queryFn: async (): Promise<AdData[]> => {
+      if (!category) return [];
+      
+      const startTime = performance.now();
+      const cacheKey = CacheKeys.ADS_BY_CATEGORY(category);
+      
+      // Vérifier le cache local
+      const cachedData = performanceCache.get<AdData[]>(cacheKey);
+      if (cachedData) {
+        queryPerformanceMonitor.trackQuery(['ads-by-category-optimized', category], 0, true);
+        return cachedData;
+      }
+
       console.log('Fetching optimized ads by category:', category);
       
       let query = supabase
@@ -118,19 +139,27 @@ export const useOptimizedAdsByCategory = (category?: string) => {
         .order('created_at', { ascending: false })
         .limit(20);
 
-      if (category && category !== 'all') {
+      if (category !== 'all') {
         query = query.eq('category', category);
       }
 
       const { data, error } = await query;
+      
+      const duration = performance.now() - startTime;
+      queryPerformanceMonitor.trackQuery(['ads-by-category-optimized', category], duration, !error);
 
       if (error) {
         console.error('Error fetching optimized ads by category:', error);
         throw error;
       }
 
-      console.log('Ads by category fetched:', data?.length || 0, 'for category:', category);
-      return data || [];
+      const result = data || [];
+      
+      // Mettre en cache le résultat
+      performanceCache.set(cacheKey, result, 15 * 60 * 1000);
+
+      console.log('Ads by category fetched:', result.length, 'for category:', category);
+      return result;
     },
     enabled: !!category,
     staleTime: 15 * 60 * 1000,
