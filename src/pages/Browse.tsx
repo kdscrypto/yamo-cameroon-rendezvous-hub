@@ -8,6 +8,8 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchResults from '@/components/SearchResults';
 import SEO from '@/components/SEO';
+import AdBanner from '@/components/ads/AdBanner';
+import AdContainer from '@/components/ads/AdContainer';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import { useSEO } from '@/hooks/useSEO';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -129,6 +131,11 @@ const Browse = () => {
               </p>
             </div>
 
+            {/* Header Ad Banner */}
+            <div className="mb-8">
+              <AdBanner placement="header" className="flex justify-center" />
+            </div>
+
             {/* Filters */}
             <div className="bg-card border border-border rounded-lg p-6 mb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -184,13 +191,28 @@ const Browse = () => {
               </div>
             </div>
 
-            {/* Search Results */}
-            <SearchResults
-              results={filteredAds}
-              query={searchQuery}
-              totalResults={filteredAds.length}
-              loading={isLoading}
-            />
+            {/* Main Content Area with Sidebar Ads */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Main Search Results */}
+              <div className="lg:col-span-3">
+                <SearchResults
+                  results={filteredAds}
+                  query={searchQuery}
+                  totalResults={filteredAds.length}
+                  loading={isLoading}
+                />
+              </div>
+
+              {/* Sidebar with Ads */}
+              <div className="lg:col-span-1 space-y-6">
+                <AdContainer title="Publicité" variant="bordered">
+                  <AdBanner placement="sidebar" />
+                </AdContainer>
+                <AdContainer title="Partenaires" variant="subtle">
+                  <AdBanner placement="content" />
+                </AdContainer>
+              </div>
+            </div>
 
             {/* Pagination */}
             {filteredAds.length > 0 && (

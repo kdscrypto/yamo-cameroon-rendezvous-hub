@@ -8,25 +8,25 @@ export const ADSTERRA_CONFIG = {
       format: 'iframe'
     },
     SIDEBAR_RECTANGLE: {
-      key: 'sidebar-rectangle-key', // Remplacez par votre clé réelle
+      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
       width: 300,
       height: 250,
       format: 'banner'
     },
     CONTENT_RECTANGLE: {
-      key: 'content-rectangle-key', // Remplacez par votre clé réelle
+      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
       width: 300,
       height: 250,
       format: 'banner'
     },
     FOOTER_BANNER: {
-      key: 'footer-banner-key', // Remplacez par votre clé réelle
+      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
       width: 728,
       height: 90,
       format: 'banner'
     },
     MOBILE_BANNER: {
-      key: 'mobile-banner-key', // Remplacez par votre clé réelle
+      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
       width: 320,
       height: 50,
       format: 'banner'
@@ -36,6 +36,7 @@ export const ADSTERRA_CONFIG = {
   // Paramètres généraux
   SETTINGS: {
     TEST_MODE: process.env.NODE_ENV === 'development',
+    ALLOW_DEV_TESTING: true, // Permet de tester en développement
     LOAD_DELAY: 1000,
     AUTO_REFRESH_ENABLED: false,
   },

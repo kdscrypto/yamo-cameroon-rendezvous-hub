@@ -20,9 +20,15 @@ const AdsterraAdUnit: React.FC<AdsterraAdUnitProps> = ({
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Ne pas initialiser les publicités en mode développement
-    if (process.env.NODE_ENV === 'development') {
-      console.log('AdsterraAdUnit: Mode développement - bannière non initialisée');
+    // Ne pas initialiser les publicités en mode développement sauf si autorisé
+    if (process.env.NODE_ENV === 'development' && !import.meta.env.VITE_ADSTERRA_TEST) {
+      console.log('AdsterraAdUnit: Mode développement - bannière non initialisée (utilisez VITE_ADSTERRA_TEST=true pour tester)');
+      return;
+    }
+
+    // Vérifier si la clé est valide
+    if (adKey.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA')) {
+      console.warn('AdsterraAdUnit: Clé Adsterra placeholder détectée - remplacez par une vraie clé');
       return;
     }
 
@@ -52,8 +58,8 @@ const AdsterraAdUnit: React.FC<AdsterraAdUnitProps> = ({
     }
   }, [adKey, width, height]);
 
-  // Affichage de placeholder en mode développement
-  if (process.env.NODE_ENV === 'development') {
+  // Affichage de placeholder en mode développement (sauf si test activé)
+  if (process.env.NODE_ENV === 'development' && !import.meta.env.VITE_ADSTERRA_TEST) {
     return (
       <div
         className={`bg-muted border-2 border-dashed border-muted-foreground/20 flex items-center justify-center ${className}`}
