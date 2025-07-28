@@ -8,25 +8,25 @@ export const ADSTERRA_CONFIG = {
       format: 'iframe'
     },
     SIDEBAR_RECTANGLE: {
-      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
+      key: 'ea16b4d4359bf41430e0c1ad103b76af',
       width: 300,
       height: 250,
       format: 'banner'
     },
     CONTENT_RECTANGLE: {
-      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
+      key: 'ea16b4d4359bf41430e0c1ad103b76af',
       width: 300,
       height: 250,
       format: 'banner'
     },
     FOOTER_BANNER: {
-      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
+      key: 'ea16b4d4359bf41430e0c1ad103b76af',
       width: 728,
       height: 90,
       format: 'banner'
     },
     MOBILE_BANNER: {
-      key: 'REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA', // ⚠️ Remplacez par votre clé Adsterra réelle
+      key: 'ea16b4d4359bf41430e0c1ad103b76af',
       width: 320,
       height: 50,
       format: 'banner'
