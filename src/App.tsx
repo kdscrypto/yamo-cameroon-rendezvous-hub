@@ -33,6 +33,7 @@ import Rencontres from "./pages/Rencontres";
 import Massages from "./pages/Massages";
 import Produits from "./pages/Produits";
 import Analytics from "./pages/Analytics";
+import AdsterraTest from "./pages/AdsterraTest";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -76,6 +77,7 @@ const AppContent = () => {
               <Route path="/events" element={<Events />} />
               <Route path="/email-test" element={<EmailTest />} />
               <Route path="/email-verification" element={<EmailVerification />} />
+              <Route path="/adsterra-test" element={<AdsterraTest />} />
               
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
