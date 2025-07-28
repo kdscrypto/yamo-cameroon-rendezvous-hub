@@ -2,9 +2,12 @@ import { useEffect } from 'react';
 
 export const useAdsterra = () => {
   useEffect(() => {
-    // Ne pas charger les scripts en mode développement sauf si autorisé
-    if (process.env.NODE_ENV === 'development' && !import.meta.env.VITE_ADSTERRA_TEST) {
-      console.log('useAdsterra: Mode développement - scripts Adsterra non chargés (utilisez VITE_ADSTERRA_TEST=true pour tester)');
+    // Vérifier si le test en développement est activé
+    const devTestEnabled = localStorage.getItem('adsterra-dev-test') === 'true';
+    
+    // Ne pas charger les scripts en mode développement sauf si test activé
+    if (process.env.NODE_ENV === 'development' && !devTestEnabled) {
+      console.log('useAdsterra: Mode développement - scripts Adsterra non chargés (cliquez sur "Activer test dev" pour tester)');
       return;
     }
 

@@ -29,7 +29,7 @@ const AdsterraVerification: React.FC = () => {
       banners: adsElements.length,
       invalidKeys,
       testMode: ADSTERRA_CONFIG.SETTINGS.TEST_MODE,
-      devTestingEnabled: import.meta.env.VITE_ADSTERRA_TEST === 'true'
+      devTestingEnabled: localStorage.getItem('adsterra-dev-test') === 'true'
     };
   };
 
@@ -49,12 +49,22 @@ const AdsterraVerification: React.FC = () => {
           <div className={results.invalidKeys > 0 ? 'text-red-500' : 'text-green-500'}>
             ⚠️ Clés invalides: {results.invalidKeys}
           </div>
-          {results.invalidKeys > 0 && (
-            <div className="text-xs text-orange-500 mt-2">
-              Remplacez les clés placeholder dans la config
+          {!results.devTestingEnabled && (
+            <div className="text-xs text-blue-500 mt-2">
+              💡 En développement, vous voyez des placeholders.
+              Les vraies pubs apparaîtront en production.
             </div>
           )}
         </div>
+        <button 
+          onClick={() => {
+            localStorage.setItem('adsterra-dev-test', 'true');
+            window.location.reload();
+          }}
+          className="mt-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
+        >
+          🧪 Activer test dev
+        </button>
       </div>
     );
   }
