@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
+import { shouldShowAdsInDev } from '@/config/adsterraConfig';
 
 export const useAdsterra = () => {
   useEffect(() => {
-    // Vérifier si le test en développement est activé
-    const devTestEnabled = localStorage.getItem('adsterra-dev-test') === 'true';
-    
-    // Ne pas charger les scripts en mode développement sauf si test activé
-    if (process.env.NODE_ENV === 'development' && !devTestEnabled) {
-      console.log('useAdsterra: Mode développement - scripts Adsterra non chargés (cliquez sur "Activer test dev" pour tester)');
+    // Ne pas charger les scripts en mode développement sauf si autorisé
+    if (process.env.NODE_ENV === 'development' && !shouldShowAdsInDev()) {
+      console.log('useAdsterra: Mode développement - scripts Adsterra non chargés (activez les tests dans AdsterraVerification)');
       return;
     }
 

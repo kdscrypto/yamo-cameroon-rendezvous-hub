@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { shouldShowAdsInDev } from '@/config/adsterraConfig';
 
 interface AdsterraAdUnitProps {
   adKey: string;
@@ -20,12 +21,9 @@ const AdsterraAdUnit: React.FC<AdsterraAdUnitProps> = ({
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Vérifier si le test en développement est activé
-    const devTestEnabled = localStorage.getItem('adsterra-dev-test') === 'true';
-    
-    // Ne pas initialiser les publicités en mode développement sauf si test activé
-    if (process.env.NODE_ENV === 'development' && !devTestEnabled) {
-      console.log('AdsterraAdUnit: Mode développement - bannière non initialisée (cliquez sur "Activer test dev" pour tester)');
+    // Ne pas initialiser les publicités en mode développement sauf si autorisé
+    if (process.env.NODE_ENV === 'development' && !shouldShowAdsInDev()) {
+      console.log('AdsterraAdUnit: Mode développement - bannière non initialisée (activez les tests dans AdsterraVerification)');
       return;
     }
 
@@ -62,7 +60,7 @@ const AdsterraAdUnit: React.FC<AdsterraAdUnitProps> = ({
   }, [adKey, width, height]);
 
   // Affichage de placeholder en mode développement (sauf si test activé)
-  if (process.env.NODE_ENV === 'development' && localStorage.getItem('adsterra-dev-test') !== 'true') {
+  if (process.env.NODE_ENV === 'development' && !shouldShowAdsInDev()) {
     return (
       <div
         className={`bg-muted border-2 border-dashed border-muted-foreground/20 flex items-center justify-center ${className}`}

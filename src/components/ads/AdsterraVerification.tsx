@@ -1,5 +1,5 @@
 import React from 'react';
-import { ADSTERRA_CONFIG, isAdsterraReady } from '@/config/adsterraConfig';
+import { ADSTERRA_CONFIG, isAdsterraReady, shouldShowAdsInDev, toggleDevTesting, forceDevAds } from '@/config/adsterraConfig';
 
 const AdsterraVerification: React.FC = () => {
   const checkAdsterraStatus = () => {
@@ -29,7 +29,8 @@ const AdsterraVerification: React.FC = () => {
       banners: adsElements.length,
       invalidKeys,
       testMode: ADSTERRA_CONFIG.SETTINGS.TEST_MODE,
-      devTestingEnabled: localStorage.getItem('adsterra-dev-test') === 'true'
+      devTestingEnabled: shouldShowAdsInDev(),
+      forceMode: localStorage.getItem('adsterra-force-dev') === 'true'
     };
   };
 
@@ -44,6 +45,7 @@ const AdsterraVerification: React.FC = () => {
           <div>✅ Environnement: {results.ready ? 'Prêt' : 'Non prêt'}</div>
           <div>📊 Mode: {results.testMode ? 'Test' : 'Production'}</div>
           <div>🧪 Test dev: {results.devTestingEnabled ? 'Activé' : 'Désactivé'}</div>
+          <div>🚀 Force mode: {results.forceMode ? 'Activé' : 'Désactivé'}</div>
           <div>🔧 Scripts: {results.scripts}</div>
           <div>📺 Bannières: {results.banners}</div>
           <div className={results.invalidKeys > 0 ? 'text-red-500' : 'text-green-500'}>
@@ -56,15 +58,31 @@ const AdsterraVerification: React.FC = () => {
             </div>
           )}
         </div>
-        <button 
-          onClick={() => {
-            localStorage.setItem('adsterra-dev-test', 'true');
-            window.location.reload();
-          }}
-          className="mt-2 px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600 w-full"
-        >
-          🧪 Activer test dev
-        </button>
+        <div className="space-y-2 mt-2">
+          <button 
+            onClick={() => {
+              toggleDevTesting(true);
+              window.location.reload();
+            }}
+            className={`px-2 py-1 text-xs rounded w-full ${
+              results.devTestingEnabled ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'
+            } text-white`}
+            disabled={results.devTestingEnabled}
+          >
+            {results.devTestingEnabled ? '✅ Test activé' : '🧪 Activer test dev'}
+          </button>
+          <button 
+            onClick={() => {
+              forceDevAds(!results.forceMode);
+              window.location.reload();
+            }}
+            className={`px-2 py-1 text-xs rounded w-full ${
+              results.forceMode ? 'bg-orange-500 hover:bg-orange-600' : 'bg-purple-500 hover:bg-purple-600'
+            } text-white`}
+          >
+            {results.forceMode ? '🔥 Désactiver force' : '🚀 Forcer pubs dev'}
+          </button>
+        </div>
       </div>
     );
   }

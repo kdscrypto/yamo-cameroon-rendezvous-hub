@@ -12,6 +12,10 @@ import { useAuth } from '@/hooks/useAuth';
 import AdImageGallery from '@/components/AdDetail/AdImageGallery';
 import AdInfoSection from '@/components/AdDetail/AdInfoSection';
 import AdContactSection from '@/components/AdDetail/AdContactSection';
+import AdBanner from '@/components/ads/AdBanner';
+import AdContainer from '@/components/ads/AdContainer';
+import AdsterraVerification from '@/components/ads/AdsterraVerification';
+import { shouldShowAdsterraAd } from '@/config/adsterraConfig';
 
 const AdDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -181,13 +185,15 @@ const AdDetail = () => {
               Retour
             </Button>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Image section */}
-              <AdImageGallery 
-                images={ad.images}
-                title={ad.title}
-                isVip={isVip}
-              />
+              <div className="lg:col-span-2">
+                <AdImageGallery 
+                  images={ad.images}
+                  title={ad.title}
+                  isVip={isVip}
+                />
+              </div>
 
               {/* Details section */}
               <div className="space-y-6">
@@ -210,10 +216,29 @@ const AdDetail = () => {
                 />
               </div>
             </div>
+
+            {/* Content Ad Section - According to PLACEMENTS.AD_DETAIL.content */}
+            {shouldShowAdsterraAd('AD_DETAIL', 'content') && (
+              <div className="mt-12">
+                <AdContainer title="Publicité" variant="subtle">
+                  <AdBanner placement="content" className="flex justify-center" />
+                </AdContainer>
+              </div>
+            )}
+
+            {/* Related Ads Section - According to PLACEMENTS.AD_DETAIL.related */}
+            {shouldShowAdsterraAd('AD_DETAIL', 'related') && (
+              <div className="mt-8">
+                <AdContainer title="Annonces similaires" variant="bordered">
+                  <AdBanner placement="content" className="flex justify-center" />
+                </AdContainer>
+              </div>
+            )}
           </div>
         </main>
 
         <Footer />
+        <AdsterraVerification />
       </div>
     </>
   );
