@@ -47,6 +47,9 @@ const Footer = () => {
               <li><Link to="/terms" className="text-white hover:text-primary transition-colors">CGU</Link></li>
               <li><Link to="/privacy" className="text-white hover:text-primary transition-colors">Confidentialité</Link></li>
               <li><Link to="/contact" className="text-white hover:text-primary transition-colors">Contact</Link></li>
+              {process.env.NODE_ENV === 'development' && (
+                <li><Link to="/adsterra-test" className="text-yellow-400 hover:text-yellow-300 transition-colors">🔧 Test Adsterra</Link></li>
+              )}
             </ul>
           </div>
 

@@ -43,29 +43,106 @@ const AdsterraSystemCheck: React.FC = () => {
       });
     }
 
-    // 2. Vérification des clés API
-    const invalidKeys = Object.values(ADSTERRA_CONFIG.BANNERS).filter(banner => 
+    // 2. Vérification détaillée des clés API Adsterra
+    const banners = Object.entries(ADSTERRA_CONFIG.BANNERS);
+    const uniqueKeys = new Set(banners.map(([, banner]) => banner.key));
+    const placeholderKeys = banners.filter(([, banner]) => 
       banner.key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA')
     );
 
-    if (invalidKeys.length === 0) {
-      results.push({
-        name: 'Clés API Adsterra',
-        status: 'success',
-        message: 'Toutes les clés API sont configurées',
-        details: `${Object.keys(ADSTERRA_CONFIG.BANNERS).length} clés valides`
-      });
+    if (placeholderKeys.length === 0) {
+      if (uniqueKeys.size === 1) {
+        results.push({
+          name: 'Clés API Adsterra',
+          status: 'warning',
+          message: 'Toutes les bannières utilisent la même clé',
+          details: `Clé actuelle: ${Array.from(uniqueKeys)[0]}. Recommandé: clés spécifiques par emplacement`,
+        });
+      } else {
+        results.push({
+          name: 'Clés API Adsterra',
+          status: 'success',
+          message: 'Clés API diversifiées configurées',
+          details: `${uniqueKeys.size} clés uniques pour ${banners.length} emplacements`
+        });
+      }
     } else {
       results.push({
         name: 'Clés API Adsterra',
-        status: 'warning',
-        message: `${invalidKeys.length} clé(s) placeholder détectée(s)`,
+        status: 'error',
+        message: `${placeholderKeys.length} clé(s) placeholder détectée(s)`,
         details: 'Remplacez les clés placeholder par de vraies clés Adsterra',
         critical: true
       });
     }
 
-    // 3. Vérification de l'environnement
+    // 3. Test de connectivité Adsterra
+    try {
+      const connectivityTest = await fetch('https://www.highperformanceformat.com/js/', { 
+        method: 'HEAD',
+        mode: 'no-cors',
+        cache: 'no-cache'
+      }).then(() => true).catch(() => false);
+
+      results.push({
+        name: 'Connectivité Adsterra',
+        status: connectivityTest ? 'success' : 'error',
+        message: connectivityTest 
+          ? 'Accès à highperformanceformat.com confirmé' 
+          : 'Impossible d\'accéder à highperformanceformat.com',
+        details: 'Test de connectivité vers le serveur de scripts Adsterra',
+        critical: !connectivityTest
+      });
+    } catch (error) {
+      results.push({
+        name: 'Connectivité Adsterra',
+        status: 'error',
+        message: 'Erreur lors du test de connectivité',
+        details: 'Vérifiez la connexion internet et les restrictions réseau',
+        critical: true
+      });
+    }
+
+    // 4. Validation des formats selon les spécifications Adsterra
+    const adsterraStandardFormats = {
+      '728x90': 'Leaderboard (Header)',
+      '300x250': 'Medium Rectangle',
+      '320x50': 'Mobile Banner',
+      '160x600': 'Wide Skyscraper',
+      '468x60': 'Banner',
+      '250x250': 'Square',
+      '300x600': 'Half Page'
+    };
+
+    const formatValidation = banners.map(([name, banner]) => {
+      const formatKey = `${banner.width}x${banner.height}`;
+      return {
+        name,
+        format: formatKey,
+        isStandard: formatKey in adsterraStandardFormats,
+        standardName: adsterraStandardFormats[formatKey as keyof typeof adsterraStandardFormats]
+      };
+    });
+
+    const nonStandardFormats = formatValidation.filter(f => !f.isStandard);
+    
+    if (nonStandardFormats.length === 0) {
+      results.push({
+        name: 'Validation des formats',
+        status: 'success',
+        message: 'Tous les formats correspondent aux spécifications Adsterra',
+        details: `Formats validés: ${formatValidation.map(f => f.format).join(', ')}`
+      });
+    } else {
+      results.push({
+        name: 'Validation des formats',
+        status: 'warning',
+        message: `${nonStandardFormats.length} format(s) non-standard détecté(s)`,
+        details: `Non-standard: ${nonStandardFormats.map(f => f.format).join(', ')}`
+      });
+    }
+
+    // 5. Vérification de l'environnement
     const envReady = isAdsterraReady();
     results.push({
       name: 'Environnement Browser',
@@ -75,7 +152,7 @@ const AdsterraSystemCheck: React.FC = () => {
       critical: !envReady
     });
 
-    // 4. Vérification des composants
+    // 6. Vérification des composants
     const components = [
       'AdBanner',
       'AdContainer', 
@@ -151,19 +228,104 @@ const AdsterraSystemCheck: React.FC = () => {
       });
     }
 
-    // 8. Vérification DOM en temps réel
+    // 8. Test de production - Simulation de chargement de script
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      try {
+        // Test de chargement d'un script Adsterra
+        const testScript = document.createElement('script');
+        testScript.src = 'https://www.highperformanceformat.com/js/';
+        testScript.onload = () => {
+          results.push({
+            name: 'Test de production',
+            status: 'success',
+            message: 'Scripts Adsterra chargés avec succès',
+            details: 'Connexion établie avec le serveur de publicités'
+          });
+        };
+        testScript.onerror = () => {
+          results.push({
+            name: 'Test de production',
+            status: 'error',
+            message: 'Échec du chargement des scripts Adsterra',
+            details: 'Vérifiez la connectivité et les restrictions CSP',
+            critical: true
+          });
+        };
+        
+        // Timeout pour le test
+        setTimeout(() => {
+          if (!results.find(r => r.name === 'Test de production')) {
+            results.push({
+              name: 'Test de production',
+              status: 'warning',
+              message: 'Test de production en timeout',
+              details: 'Le chargement des scripts prend plus de temps que prévu'
+            });
+          }
+        }, 5000);
+        
+      } catch (error) {
+        results.push({
+          name: 'Test de production',
+          status: 'error',
+          message: 'Erreur lors du test de production',
+          critical: true
+        });
+      }
+    } else {
+      results.push({
+        name: 'Test de production',
+        status: 'info',
+        message: 'Test de production disponible uniquement en production',
+        details: 'Déployez en production pour effectuer ce test'
+      });
+    }
+
+    // 9. Vérification DOM en temps réel
     await new Promise(resolve => setTimeout(resolve, 1000)); // Attendre le rendu
 
-    const adElements = document.querySelectorAll('.adsterra-banner');
-    const adContainers = document.querySelectorAll('.ad-wrapper');
+    const adElements = document.querySelectorAll('.adsterra-banner, [data-adsterra]');
+    const adContainers = document.querySelectorAll('.ad-wrapper, .adsterra-container');
     const scripts = document.querySelectorAll('script[src*="highperformanceformat.com"]');
 
     results.push({
-      name: 'Éléments DOM',
+      name: 'Éléments DOM Adsterra',
       status: adElements.length > 0 ? 'success' : 'info',
       message: `${adElements.length} bannière(s) détectée(s)`,
-      details: `Conteneurs: ${adContainers.length}, Scripts: ${scripts.length}`
+      details: `Conteneurs: ${adContainers.length}, Scripts externes: ${scripts.length}`
     });
+
+    // 10. Vérification des bloqueurs de publicité
+    let adBlockerDetected = false;
+    try {
+      const testElement = document.createElement('div');
+      testElement.innerHTML = '&nbsp;';
+      testElement.className = 'adsbox';
+      testElement.style.cssText = 'position:absolute;left:-10000px;';
+      document.body.appendChild(testElement);
+      
+      setTimeout(() => {
+        if (testElement.offsetHeight === 0) {
+          adBlockerDetected = true;
+        }
+        document.body.removeChild(testElement);
+        
+        results.push({
+          name: 'Détection de bloqueur de pub',
+          status: adBlockerDetected ? 'warning' : 'success',
+          message: adBlockerDetected ? 'Bloqueur de publicité détecté' : 'Aucun bloqueur détecté',
+          details: adBlockerDetected ? 'Les publicités peuvent être bloquées' : 'Affichage des publicités autorisé'
+        });
+      }, 100);
+    } catch (error) {
+      results.push({
+        name: 'Détection de bloqueur de pub',
+        status: 'info',
+        message: 'Test de détection non disponible',
+        details: 'Impossible de détecter les bloqueurs de publicité'
+      });
+    }
 
     // 9. Vérification de la connectivité réseau
     results.push({
