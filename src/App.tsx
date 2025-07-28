@@ -28,6 +28,7 @@ import ParentalControl from "./pages/ParentalControl";
 import Referral from "@/pages/Referral";
 import UpdatePassword from "./pages/UpdatePassword";
 import EmailTest from "./pages/EmailTest";
+import EmailVerification from "./pages/EmailVerification";
 import Rencontres from "./pages/Rencontres";
 import Massages from "./pages/Massages";
 import Produits from "./pages/Produits";
@@ -74,6 +75,7 @@ const AppContent = () => {
               <Route path="/parental-control" element={<ParentalControl />} />
               <Route path="/events" element={<Events />} />
               <Route path="/email-test" element={<EmailTest />} />
+              <Route path="/email-verification" element={<EmailVerification />} />
               
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />
