@@ -136,7 +136,23 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, subject, message, clientId }: ContactEmailRequest = await req.json();
+    // Si c'est un test, retourner une réponse simple
+    const body = await req.json();
+    if (body.test === true) {
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: "Edge function send-contact-email accessible",
+        timestamp: new Date().toISOString()
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      });
+    }
+
+    const { name, email, subject, message, clientId }: ContactEmailRequest = body;
 
     // Validation des données d'entrée
     if (!name || name.length > SECURITY_CONFIG.MAX_NAME_LENGTH) {

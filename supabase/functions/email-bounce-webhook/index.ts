@@ -37,6 +37,21 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Si c'est un test, retourner une réponse simple
+    if (req.url.includes('test=true')) {
+      return new Response(JSON.stringify({ 
+        success: true, 
+        message: "Webhook test OK - fonction accessible",
+        timestamp: new Date().toISOString()
+      }), {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          ...corsHeaders,
+        },
+      });
+    }
+
     const webhookEvent: ResendWebhookEvent = await req.json();
     
     console.log('Webhook reçu de Resend:', webhookEvent);

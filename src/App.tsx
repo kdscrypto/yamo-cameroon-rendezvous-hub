@@ -43,13 +43,13 @@ const queryClient = createOptimizedQueryClient();
 
 // Component interne pour utiliser les hooks de performance
 const AppContent = () => {
-  // Temporairement désactivé pour corriger les erreurs
+  // Désactivé pour éviter les erreurs de hooks
   // usePerformanceOptimization();
 
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
-      {/* <TooltipProvider delayDuration={0}> */}
-        <BrowserRouter>
+    <BrowserRouter>
+      <ThemeProvider defaultTheme="dark" storageKey="yamo-theme">
+        {/* <TooltipProvider delayDuration={0}> */}
           <div className="min-h-screen bg-background">
             <Routes>
               <Route path="/" element={<Index />} />
@@ -83,11 +83,11 @@ const AppContent = () => {
             <PageTracker />
             <AdNavigationDebugger />
           </div>
-          <Toaster />
-          <Sonner />
-        </BrowserRouter>
-      {/* </TooltipProvider> */}
-    </ThemeProvider>
+        {/* </TooltipProvider> */}
+      </ThemeProvider>
+      <Toaster />
+      <Sonner />
+    </BrowserRouter>
   );
 };
 
