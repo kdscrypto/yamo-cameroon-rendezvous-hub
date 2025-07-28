@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import EmailForwardingManager from '@/components/EmailForwardingManager';
+import EmailBounceMonitor from '@/components/EmailBounceMonitor';
 
 interface TestResult {
   success: boolean;
@@ -81,6 +82,9 @@ const EmailTest = () => {
           <div className="flex justify-center">
             <EmailForwardingManager />
           </div>
+
+          {/* Email Bounce Monitor */}
+          <EmailBounceMonitor />
 
           {/* Original Email Test */}
           <div className="flex justify-center">
@@ -171,6 +175,40 @@ const EmailTest = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* Instructions de configuration SMTP */}
+          <Card className="w-full max-w-4xl mx-auto">
+            <CardHeader>
+              <CardTitle className="text-red-600 flex items-center gap-2">
+                <Mail className="w-6 h-6" />
+                🚨 Action Requise: Configurer Resend comme SMTP Supabase
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-red-50 p-4 rounded-lg border border-red-200">
+                <p className="text-red-800 font-medium mb-2">
+                  Pour résoudre les bounces, vous DEVEZ configurer Resend comme fournisseur SMTP dans Supabase :
+                </p>
+                <ol className="text-sm text-red-700 space-y-2 ml-4">
+                  <li>1. Allez sur <a href="https://supabase.com/dashboard/project/lusovklxvtzhluekhwvu/settings/auth" className="underline text-blue-600" target="_blank">Settings → Auth → SMTP</a></li>
+                  <li>2. Activez "Enable custom SMTP"</li>
+                  <li>3. Configurez :</li>
+                  <ul className="ml-4 space-y-1">
+                    <li>• Host: smtp.resend.com</li>
+                    <li>• Port: 587</li>
+                    <li>• User: resend</li>
+                    <li>• Password: [Votre clé API Resend]</li>
+                    <li>• Sender email: noreply@yamo.chat</li>
+                    <li>• Sender name: Yamo</li>
+                  </ul>
+                  <li>4. Testez la configuration</li>
+                </ol>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Sans cette configuration, Supabase continue d'utiliser son service d'email par défaut qui cause les bounces.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </div>
       

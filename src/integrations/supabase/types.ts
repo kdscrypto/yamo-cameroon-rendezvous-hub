@@ -232,6 +232,45 @@ export type Database = {
         }
         Relationships: []
       }
+      email_tracking: {
+        Row: {
+          bounce_reason: string | null
+          created_at: string
+          email_address: string
+          email_type: string
+          id: string
+          metadata: Json | null
+          provider: string
+          risk_level: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          bounce_reason?: string | null
+          created_at?: string
+          email_address: string
+          email_type: string
+          id?: string
+          metadata?: Json | null
+          provider?: string
+          risk_level?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          bounce_reason?: string | null
+          created_at?: string
+          email_address?: string
+          email_type?: string
+          id?: string
+          metadata?: Json | null
+          provider?: string
+          risk_level?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       event_waitlist: {
         Row: {
           city: string | null
@@ -712,6 +751,17 @@ export type Database = {
         }
         Returns: boolean
       }
+      analyze_email_bounces: {
+        Args: { days_back?: number }
+        Returns: {
+          email_address: string
+          bounce_count: number
+          total_emails: number
+          bounce_rate: number
+          last_bounce_date: string
+          risk_assessment: string
+        }[]
+      }
       check_role_modification_rate_limit: {
         Args: {
           _admin_user_id: string
@@ -721,6 +771,10 @@ export type Database = {
         Returns: boolean
       }
       cleanup_old_audit_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_email_tracking: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
