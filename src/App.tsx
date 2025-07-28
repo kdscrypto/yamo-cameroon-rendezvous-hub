@@ -85,10 +85,10 @@ const AppContent = () => {
             <PageTracker />
             <AdNavigationDebugger />
           </div>
+          <Toaster />
+          <Sonner />
         {/* </TooltipProvider> */}
       </ThemeProvider>
-      <Toaster />
-      <Sonner />
     </BrowserRouter>
   );
 };
