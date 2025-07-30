@@ -3,8 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, XCircle, AlertTriangle, Wrench, RefreshCw } from 'lucide-react';
+import { CheckCircle, XCircle, AlertTriangle, Wrench, RefreshCw, Play } from 'lucide-react';
 import { validateAdsterraKeys, testAdsterraConnectivity, isDomainAllowed } from '@/utils/adsterraProductionConfig';
+import { adsterraMonitor } from '@/utils/adsterraSystemMonitor';
 
 interface AutoFixIssue {
   id: string;
@@ -26,23 +27,78 @@ const AdsterraAutoFix: React.FC = () => {
     {
       id: 'keys-validation',
       title: 'Validation des clés Adsterra',
-      description: 'Vérifier et corriger les clés de configuration',
+      description: 'Vérifier l\'unicité et la validité des clés de configuration',
       status: 'checking',
       severity: 'critical',
       autoFixAvailable: true,
       fixFunction: async () => {
         const validation = validateAdsterraKeys();
         if (!validation.isValid) {
-          // En production, informer l'utilisateur mais ne pas auto-corriger
-          if (process.env.NODE_ENV === 'production') {
+          setAutoFixResults(prev => ({
+            ...prev,
+            'keys-validation': `Erreurs détectées: ${validation.errors.join(', ')}`
+          }));
+          return false;
+        }
+        
+        if (validation.warnings.length > 0) {
+          setAutoFixResults(prev => ({
+            ...prev,
+            'keys-validation': `Clés valides avec avertissements: ${validation.warnings.join(', ')}`
+          }));
+          return true;
+        }
+        
+        setAutoFixResults(prev => ({
+          ...prev,
+          'keys-validation': 'Toutes les clés sont uniques et valides'
+        }));
+        return true;
+      }
+    },
+    {
+      id: 'dom-banner-detection',
+      title: 'Détection des bannières DOM',
+      description: 'Initialiser et vérifier la présence des conteneurs de bannières',
+      status: 'checking',
+      severity: 'warning',
+      autoFixAvailable: true,
+      fixFunction: async () => {
+        try {
+          // Attendre un peu pour que les composants se montent
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          
+          const bannerContainers = document.querySelectorAll('[data-placement]');
+          const adsterraScripts = document.querySelectorAll('script[src*="highperformanceformat.com"]');
+          
+          if (bannerContainers.length === 0) {
             setAutoFixResults(prev => ({
               ...prev,
-              'keys-validation': 'Clés de production requises - correction manuelle nécessaire'
+              'dom-banner-detection': 'Aucun conteneur de bannière détecté - vérifier l\'intégration des composants'
             }));
             return false;
           }
+          
+          setAutoFixResults(prev => ({
+            ...prev,
+            'dom-banner-detection': `${bannerContainers.length} conteneur(s) et ${adsterraScripts.length} script(s) détectés`
+          }));
+          
+          // Initialiser le tracking global
+          if (!window.adsterraLoaded) {
+            window.adsterraLoaded = (placement: string, key: string) => {
+              console.log(`Adsterra banner loaded: ${placement} (${key})`);
+            };
+          }
+          
+          return bannerContainers.length > 0;
+        } catch (error) {
+          setAutoFixResults(prev => ({
+            ...prev,
+            'dom-banner-detection': `Erreur lors de la détection: ${error instanceof Error ? error.message : 'Inconnue'}`
+          }));
+          return false;
         }
-        return validation.isValid;
       }
     },
     {
@@ -58,29 +114,20 @@ const AdsterraAutoFix: React.FC = () => {
           if (result.success) {
             setAutoFixResults(prev => ({
               ...prev,
-              'connectivity-test': `Connectivité établie via ${result.method} (${result.latency}ms)`
+              'connectivity-test': `✅ Connectivité établie via ${result.method} (${result.latency}ms)`
             }));
             return true;
           } else {
-            // Essayer des solutions de contournement
-            if (process.env.NODE_ENV === 'development') {
-              setAutoFixResults(prev => ({
-                ...prev,
-                'connectivity-test': 'Mode développement - connectivité simulée'
-              }));
-              return true;
-            }
-            
             setAutoFixResults(prev => ({
               ...prev,
-              'connectivity-test': `Échec de connectivité: ${result.error}`
+              'connectivity-test': `❌ ${result.error || 'Connectivité échouée'} (${result.latency}ms)`
             }));
             return false;
           }
         } catch (error) {
           setAutoFixResults(prev => ({
             ...prev,
-            'connectivity-test': `Erreur de test: ${error instanceof Error ? error.message : 'Inconnue'}`
+            'connectivity-test': `❌ Erreur de test: ${error instanceof Error ? error.message : 'Inconnue'}`
           }));
           return false;
         }
@@ -117,26 +164,44 @@ const AdsterraAutoFix: React.FC = () => {
       severity: 'info',
       autoFixAvailable: true,
       fixFunction: async () => {
-        // Optimiser les paramètres de performance
+        const startTime = performance.now();
         const optimizations = [];
         
-        // Vérifier et ajuster les timeouts
+        // Optimiser les délais de chargement
         if (localStorage.getItem('adsterra-timeout-optimized') !== 'true') {
           localStorage.setItem('adsterra-timeout-optimized', 'true');
-          optimizations.push('Timeouts optimisés');
+          localStorage.setItem('adsterra-load-timeout', '3000'); // 3s au lieu de 5s
+          optimizations.push('Timeouts réduits (3s)');
         }
         
-        // Activer la mise en cache
+        // Activer le pré-chargement DNS
+        if (!document.querySelector('link[rel="dns-prefetch"][href*="highperformanceformat.com"]')) {
+          const link = document.createElement('link');
+          link.rel = 'dns-prefetch';
+          link.href = 'https://www.highperformanceformat.com';
+          document.head.appendChild(link);
+          optimizations.push('DNS prefetch activé');
+        }
+        
+        // Optimiser la détection des bannières
+        if (localStorage.getItem('adsterra-fast-detection') !== 'true') {
+          localStorage.setItem('adsterra-fast-detection', 'true');
+          optimizations.push('Détection rapide activée');
+        }
+        
+        // Activer la mise en cache des scripts
         if (localStorage.getItem('adsterra-cache-enabled') !== 'true') {
           localStorage.setItem('adsterra-cache-enabled', 'true');
-          optimizations.push('Cache activé');
+          optimizations.push('Cache des scripts activé');
         }
+        
+        const executionTime = Math.round(performance.now() - startTime);
         
         setAutoFixResults(prev => ({
           ...prev,
           'performance-optimization': optimizations.length > 0 
-            ? `Optimisations appliquées: ${optimizations.join(', ')}`
-            : 'Déjà optimisé'
+            ? `✅ Optimisations appliquées (${executionTime}ms): ${optimizations.join(', ')}`
+            : `✅ Déjà optimisé (${executionTime}ms)`
         }));
         
         return true;
@@ -184,9 +249,48 @@ const AdsterraAutoFix: React.FC = () => {
     setIsFixing(true);
     setAutoFixResults({});
     
-    await performAutoCheck();
+    try {
+      // Utiliser le nouveau système de monitoring
+      const healthReport = await adsterraMonitor.performHealthCheck();
+      const autoFixResult = await adsterraMonitor.autoFixIssues();
+      
+      // Mettre à jour les résultats avec les détails du système de monitoring
+      const combinedResults: Record<string, string> = {};
+      
+      autoFixResult.details.forEach((detail, index) => {
+        combinedResults[`monitor-fix-${index}`] = detail;
+      });
+      
+      if (autoFixResult.fixed > 0) {
+        combinedResults['summary'] = `✅ ${autoFixResult.fixed} problème(s) corrigé(s), ${autoFixResult.failed} échec(s)`;
+      }
+      
+      if (healthReport.isOperational) {
+        combinedResults['operational-status'] = `🎉 Système opérationnel (Score: ${healthReport.score}/100)`;
+      } else {
+        combinedResults['operational-status'] = `⚠️ Système non opérationnel (Score: ${healthReport.score}/100)`;
+      }
+      
+      setAutoFixResults(combinedResults);
+      
+      // Relancer la vérification classique
+      await performAutoCheck();
+      
+    } catch (error) {
+      setAutoFixResults({
+        error: `Erreur lors de la correction automatique: ${error instanceof Error ? error.message : 'Inconnue'}`
+      });
+    }
     
     setIsFixing(false);
+  };
+
+  const startSystemMonitoring = () => {
+    adsterraMonitor.startMonitoring(30000); // Surveillance toutes les 30 secondes
+    setAutoFixResults(prev => ({
+      ...prev,
+      'monitoring': '🔄 Surveillance système démarrée (30s)'
+    }));
   };
 
   const getStatusIcon = (status: AutoFixIssue['status']) => {
@@ -329,7 +433,7 @@ const AdsterraAutoFix: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex gap-2 mt-6">
+          <div className="flex gap-2 mt-6 flex-wrap">
             <Button 
               onClick={runAutoFix} 
               disabled={isFixing}
@@ -340,7 +444,7 @@ const AdsterraAutoFix: React.FC = () => {
               ) : (
                 <Wrench className="w-4 h-4" />
               )}
-              {isFixing ? 'Correction en cours...' : 'Lancer la correction auto'}
+              {isFixing ? 'Correction en cours...' : 'Correction automatique complète'}
             </Button>
             
             <Button 
@@ -348,7 +452,17 @@ const AdsterraAutoFix: React.FC = () => {
               variant="outline"
               disabled={isFixing}
             >
+              <RefreshCw className="w-4 h-4 mr-2" />
               Nouvelle vérification
+            </Button>
+
+            <Button 
+              onClick={startSystemMonitoring} 
+              variant="secondary"
+              disabled={isFixing}
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Surveillance continue
             </Button>
           </div>
 
