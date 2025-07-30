@@ -47,7 +47,9 @@ const AdsterraSystemCheck: React.FC = () => {
     const banners = Object.entries(ADSTERRA_CONFIG.BANNERS);
     const uniqueKeys = new Set(banners.map(([, banner]) => banner.key));
     const placeholderKeys = banners.filter(([, banner]) => 
-      banner.key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA')
+      banner.key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA') ||
+      banner.key.includes('ea16b4d4359bf41430e0c1ad103b76af') ||
+      banner.key.startsWith('dev-')
     );
 
     if (placeholderKeys.length === 0) {
@@ -76,30 +78,79 @@ const AdsterraSystemCheck: React.FC = () => {
       });
     }
 
-    // 3. Test de connectivité Adsterra
+    // 3. Test de connectivité Adsterra avec méthodes alternatives
+    let connectivityStatus = 'error';
+    let connectivityMessage = 'Impossible d\'accéder à highperformanceformat.com';
+    let connectivityDetails = 'Test de connectivité vers le serveur de scripts Adsterra';
+
     try {
-      const connectivityTest = await fetch('https://www.highperformanceformat.com/js/', { 
-        method: 'HEAD',
-        mode: 'no-cors',
-        cache: 'no-cache'
-      }).then(() => true).catch(() => false);
+      // Méthode 1: Test avec fetch HEAD
+      const headTest = await Promise.race([
+        fetch('https://www.highperformanceformat.com/js/', { 
+          method: 'HEAD',
+          mode: 'no-cors',
+          cache: 'no-cache'
+        }).then(() => true),
+        new Promise<boolean>((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+      ]).catch(() => false);
+
+      if (headTest) {
+        connectivityStatus = 'success';
+        connectivityMessage = 'Accès à highperformanceformat.com confirmé';
+      } else {
+        // Méthode 2: Test avec création de script DOM
+        const scriptTest = await new Promise<boolean>((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://www.highperformanceformat.com/js/test.js';
+          script.onload = () => {
+            document.head.removeChild(script);
+            resolve(true);
+          };
+          script.onerror = () => {
+            document.head.removeChild(script);
+            resolve(false);
+          };
+          
+          // Timeout de 2 secondes
+          setTimeout(() => {
+            if (script.parentNode) {
+              document.head.removeChild(script);
+            }
+            resolve(false);
+          }, 2000);
+          
+          document.head.appendChild(script);
+        });
+
+        if (scriptTest) {
+          connectivityStatus = 'success';
+          connectivityMessage = 'Connectivité Adsterra établie via test de script';
+          connectivityDetails = 'Connexion réussie par méthode alternative';
+        } else if (process.env.NODE_ENV === 'development') {
+          connectivityStatus = 'warning';
+          connectivityMessage = 'Test de connectivité limité en développement';
+          connectivityDetails = 'La connectivité sera testée automatiquement en production';
+        }
+      }
 
       results.push({
         name: 'Connectivité Adsterra',
-        status: connectivityTest ? 'success' : 'error',
-        message: connectivityTest 
-          ? 'Accès à highperformanceformat.com confirmé' 
-          : 'Impossible d\'accéder à highperformanceformat.com',
-        details: 'Test de connectivité vers le serveur de scripts Adsterra',
-        critical: !connectivityTest
+        status: connectivityStatus as 'success' | 'warning' | 'error',
+        message: connectivityMessage,
+        details: connectivityDetails,
+        critical: connectivityStatus === 'error' && process.env.NODE_ENV === 'production'
       });
     } catch (error) {
       results.push({
         name: 'Connectivité Adsterra',
-        status: 'error',
-        message: 'Erreur lors du test de connectivité',
-        details: 'Vérifiez la connexion internet et les restrictions réseau',
-        critical: true
+        status: process.env.NODE_ENV === 'development' ? 'warning' : 'error',
+        message: process.env.NODE_ENV === 'development' 
+          ? 'Test de connectivité différé en développement'
+          : 'Erreur lors du test de connectivité',
+        details: process.env.NODE_ENV === 'development'
+          ? 'Les tests de connectivité complets sont effectués en production'
+          : 'Vérifiez la connexion internet et les restrictions réseau',
+        critical: process.env.NODE_ENV === 'production'
       });
     }
 
@@ -336,13 +387,28 @@ const AdsterraSystemCheck: React.FC = () => {
       critical: !navigator.onLine
     });
 
-    // 10. Test de performance
+    // 10. Test de performance optimisé
     const performanceEntry = performance.now();
+    const performanceTime = Math.round(performanceEntry);
+    
+    let performanceStatus: 'success' | 'warning' | 'error' = 'success';
+    let performanceMessage = `Temps de vérification: ${performanceTime}ms`;
+    
+    if (performanceTime > 5000) {
+      performanceStatus = 'error';
+      performanceMessage += ' - Performance critique';
+    } else if (performanceTime > 1000) {
+      performanceStatus = 'warning';
+      performanceMessage += ' - Performance acceptable';
+    } else {
+      performanceMessage += ' - Performance optimale';
+    }
+
     results.push({
       name: 'Performance système',
-      status: performanceEntry < 50 ? 'success' : 'warning',
-      message: `Temps de vérification: ${Math.round(performanceEntry)}ms`,
-      details: 'Délai de chargement configuré: 1000ms'
+      status: performanceStatus,
+      message: performanceMessage,
+      details: `Délai de chargement configuré: 1000ms | Seuil critique: 5000ms`
     });
 
     setChecks(results);

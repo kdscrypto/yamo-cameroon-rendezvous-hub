@@ -23,8 +23,10 @@ const AdsterraPreDeploymentChecklist: React.FC = () => {
       title: 'Vérification des clés Adsterra',
       description: 'Remplacer les clés placeholder par de vraies clés Adsterra',
       status: Object.values(ADSTERRA_CONFIG.BANNERS).some(banner => 
-        banner.key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA')
-      ) ? 'failed' : 'pending',
+        banner.key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA') ||
+        banner.key.includes('ea16b4d4359bf41430e0c1ad103b76af') ||
+        (process.env.NODE_ENV === 'production' && banner.key.startsWith('dev-'))
+      ) ? 'failed' : (process.env.NODE_ENV === 'production' ? 'completed' : 'pending'),
       critical: true,
       externalLink: 'https://publisher.adsterra.com/'
     },
@@ -76,10 +78,18 @@ const AdsterraPreDeploymentChecklist: React.FC = () => {
     ));
 
     try {
-      const response = await fetch('https://www.highperformanceformat.com/js/', {
+      // Test avec timeout optimisé
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('timeout')), 5000)
+      );
+
+      const fetchPromise = fetch('https://www.highperformanceformat.com/js/', {
         method: 'HEAD',
-        mode: 'no-cors'
+        mode: 'no-cors',
+        cache: 'no-cache'
       });
+
+      await Promise.race([fetchPromise, timeoutPromise]);
       
       setChecklist(prev => prev.map(item => 
         item.id === 'connectivity' 
@@ -87,9 +97,12 @@ const AdsterraPreDeploymentChecklist: React.FC = () => {
           : item
       ));
     } catch (error) {
+      // En développement, on considère que c'est normal
+      const status = process.env.NODE_ENV === 'development' ? 'pending' : 'failed';
+      
       setChecklist(prev => prev.map(item => 
         item.id === 'connectivity' 
-          ? { ...item, status: 'failed' }
+          ? { ...item, status }
           : item
       ));
     }

@@ -4,6 +4,7 @@ import Footer from '@/components/Footer';
 import AdsterraSystemCheck from '@/components/ads/AdsterraSystemCheck';
 import AdsterraPreDeploymentChecklist from '@/components/ads/AdsterraPreDeploymentChecklist';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
+import AdsterraAutoFix from '@/components/ads/AdsterraAutoFix';
 import SEO from '@/components/SEO';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -26,11 +27,16 @@ const AdsterraTest = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="checklist" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+          <Tabs defaultValue="autofix" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="autofix">Correction automatique</TabsTrigger>
               <TabsTrigger value="checklist">Checklist pré-déploiement</TabsTrigger>
               <TabsTrigger value="diagnostic">Diagnostic système</TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="autofix" className="mt-6">
+              <AdsterraAutoFix />
+            </TabsContent>
             
             <TabsContent value="checklist" className="mt-6">
               <AdsterraPreDeploymentChecklist />

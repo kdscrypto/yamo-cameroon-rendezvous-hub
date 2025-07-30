@@ -1,32 +1,34 @@
+import { getAdsterraKey } from '@/utils/adsterraProductionConfig';
+
 export const ADSTERRA_CONFIG = {
   // Configuration pour les bannières Adsterra
   BANNERS: {
     HEADER_BANNER: {
-      key: 'ea16b4d4359bf41430e0c1ad103b76af',
+      key: getAdsterraKey('HEADER_BANNER'),
       width: 728,
       height: 90,
       format: 'iframe'
     },
     SIDEBAR_RECTANGLE: {
-      key: 'ea16b4d4359bf41430e0c1ad103b76af',
+      key: getAdsterraKey('SIDEBAR_RECTANGLE'),
       width: 300,
       height: 250,
       format: 'banner'
     },
     CONTENT_RECTANGLE: {
-      key: 'ea16b4d4359bf41430e0c1ad103b76af',
+      key: getAdsterraKey('CONTENT_RECTANGLE'),
       width: 300,
       height: 250,
       format: 'banner'
     },
     FOOTER_BANNER: {
-      key: 'ea16b4d4359bf41430e0c1ad103b76af',
+      key: getAdsterraKey('FOOTER_BANNER'),
       width: 728,
       height: 90,
       format: 'banner'
     },
     MOBILE_BANNER: {
-      key: 'ea16b4d4359bf41430e0c1ad103b76af',
+      key: getAdsterraKey('MOBILE_BANNER'),
       width: 320,
       height: 50,
       format: 'banner'
