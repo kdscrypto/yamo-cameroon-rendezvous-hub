@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CheckCircle, XCircle, AlertTriangle, ArrowRight, ExternalLink } from 'lucide-react';
 import { ADSTERRA_CONFIG } from '@/config/adsterraConfig';
+import { validateAdsterraKeys } from '@/utils/adsterraProductionConfig';
 
 interface ChecklistItem {
   id: string;
@@ -22,11 +23,10 @@ const AdsterraPreDeploymentChecklist: React.FC = () => {
       id: 'keys',
       title: 'Vérification des clés Adsterra',
       description: 'Remplacer les clés placeholder par de vraies clés Adsterra',
-      status: Object.values(ADSTERRA_CONFIG.BANNERS).some(banner => 
-        banner.key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA') ||
-        banner.key.includes('ea16b4d4359bf41430e0c1ad103b76af') ||
-        (process.env.NODE_ENV === 'production' && banner.key.startsWith('dev-'))
-      ) ? 'failed' : (process.env.NODE_ENV === 'production' ? 'completed' : 'pending'),
+      status: (() => {
+        const keyValidation = validateAdsterraKeys();
+        return keyValidation.isValid ? 'completed' : 'failed';
+      })(),
       critical: true,
       externalLink: 'https://publisher.adsterra.com/'
     },

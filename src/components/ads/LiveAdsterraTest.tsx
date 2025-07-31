@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { getAdsterraKey } from '@/utils/adsterraProductionConfig';
-import AdsterraBannerContainer from './AdsterraBannerContainer';
+import AdsterraProductionBanner from './AdsterraProductionBanner';
 
 interface BannerTestResult {
   placement: string;
@@ -126,7 +126,7 @@ const LiveAdsterraTest: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="border-2 border-dashed border-muted rounded-lg p-4 flex justify-center">
-                <AdsterraBannerContainer
+                <AdsterraProductionBanner
                   placement={config.placement}
                   width={config.width}
                   height={config.height}

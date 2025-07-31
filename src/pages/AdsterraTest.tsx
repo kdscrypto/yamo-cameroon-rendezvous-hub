@@ -7,6 +7,7 @@ import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import AdsterraAutoFix from '@/components/ads/AdsterraAutoFix';
 import AdsterraSystemFix from '@/components/ads/AdsterraSystemFix';
 import LiveAdsterraTest from '@/components/ads/LiveAdsterraTest';
+import AdsterraTestBanners from '@/components/ads/AdsterraTestBanners';
 import SEO from '@/components/SEO';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -30,28 +31,33 @@ const AdsterraTest = () => {
           </div>
 
           <Tabs defaultValue="systemfix" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-6">
               <TabsTrigger value="systemfix">🚀 Réparation système</TabsTrigger>
+              <TabsTrigger value="testbanners">🎯 Bannières de test</TabsTrigger>
               <TabsTrigger value="livetest">📺 Test en direct</TabsTrigger>
-              <TabsTrigger value="autofix">Correction automatique</TabsTrigger>
-              <TabsTrigger value="checklist">Checklist pré-déploiement</TabsTrigger>
-              <TabsTrigger value="diagnostic">Diagnostic système</TabsTrigger>
+              <TabsTrigger value="checklist">✅ Checklist</TabsTrigger>
+              <TabsTrigger value="autofix">🔧 Auto-fix</TabsTrigger>
+              <TabsTrigger value="diagnostic">🔍 Diagnostic</TabsTrigger>
             </TabsList>
             
             <TabsContent value="systemfix" className="mt-6">
               <AdsterraSystemFix />
             </TabsContent>
             
+            <TabsContent value="testbanners" className="mt-6">
+              <AdsterraTestBanners />
+            </TabsContent>
+            
             <TabsContent value="livetest" className="mt-6">
               <LiveAdsterraTest />
             </TabsContent>
             
-            <TabsContent value="autofix" className="mt-6">
-              <AdsterraAutoFix />
-            </TabsContent>
-            
             <TabsContent value="checklist" className="mt-6">
               <AdsterraPreDeploymentChecklist />
+            </TabsContent>
+            
+            <TabsContent value="autofix" className="mt-6">
+              <AdsterraAutoFix />
             </TabsContent>
             
             <TabsContent value="diagnostic" className="mt-6">
