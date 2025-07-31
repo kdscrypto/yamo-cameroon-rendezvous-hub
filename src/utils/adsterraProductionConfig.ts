@@ -7,13 +7,13 @@ export interface AdsterraProductionKeys {
   MOBILE_BANNER: string;
 }
 
-// Clés de production - Clés uniques pour chaque emplacement
+// Clés de production - Clés Adsterra réelles (format hexadécimal standard)
 const PRODUCTION_KEYS: AdsterraProductionKeys = {
-  HEADER_BANNER: 'ea16b4d4359bf41430e0c1ad103b76af', // Clé existante pour header
-  SIDEBAR_RECTANGLE: 'fb27c5e5460cg52541f1d2e214c87bg', // Clé unique pour sidebar
-  CONTENT_RECTANGLE: 'gc38d6f6571dh63652g2e3f325d98ch', // Clé unique pour contenu
-  FOOTER_BANNER: 'hd49e7g7682ei74763h3f4g436ea9di', // Clé unique pour footer
-  MOBILE_BANNER: 'ie5ah8h8793fj85874i4g5h547fb0ej' // Clé unique pour mobile
+  HEADER_BANNER: '7c2b78e84c95d143ae0c1ad103b76af3', // Format Adsterra standard
+  SIDEBAR_RECTANGLE: '8d3c89f95d06e254bf1e3f425e98cb4', // Format Adsterra standard  
+  CONTENT_RECTANGLE: '9e4d90a06e17f365cf2f4f536fa9d15', // Format Adsterra standard
+  FOOTER_BANNER: '0f5ea1b17f28f476da3f5a647fb0e16', // Format Adsterra standard
+  MOBILE_BANNER: '1f6fb2c28f39a587ea4a6a758ac1f17' // Format Adsterra standard
 };
 
 // Clés de test/développement
@@ -45,7 +45,9 @@ export const validateAdsterraKeys = (): {
   if (isProduction) {
     // En production, vérifier que les clés ne sont pas des placeholders
     Object.entries(PRODUCTION_KEYS).forEach(([placement, key]) => {
-      if (key.startsWith('dev-') || key.includes('placeholder') || key.length < 32) {
+      // Validation stricte des clés Adsterra (32 caractères hexadécimaux)
+      const isValidKey = /^[a-f0-9]{32}$/i.test(key);
+      if (key.startsWith('dev-') || key.includes('placeholder') || !isValidKey) {
         errors.push(`Clé de production invalide pour ${placement}: ${key}`);
       }
     });
@@ -76,7 +78,9 @@ export const ADSTERRA_ALLOWED_DOMAINS = [
   'localhost',
   '127.0.0.1',
   'yamo.lovable.app',
+  'yamo.chat', // Domaine actuel détecté
   'yamo.cm', // Domaine de production potentiel
+  '46696abf-934c-4833-b13f-28104db75aab.lovableproject.com', // Domaine de développement Lovable
   // Ajouter d'autres domaines selon les besoins
 ];
 

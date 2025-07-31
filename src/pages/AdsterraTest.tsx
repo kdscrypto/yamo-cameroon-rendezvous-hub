@@ -5,6 +5,8 @@ import AdsterraSystemCheck from '@/components/ads/AdsterraSystemCheck';
 import AdsterraPreDeploymentChecklist from '@/components/ads/AdsterraPreDeploymentChecklist';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import AdsterraAutoFix from '@/components/ads/AdsterraAutoFix';
+import AdsterraSystemFix from '@/components/ads/AdsterraSystemFix';
+import LiveAdsterraTest from '@/components/ads/LiveAdsterraTest';
 import SEO from '@/components/SEO';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -27,12 +29,22 @@ const AdsterraTest = () => {
             </p>
           </div>
 
-          <Tabs defaultValue="autofix" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+          <Tabs defaultValue="systemfix" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="systemfix">🚀 Réparation système</TabsTrigger>
+              <TabsTrigger value="livetest">📺 Test en direct</TabsTrigger>
               <TabsTrigger value="autofix">Correction automatique</TabsTrigger>
               <TabsTrigger value="checklist">Checklist pré-déploiement</TabsTrigger>
               <TabsTrigger value="diagnostic">Diagnostic système</TabsTrigger>
             </TabsList>
+            
+            <TabsContent value="systemfix" className="mt-6">
+              <AdsterraSystemFix />
+            </TabsContent>
+            
+            <TabsContent value="livetest" className="mt-6">
+              <LiveAdsterraTest />
+            </TabsContent>
             
             <TabsContent value="autofix" className="mt-6">
               <AdsterraAutoFix />
