@@ -178,7 +178,7 @@ const AdDetail = () => {
             {/* Back button */}
             <Button 
               variant="outline" 
-              className="mb-6"
+              className="mb-6 border-2 border-primary/20 hover:border-primary hover:bg-primary/5 backdrop-blur-sm bg-background/80 shadow-lg"
               onClick={() => navigate(-1)}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
