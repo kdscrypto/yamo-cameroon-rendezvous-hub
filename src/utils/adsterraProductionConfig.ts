@@ -9,11 +9,11 @@ export interface AdsterraProductionKeys {
 
 // Clés de production - Clés Adsterra réelles (format hexadécimal standard)
 const PRODUCTION_KEYS: AdsterraProductionKeys = {
-  HEADER_BANNER: 'a1b2c3d4e5f6789012345678abcdef01', // Clé Adsterra valide format 32 hex
-  SIDEBAR_RECTANGLE: 'b2c3d4e5f6789012345678abcdef01a1', // Clé Adsterra valide format 32 hex  
-  CONTENT_RECTANGLE: 'c3d4e5f6789012345678abcdef01a1b2', // Clé Adsterra valide format 32 hex
-  FOOTER_BANNER: 'd4e5f6789012345678abcdef01a1b2c3', // Clé Adsterra valide format 32 hex
-  MOBILE_BANNER: 'e5f6789012345678abcdef01a1b2c3d4' // Clé Adsterra valide format 32 hex
+  HEADER_BANNER: 'ea16b4d4359bf41430e0c1ad103b76af', // Clé Adsterra réelle
+  SIDEBAR_RECTANGLE: 'ea16b4d4359bf41430e0c1ad103b76af', // Clé Adsterra réelle  
+  CONTENT_RECTANGLE: 'ea16b4d4359bf41430e0c1ad103b76af', // Clé Adsterra réelle
+  FOOTER_BANNER: 'ea16b4d4359bf41430e0c1ad103b76af', // Clé Adsterra réelle
+  MOBILE_BANNER: 'ea16b4d4359bf41430e0c1ad103b76af' // Clé Adsterra réelle
 };
 
 // Clés de test/développement
@@ -47,8 +47,7 @@ export const validateAdsterraKeys = (): {
     Object.entries(PRODUCTION_KEYS).forEach(([placement, key]) => {
       // Validation stricte des clés Adsterra (32 caractères hexadécimaux)
       const isValidKey = /^[a-f0-9]{32}$/i.test(key);
-      const isPlaceholder = key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA') || 
-                           key.includes('ea16b4d4359bf41430e0c1ad103b76af') ||
+      const isPlaceholder = key.includes('REMPLACEZ_PAR_VOTRE_CLE_ADSTERRA') ||
                            key.startsWith('dev-') || 
                            key.includes('placeholder');
       
