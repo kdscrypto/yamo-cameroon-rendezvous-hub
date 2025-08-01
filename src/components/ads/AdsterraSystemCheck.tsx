@@ -205,9 +205,8 @@ const AdsterraSystemCheck: React.FC = () => {
 
     // 6. Vérification des composants
     const components = [
-      'AdBanner',
+      'AdsterraBanner',
       'AdContainer', 
-      'AdsterraAdUnit',
       'AdsterraVerification',
       'OptimizedAdBanner',
       'OptimizedAdUnit'

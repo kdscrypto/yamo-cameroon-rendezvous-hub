@@ -6,7 +6,7 @@ import HeroSection from '@/components/Homepage/HeroSection';
 import CategoriesSection from '@/components/Homepage/CategoriesSection';
 import OptimizedAdSections from '@/components/Homepage/OptimizedAdSections';
 import SafetySection from '@/components/Homepage/SafetySection';
-import AdBanner from '@/components/ads/AdBanner';
+import AdsterraBanner from '@/components/AdsterraBanner';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import AdContainer from '@/components/ads/AdContainer';
 import SEO from '@/components/SEO';
@@ -86,7 +86,9 @@ const Index = React.memo(() => {
         
         {/* Header Ad Banner */}
         <AdContainer variant="transparent" title="">
-          <AdBanner placement="header" />
+          <div className="flex justify-center">
+            <AdsterraBanner slot="BANNER_728x90" />
+          </div>
         </AdContainer>
         
         <HeroSection />
@@ -96,7 +98,7 @@ const Index = React.memo(() => {
         <section className="py-4">
           <div className="container mx-auto px-4">
             <AdContainer variant="subtle">
-              <AdBanner placement="content" />
+              <AdsterraBanner slot="CONTENT_RECTANGLE" />
             </AdContainer>
           </div>
         </section>
