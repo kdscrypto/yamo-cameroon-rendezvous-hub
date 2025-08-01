@@ -84,28 +84,60 @@ const Index = React.memo(() => {
       <div className="min-h-screen flex flex-col bg-background">
         <Header />
         
-        {/* Header Ad Banner */}
-        <AdContainer variant="transparent" title="">
-          <div className="flex justify-center">
-            <AdsterraBanner slot="BANNER_728x90" />
-          </div>
-        </AdContainer>
-        
         <HeroSection />
-        <CategoriesSection />
         
-        {/* Content Ad between sections */}
-        <section className="py-4">
-          <div className="container mx-auto px-4">
-            <AdContainer variant="subtle">
-              <AdsterraBanner slot="CONTENT_RECTANGLE" />
+        {/* Bannière principale optimisée - Positionnement premium après hero */}
+        <section className="py-6 bg-gradient-to-r from-background/50 to-accent/5">
+          <div className="container mx-auto px-4 flex justify-center">
+            <AdContainer variant="premium" title="Annonces premium">
+              <AdsterraBanner slot="BANNER_728x90" />
             </AdContainer>
           </div>
         </section>
         
-        <OptimizedAdSections />
+        <CategoriesSection />
+        
+        {/* Bannière rectangulaire au centre - Zone haute visibilité */}
+        <section className="py-8">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              <div className="lg:col-span-2">
+                <OptimizedAdSections />
+              </div>
+              <aside className="lg:col-span-1">
+                <div className="sticky top-20 space-y-6">
+                  <AdContainer variant="sidebar" title="Annonces sponsorisées">
+                    <AdsterraBanner slot="SIDEBAR_RECTANGLE" />
+                  </AdContainer>
+                  <AdContainer variant="sidebar">
+                    <AdsterraBanner slot="CONTENT_RECTANGLE" />
+                  </AdContainer>
+                </div>
+              </aside>
+            </div>
+          </div>
+        </section>
+        
         <SafetySection />
+        
+        {/* Bannière footer - Dernière chance de conversion */}
+        <section className="py-6 border-t border-border/20 bg-muted/30">
+          <div className="container mx-auto px-4 flex justify-center">
+            <AdContainer variant="bordered" title="Dernières annonces">
+              <AdsterraBanner slot="FOOTER_BANNER" />
+            </AdContainer>
+          </div>
+        </section>
+        
         <Footer />
+        
+        {/* Bannière mobile sticky en bas - Optimisée pour mobile */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-sm border-t border-border/20 p-2">
+          <div className="flex justify-center">
+            <AdsterraBanner slot="MOBILE_BANNER" />
+          </div>
+        </div>
+        
         <AdsterraVerification />
       </div>
     </>
