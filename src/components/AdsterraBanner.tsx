@@ -42,7 +42,27 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
     return null;
   }
   
-  return <div ref={bannerRef} style={{ width: `${adDetails.width}px`, height: `${adDetails.height}px`, display: 'inline-block' }} />;
+  return (
+    <div 
+      ref={bannerRef} 
+      className="adsterra-banner-container"
+      style={{ 
+        width: `${adDetails.width}px`, 
+        height: `${adDetails.height}px`, 
+        minWidth: `${adDetails.width}px`,
+        minHeight: `${adDetails.height}px`,
+        maxWidth: `${adDetails.width}px`,
+        maxHeight: `${adDetails.height}px`,
+        display: 'block',
+        overflow: 'hidden',
+        position: 'relative',
+        backgroundColor: '#f8f9fa',
+        border: '1px solid #e9ecef'
+      }}
+      data-slot={slot}
+      data-dimensions={`${adDetails.width}x${adDetails.height}`}
+    />
+  );
 };
 
 export default AdsterraBanner;

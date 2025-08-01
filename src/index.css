@@ -454,3 +454,63 @@
                     linear-gradient(90deg, rgba(255, 215, 0, 0.1) 1px, transparent 1px);
   background-size: 20px 20px;
 }
+
+/* Styles pour les bannières Adsterra - Forcer les dimensions */
+.adsterra-banner-container {
+  box-sizing: border-box !important;
+}
+
+.adsterra-banner-container iframe,
+.adsterra-banner-container > div,
+.adsterra-banner-container script + * {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  box-sizing: border-box !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+}
+
+/* Styles spécifiques pour les différents formats de bannières */
+.adsterra-banner-container[data-slot="BANNER_728x90"] {
+  width: 728px !important;
+  height: 90px !important;
+}
+
+.adsterra-banner-container[data-slot="SIDEBAR_RECTANGLE"] {
+  width: 300px !important;
+  height: 250px !important;
+}
+
+.adsterra-banner-container[data-slot="CONTENT_RECTANGLE"] {
+  width: 336px !important;
+  height: 280px !important;
+}
+
+.adsterra-banner-container[data-slot="FOOTER_BANNER"] {
+  width: 728px !important;
+  height: 90px !important;
+}
+
+.adsterra-banner-container[data-slot="MOBILE_BANNER"] {
+  width: 320px !important;
+  height: 50px !important;
+}
+
+/* Responsivité pour les bannières */
+@media (max-width: 768px) {
+  .adsterra-banner-container[data-slot="BANNER_728x90"],
+  .adsterra-banner-container[data-slot="FOOTER_BANNER"] {
+    width: 320px !important;
+    height: 50px !important;
+  }
+  
+  .adsterra-banner-container[data-slot="SIDEBAR_RECTANGLE"],
+  .adsterra-banner-container[data-slot="CONTENT_RECTANGLE"] {
+    width: 300px !important;
+    height: 250px !important;
+  }
+}

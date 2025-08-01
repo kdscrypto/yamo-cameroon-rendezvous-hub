@@ -12,11 +12,15 @@ import AdContainer from '@/components/ads/AdContainer';
 import SEO from '@/components/SEO';
 import { useSEO } from '@/hooks/useSEO';
 import { useAdsterra } from '@/hooks/useAdsterra';
+import { useAdsterraDimensionsFix } from '@/hooks/useAdsterraDimensionsFix';
 
 const Index = React.memo(() => {
   const [ageVerified, setAgeVerified] = useState(false);
   const { getSEOForPath } = useSEO();
   const { refreshAds: refreshAdsterra } = useAdsterra();
+  
+  // Hook pour corriger automatiquement les dimensions des bannières
+  useAdsterraDimensionsFix();
 
   // Check age verification with enhanced security
   useEffect(() => {
