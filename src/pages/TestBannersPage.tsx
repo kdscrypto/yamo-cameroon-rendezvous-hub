@@ -33,9 +33,7 @@ const TestBannersPage = () => {
               </CardHeader>
               <CardContent className="flex justify-center">
                 <AdsterraBanner 
-                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
-                  width={728} 
-                  height={90}
+                  slot="BANNER_728x90"
                 />
               </CardContent>
             </Card>
@@ -48,9 +46,7 @@ const TestBannersPage = () => {
               </CardHeader>
               <CardContent className="flex justify-center">
                 <AdsterraBanner 
-                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
-                  width={300} 
-                  height={250}
+                  slot="SIDEBAR_RECTANGLE"
                 />
               </CardContent>
             </Card>
@@ -63,9 +59,7 @@ const TestBannersPage = () => {
               </CardHeader>
               <CardContent className="flex justify-center">
                 <AdsterraBanner 
-                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
-                  width={336} 
-                  height={280}
+                  slot="CONTENT_RECTANGLE"
                 />
               </CardContent>
             </Card>
@@ -78,9 +72,7 @@ const TestBannersPage = () => {
               </CardHeader>
               <CardContent className="flex justify-center">
                 <AdsterraBanner 
-                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
-                  width={728} 
-                  height={90}
+                  slot="FOOTER_BANNER"
                 />
               </CardContent>
             </Card>
@@ -93,9 +85,7 @@ const TestBannersPage = () => {
               </CardHeader>
               <CardContent className="flex justify-center">
                 <AdsterraBanner 
-                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
-                  width={320} 
-                  height={50}
+                  slot="MOBILE_BANNER"
                 />
               </CardContent>
             </Card>
