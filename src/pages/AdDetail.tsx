@@ -12,7 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import AdImageGallery from '@/components/AdDetail/AdImageGallery';
 import AdInfoSection from '@/components/AdDetail/AdInfoSection';
 import AdContactSection from '@/components/AdDetail/AdContactSection';
-import AdsterraBanner from '@/components/AdsterraBanner';
+import AdsterraWrapper from '@/components/AdsterraWrapper';
 import AdContainer from '@/components/ads/AdContainer';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import { shouldShowAdsterraAd } from '@/config/adsterraConfig';
@@ -222,7 +222,7 @@ const AdDetail = () => {
               <div className="mt-12">
                 <AdContainer title="Publicité" variant="subtle">
                   <div className="flex justify-center">
-                    <AdsterraBanner slot="CONTENT_RECTANGLE" />
+                    <AdsterraWrapper slot="CONTENT_RECTANGLE" />
                   </div>
                 </AdContainer>
               </div>
@@ -233,7 +233,7 @@ const AdDetail = () => {
               <div className="mt-8">
                 <AdContainer title="Annonces similaires" variant="bordered">
                   <div className="flex justify-center">
-                    <AdsterraBanner slot="CONTENT_RECTANGLE" />
+                    <AdsterraWrapper slot="CONTENT_RECTANGLE" />
                   </div>
                 </AdContainer>
               </div>

@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import UserAds from '@/components/dashboard/UserAds';
 import RealTimeMessages from '@/components/dashboard/RealTimeMessages';
 import AdContainer from '@/components/ads/AdContainer';
-import AdsterraBanner from '@/components/AdsterraBanner';
+import AdsterraWrapper from '@/components/AdsterraWrapper';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAdsterra } from '@/hooks/useAdsterra';
 
@@ -70,11 +70,11 @@ const Dashboard = () => {
             {/* Sidebar with ads - hidden on mobile */}
             <div className="hidden lg:block space-y-6">
               <AdContainer variant="bordered" title="Sponsorisé">
-                <AdsterraBanner slot="SIDEBAR_RECTANGLE" />
+                <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
               </AdContainer>
               
               <AdContainer variant="subtle" title="Publicité">
-                <AdsterraBanner slot="SIDEBAR_RECTANGLE" />
+                <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
               </AdContainer>
             </div>
           </div>
@@ -82,7 +82,7 @@ const Dashboard = () => {
           {/* Mobile ad banner */}
           <div className="lg:hidden mt-6">
             <AdContainer variant="subtle">
-              <AdsterraBanner slot="CONTENT_RECTANGLE" />
+              <AdsterraWrapper slot="CONTENT_RECTANGLE" />
             </AdContainer>
           </div>
         </div>

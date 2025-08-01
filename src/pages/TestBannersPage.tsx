@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import AdsterraBanner from '@/components/AdsterraBanner';
+import AdsterraWrapper from '@/components/AdsterraWrapper';
 import SEO from '@/components/SEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -32,7 +32,7 @@ const TestBannersPage = () => {
                 <CardDescription>Format leaderboard standard pour l'en-tête</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBanner 
+                <AdsterraWrapper 
                   slot="BANNER_728x90"
                 />
               </CardContent>
@@ -45,7 +45,7 @@ const TestBannersPage = () => {
                 <CardDescription>Format rectangle moyen pour les barres latérales</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBanner 
+                <AdsterraWrapper 
                   slot="SIDEBAR_RECTANGLE"
                 />
               </CardContent>
@@ -58,7 +58,7 @@ const TestBannersPage = () => {
                 <CardDescription>Format rectangle large pour l'intégration dans le contenu</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBanner 
+                <AdsterraWrapper 
                   slot="CONTENT_RECTANGLE"
                 />
               </CardContent>
@@ -71,7 +71,7 @@ const TestBannersPage = () => {
                 <CardDescription>Format leaderboard pour le pied de page</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBanner 
+                <AdsterraWrapper 
                   slot="FOOTER_BANNER"
                 />
               </CardContent>
@@ -84,7 +84,7 @@ const TestBannersPage = () => {
                 <CardDescription>Format optimisé pour les appareils mobiles</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBanner 
+                <AdsterraWrapper 
                   slot="MOBILE_BANNER"
                 />
               </CardContent>
