@@ -28,19 +28,20 @@ export function ThemeProvider({
   storageKey = 'yamo-theme',
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
-    // Initialisation sécurisée avec localStorage
-    if (typeof window !== 'undefined') {
-      try {
-        const savedTheme = localStorage.getItem(storageKey) as Theme;
-        return savedTheme && ['dark', 'light', 'system'].includes(savedTheme) ? savedTheme : defaultTheme;
-      } catch (error) {
-        console.warn('Failed to read theme from localStorage:', error);
-        return defaultTheme;
-      }
+  // Fonction pour récupérer le thème sauvegardé de manière sécurisée
+  const getSavedTheme = (): Theme => {
+    if (typeof window === 'undefined') return defaultTheme;
+    
+    try {
+      const savedTheme = localStorage.getItem(storageKey) as Theme;
+      return savedTheme && ['dark', 'light', 'system'].includes(savedTheme) ? savedTheme : defaultTheme;
+    } catch (error) {
+      console.warn('Failed to read theme from localStorage:', error);
+      return defaultTheme;
     }
-    return defaultTheme;
-  });
+  };
+
+  const [theme, setTheme] = useState<Theme>(getSavedTheme);
 
   useEffect(() => {
     const root = window.document.documentElement;

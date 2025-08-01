@@ -9,6 +9,7 @@ import SafetySection from '@/components/Homepage/SafetySection';
 import AdsterraBanner from '@/components/AdsterraBanner';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import AdContainer from '@/components/ads/AdContainer';
+import AdsterraDebugPanel from '@/components/ads/AdsterraDebugPanel';
 import SEO from '@/components/SEO';
 import { useSEO } from '@/hooks/useSEO';
 import { useAdsterra } from '@/hooks/useAdsterra';
@@ -143,6 +144,7 @@ const Index = React.memo(() => {
         </div>
         
         <AdsterraVerification />
+        <AdsterraDebugPanel />
       </div>
     </>
   );

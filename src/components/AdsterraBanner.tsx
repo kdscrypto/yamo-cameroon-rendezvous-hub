@@ -11,35 +11,172 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
   const adDetails = AdsterraAdSlots[slot];
 
   useEffect(() => {
-    // Si les détails de la pub n'existent pas ou si la clé est un placeholder, on arrête.
-    if (!adDetails || adDetails.key.startsWith('REMPLACEZ_MOI')) {
-        console.warn(`Adsterra: Clé non configurée pour le slot ${slot}`);
-        return;
-    }
-
-    if (!bannerRef.current || bannerRef.current.children.length > 0) {
+    // Vérification et nettoyage du container
+    const container = bannerRef.current;
+    if (!container || !adDetails) {
+      console.warn(`AdsterraBanner: Container ou détails manquants pour ${slot}`);
       return;
     }
+
+    // Nettoyer le container avant de charger une nouvelle pub
+    container.innerHTML = '';
+
+    // En mode développement, vérifier si les tests sont autorisés
+    const isDev = process.env.NODE_ENV === 'development';
+    const devTestEnabled = isDev && localStorage.getItem('adsterra-dev-test') === 'true';
     
+    if (isDev && !devTestEnabled) {
+      // Afficher un placeholder en développement
+      container.innerHTML = `
+        <div style="
+          width: 100%; 
+          height: 100%; 
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          color: white; 
+          font-family: Arial, sans-serif;
+          font-size: 14px;
+          text-align: center;
+          border-radius: 4px;
+        ">
+          <div>
+            <div style="font-weight: bold; margin-bottom: 4px;">Adsterra ${slot}</div>
+            <div style="font-size: 12px; opacity: 0.8;">${adDetails.width}x${adDetails.height}</div>
+            <div style="font-size: 10px; margin-top: 4px; opacity: 0.6;">Mode développement</div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+
     const { key: adKey, width, height } = adDetails;
 
-    const configScript = document.createElement('script');
-    configScript.type = 'text/javascript';
-    configScript.innerHTML = `atOptions = {'key' : '${adKey}', 'format' : 'iframe', 'height' : ${height}, 'width' : ${width}, 'params' : {}};`;
+    // Vérifier que la clé est valide
+    if (!adKey || adKey.length < 10) {
+      console.error(`AdsterraBanner: Clé invalide pour ${slot}: ${adKey}`);
+      container.innerHTML = `
+        <div style="
+          width: 100%; 
+          height: 100%; 
+          background: #ff4444;
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          color: white; 
+          font-family: Arial, sans-serif;
+          font-size: 12px;
+          text-align: center;
+        ">
+          Erreur: Clé Adsterra invalide
+        </div>
+      `;
+      return;
+    }
 
-    const invokeScript = document.createElement('script');
-    invokeScript.type = 'text/javascript';
-    invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
-    invokeScript.async = true;
+    try {
+      // Configuration de la bannière
+      const configScript = document.createElement('script');
+      configScript.type = 'text/javascript';
+      configScript.innerHTML = `
+        atOptions = {
+          'key': '${adKey}',
+          'format': 'iframe',
+          'height': ${height},
+          'width': ${width},
+          'params': {}
+        };
+      `;
 
-    bannerRef.current.appendChild(configScript);
-    bannerRef.current.appendChild(invokeScript);
+      // Script d'invocation
+      const invokeScript = document.createElement('script');
+      invokeScript.type = 'text/javascript';
+      invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      invokeScript.async = true;
+
+      // Gestion des erreurs de chargement
+      invokeScript.onerror = () => {
+        console.error(`AdsterraBanner: Erreur de chargement du script pour ${slot}`);
+        container.innerHTML = `
+          <div style="
+            width: 100%; 
+            height: 100%; 
+            background: #ff9800;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-family: Arial, sans-serif;
+            font-size: 12px;
+            text-align: center;
+          ">
+            <div>
+              <div>Pub temporairement indisponible</div>
+              <div style="font-size: 10px; margin-top: 4px; opacity: 0.8;">Rechargement automatique...</div>
+            </div>
+          </div>
+        `;
+        
+        // Réessayer après 5 secondes
+        setTimeout(() => {
+          if (container.parentNode) {
+            container.innerHTML = '';
+            container.appendChild(configScript.cloneNode(true));
+            container.appendChild(invokeScript.cloneNode(true));
+          }
+        }, 5000);
+      };
+
+      // Ajouter les scripts au container
+      container.appendChild(configScript);
+      container.appendChild(invokeScript);
+
+      console.log(`AdsterraBanner: Bannière ${slot} initialisée avec la clé ${adKey}`);
+
+    } catch (error) {
+      console.error(`AdsterraBanner: Erreur lors de l'initialisation de ${slot}:`, error);
+      container.innerHTML = `
+        <div style="
+          width: 100%; 
+          height: 100%; 
+          background: #f44336;
+          display: flex; 
+          align-items: center; 
+          justify-content: center; 
+          color: white; 
+          font-family: Arial, sans-serif;
+          font-size: 12px;
+          text-align: center;
+        ">
+          Erreur de chargement
+        </div>
+      `;
+    }
 
   }, [slot, adDetails]);
 
-  if (!adDetails || adDetails.key.startsWith('REMPLACEZ_MOI')) {
-    // N'affiche rien si la clé n'est pas configurée pour éviter les erreurs.
-    return null;
+  // Toujours afficher le container, même en cas d'erreur
+  if (!adDetails) {
+    console.error(`AdsterraBanner: Aucune configuration trouvée pour le slot ${slot}`);
+    return (
+      <div 
+        className="adsterra-banner-container"
+        style={{ 
+          width: '300px', 
+          height: '250px',
+          background: '#f44336',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '12px',
+          textAlign: 'center'
+        }}
+      >
+        Configuration manquante
+      </div>
+    );
   }
   
   return (
