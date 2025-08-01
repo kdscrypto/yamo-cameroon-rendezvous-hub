@@ -11,27 +11,27 @@ export type AdSlotType =
 // Base de données centrale pour toutes nos clés et dimensions Adsterra
 export const AdsterraAdSlots: Record<AdSlotType, { key: string; width: number; height: number }> = {
   BANNER_728x90: {
-    key: 'ea16b4d4359bf41430e0c1ad103b76af', // La clé que nous connaissons
+    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 728,
     height: 90,
   },
   SIDEBAR_RECTANGLE: {
-    key: 'REMPLACEZ_MOI_PAR_LA_VRAIE_CLE_SIDEBAR',
+    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 300,
     height: 250,
   },
   CONTENT_RECTANGLE: {
-    key: 'REMPLACEZ_MOI_PAR_LA_VRAIE_CLE_CONTENT',
+    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 336,
     height: 280,
   },
   FOOTER_BANNER: {
-    key: 'REMPLACEZ_MOI_PAR_LA_VRAIE_CLE_FOOTER',
+    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 728,
     height: 90,
   },
   MOBILE_BANNER: {
-    key: 'REMPLACEZ_MOI_PAR_LA_VRAIE_CLE_MOBILE',
+    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 320,
     height: 50,
   },
