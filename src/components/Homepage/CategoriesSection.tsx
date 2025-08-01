@@ -14,6 +14,7 @@ const CategoriesSection = () => {
             icon={Users}
             href="/rencontres"
             gradient="gradient-gold"
+            backgroundImage="/images/categories/rencontres.jpg"
           />
           <CategoryCard
             title="Massages"
@@ -21,6 +22,7 @@ const CategoriesSection = () => {
             icon={Heart}
             href="/massages"
             gradient="gradient-luxe"
+            backgroundImage="/images/categories/massages.jpg"
           />
           <CategoryCard
             title="Produits adultes"
@@ -28,6 +30,7 @@ const CategoriesSection = () => {
             icon={Settings}
             href="/produits"
             gradient="gradient-accent"
+            backgroundImage="/images/categories/produits.jpg"
           />
           <CategoryCard
             title="Événements Spéciaux"
@@ -35,6 +38,7 @@ const CategoriesSection = () => {
             icon={Calendar}
             href="/events"
             gradient="bg-gradient-to-br from-red-500 to-orange-400"
+            backgroundImage="/images/categories/evenements.jpg"
           />
         </div>
       </div>
