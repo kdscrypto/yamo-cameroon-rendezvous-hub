@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import AdsterraBannerContainer from '@/components/ads/AdsterraBannerContainer';
+import AdsterraBanner from '@/components/AdsterraBanner';
 import SEO from '@/components/SEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -32,11 +32,10 @@ const TestBannersPage = () => {
                 <CardDescription>Format leaderboard standard pour l'en-tête</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBannerContainer 
-                  placement="HEADER_BANNER" 
+                <AdsterraBanner 
+                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
                   width={728} 
                   height={90}
-                  className="border-2 border-dashed border-gray-300"
                 />
               </CardContent>
             </Card>
@@ -48,11 +47,10 @@ const TestBannersPage = () => {
                 <CardDescription>Format rectangle moyen pour les barres latérales</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBannerContainer 
-                  placement="SIDEBAR_RECTANGLE" 
+                <AdsterraBanner 
+                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
                   width={300} 
                   height={250}
-                  className="border-2 border-dashed border-gray-300"
                 />
               </CardContent>
             </Card>
@@ -64,11 +62,10 @@ const TestBannersPage = () => {
                 <CardDescription>Format rectangle large pour l'intégration dans le contenu</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBannerContainer 
-                  placement="CONTENT_RECTANGLE" 
+                <AdsterraBanner 
+                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
                   width={336} 
                   height={280}
-                  className="border-2 border-dashed border-gray-300"
                 />
               </CardContent>
             </Card>
@@ -80,11 +77,10 @@ const TestBannersPage = () => {
                 <CardDescription>Format leaderboard pour le pied de page</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBannerContainer 
-                  placement="FOOTER_BANNER" 
+                <AdsterraBanner 
+                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
                   width={728} 
                   height={90}
-                  className="border-2 border-dashed border-gray-300"
                 />
               </CardContent>
             </Card>
@@ -96,11 +92,10 @@ const TestBannersPage = () => {
                 <CardDescription>Format optimisé pour les appareils mobiles</CardDescription>
               </CardHeader>
               <CardContent className="flex justify-center">
-                <AdsterraBannerContainer 
-                  placement="MOBILE_BANNER" 
+                <AdsterraBanner 
+                  adKey="ea16b4d4359bf41430e0c1ad103b76af"
                   width={320} 
                   height={50}
-                  className="border-2 border-dashed border-gray-300"
                 />
               </CardContent>
             </Card>
