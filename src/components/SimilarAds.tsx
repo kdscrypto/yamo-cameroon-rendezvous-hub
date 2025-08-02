@@ -77,7 +77,7 @@ const SimilarAds: React.FC<SimilarAdsProps> = ({ ads, isLoading }) => {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-semibold text-foreground">Annonces similaires</h2>
+      <h2 className="text-xl font-semibold text-yellow-400">Annonces similaires</h2>
       
       <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
         {ads.map((ad) => {
@@ -130,27 +130,27 @@ const SimilarAds: React.FC<SimilarAdsProps> = ({ ads, isLoading }) => {
                     </Badge>
                     
                     {/* Title */}
-                    <h3 className="font-semibold text-sm line-clamp-2 text-foreground leading-tight">
+                    <h3 className="font-semibold text-sm line-clamp-2 text-yellow-400 leading-tight">
                       {ad.title}
                     </h3>
                     
                     {/* Description */}
                     {ad.description && (
-                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="text-xs text-white line-clamp-2 leading-relaxed">
                         {ad.description}
                       </p>
                     )}
                     
                     {/* Location and Date */}
-                    <div className="flex flex-col space-y-1 text-xs text-muted-foreground">
+                    <div className="flex flex-col space-y-1 text-xs text-white">
                       {ad.location && (
                         <div className="flex items-center">
-                          <MapPin className="w-3 h-3 mr-1 text-primary" />
+                          <MapPin className="w-3 h-3 mr-1 text-yellow-400" />
                           <span>{getLocationDisplay(ad.location)}</span>
                         </div>
                       )}
                       <div className="flex items-center">
-                        <Clock className="w-3 h-3 mr-1 text-primary" />
+                        <Clock className="w-3 h-3 mr-1 text-yellow-400" />
                         <span>
                           {format(new Date(ad.created_at), 'dd MMM yyyy', { locale: fr })}
                         </span>
