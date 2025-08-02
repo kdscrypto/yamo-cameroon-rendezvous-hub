@@ -67,6 +67,7 @@ export type Database = {
       }
       ads: {
         Row: {
+          average_rating: number | null
           category: string
           created_at: string
           description: string | null
@@ -80,6 +81,7 @@ export type Database = {
           moderation_status: string | null
           phone: string | null
           price: number | null
+          rating_count: number | null
           status: string
           title: string
           updated_at: string
@@ -87,6 +89,7 @@ export type Database = {
           whatsapp: string | null
         }
         Insert: {
+          average_rating?: number | null
           category: string
           created_at?: string
           description?: string | null
@@ -100,6 +103,7 @@ export type Database = {
           moderation_status?: string | null
           phone?: string | null
           price?: number | null
+          rating_count?: number | null
           status?: string
           title: string
           updated_at?: string
@@ -107,6 +111,7 @@ export type Database = {
           whatsapp?: string | null
         }
         Update: {
+          average_rating?: number | null
           category?: string
           created_at?: string
           description?: string | null
@@ -120,6 +125,7 @@ export type Database = {
           moderation_status?: string | null
           phone?: string | null
           price?: number | null
+          rating_count?: number | null
           status?: string
           title?: string
           updated_at?: string
@@ -485,6 +491,41 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      ratings: {
+        Row: {
+          ad_id: string
+          created_at: string
+          id: string
+          rating_value: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ad_id: string
+          created_at?: string
+          id?: string
+          rating_value: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ad_id?: string
+          created_at?: string
+          id?: string
+          rating_value?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ratings_ad_id_fkey"
+            columns: ["ad_id"]
+            isOneToOne: false
+            referencedRelation: "ads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       referral_codes: {
         Row: {
