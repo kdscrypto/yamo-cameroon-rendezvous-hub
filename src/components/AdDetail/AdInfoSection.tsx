@@ -3,6 +3,7 @@ import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { MapPin, Calendar } from 'lucide-react';
+import StarRating from '@/components/StarRating';
 
 interface AdInfoSectionProps {
   title: string;
@@ -12,6 +13,10 @@ interface AdInfoSectionProps {
   price: number | null;
   description: string | null;
   isVip: boolean;
+  adId: string;
+  averageRating: number;
+  ratingCount: number;
+  onRatingUpdate?: (averageRating: number, ratingCount: number) => void;
 }
 
 const AdInfoSection = ({ 
@@ -21,7 +26,11 @@ const AdInfoSection = ({
   createdAt, 
   price, 
   description, 
-  isVip 
+  isVip,
+  adId,
+  averageRating,
+  ratingCount,
+  onRatingUpdate
 }: AdInfoSectionProps) => {
   const getCategoryDisplay = (category: string) => {
     const categories: { [key: string]: string } = {
@@ -68,6 +77,17 @@ const AdInfoSection = ({
         </div>
         
         <h1 className="text-3xl font-bold mb-4 text-yellow-400">{title}</h1>
+        
+        {/* Système de notation par étoiles */}
+        <div className="mb-6">
+          <StarRating
+            adId={adId}
+            averageRating={averageRating}
+            ratingCount={ratingCount}
+            onRatingUpdate={onRatingUpdate}
+            className="mb-4"
+          />
+        </div>
         
         <div className="flex items-center gap-4 text-yellow-500 mb-4">
           <div className="flex items-center gap-1">

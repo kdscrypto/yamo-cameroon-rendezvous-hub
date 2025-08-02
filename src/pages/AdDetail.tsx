@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -17,12 +17,17 @@ import AdContainer from '@/components/ads/AdContainer';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import { shouldShowAdsterraAd } from '@/config/adsterraConfig';
 import SimilarAds from '@/components/SimilarAds';
+import StarRating from '@/components/StarRating';
 import { useSimilarAds } from '@/hooks/useSimilarAds';
 
 const AdDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
+  
+  // État local pour les statistiques de notation
+  const [currentRating, setCurrentRating] = useState<number>(0);
+  const [currentRatingCount, setCurrentRatingCount] = useState<number>(0);
 
   const { data: ad, isLoading, error } = useQuery({
     queryKey: ['ad-detail', id],
@@ -59,6 +64,20 @@ const AdDetail = () => {
     retry: 1,
     staleTime: 5 * 60 * 1000,
   });
+
+  // Initialiser les statistiques de notation quand l'annonce est chargée
+  useEffect(() => {
+    if (ad) {
+      setCurrentRating(parseFloat(String(ad.average_rating)) || 0);
+      setCurrentRatingCount(ad.rating_count || 0);
+    }
+  }, [ad]);
+
+  // Fonction pour mettre à jour les statistiques de notation
+  const handleRatingUpdate = (averageRating: number, ratingCount: number) => {
+    setCurrentRating(averageRating);
+    setCurrentRatingCount(ratingCount);
+  };
 
   // Query to get contact information only if user is authenticated
   const { data: contactInfo } = useQuery({
@@ -214,6 +233,10 @@ const AdDetail = () => {
                   price={ad.price}
                   description={ad.description}
                   isVip={isVip}
+                  adId={ad.id}
+                  averageRating={currentRating}
+                  ratingCount={currentRatingCount}
+                  onRatingUpdate={handleRatingUpdate}
                 />
 
                 {/* Contact actions */}
