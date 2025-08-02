@@ -508,6 +508,16 @@
   padding: 0.75rem;     /* Applique un espacement global réduit (12px) tout autour */
 }
 
+/* Styles pour le carrousel d'annonces similaires */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
 /* Responsivité pour les bannières */
 @media (max-width: 768px) {
   .adsterra-banner-container[data-slot="BANNER_728x90"],

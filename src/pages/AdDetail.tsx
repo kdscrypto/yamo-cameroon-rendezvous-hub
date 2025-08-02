@@ -16,6 +16,8 @@ import AdsterraWrapper from '@/components/AdsterraWrapper';
 import AdContainer from '@/components/ads/AdContainer';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import { shouldShowAdsterraAd } from '@/config/adsterraConfig';
+import SimilarAds from '@/components/SimilarAds';
+import { useSimilarAds } from '@/hooks/useSimilarAds';
 
 const AdDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -81,6 +83,13 @@ const AdDetail = () => {
     },
     enabled: !!id && !!user,
     retry: 1,
+  });
+
+  // Query to get similar ads
+  const { data: similarAds, isLoading: isLoadingSimilarAds } = useSimilarAds({
+    currentAdId: ad?.id || '',
+    category: ad?.category || '',
+    location: ad?.location || ''
   });
 
   const getCategoryDisplay = (category: string) => {
@@ -216,6 +225,13 @@ const AdDetail = () => {
                 />
               </div>
             </div>
+
+            {/* Similar Ads Section */}
+            {(similarAds && similarAds.length > 0) && (
+              <div className="mt-12">
+                <SimilarAds ads={similarAds} isLoading={isLoadingSimilarAds} />
+              </div>
+            )}
 
             {/* Content Ad Section - According to PLACEMENTS.AD_DETAIL.content */}
             {shouldShowAdsterraAd('AD_DETAIL', 'content') && (
