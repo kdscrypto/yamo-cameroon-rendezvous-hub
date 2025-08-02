@@ -31,8 +31,10 @@ const AdContainer: React.FC<AdContainerProps> = ({
     }
   };
 
+  const compactClass = variant === 'sidebar' ? 'ad-wrapper--compact' : '';
+  
   return (
-    <div className={`ad-wrapper ${getContainerStyles()} ${className}`}>
+    <div className={`ad-wrapper ${getContainerStyles()} ${compactClass} ${className}`}>
       {title && (
         <div className="text-xs text-muted-foreground mb-2 text-center opacity-60">
           {title}

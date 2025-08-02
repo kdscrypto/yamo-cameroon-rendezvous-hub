@@ -500,6 +500,14 @@
   height: 50px !important;
 }
 
+/* Classe compacte pour les conteneurs publicitaires de la sidebar */
+.ad-wrapper--compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;          /* Définit un petit espace (8px) UNIQUEMENT entre le titre et la bannière */
+  padding: 0.75rem;     /* Applique un espacement global réduit (12px) tout autour */
+}
+
 /* Responsivité pour les bannières */
 @media (max-width: 768px) {
   .adsterra-banner-container[data-slot="BANNER_728x90"],
