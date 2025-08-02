@@ -24,7 +24,7 @@ const AdContainer: React.FC<AdContainerProps> = ({
       case 'premium':
         return 'bg-gradient-to-br from-primary/5 to-accent/10 p-4 rounded-xl border border-primary/20 shadow-sm';
       case 'sidebar':
-        return 'bg-card/60 p-3 rounded-lg border border-border/20 shadow-sm backdrop-blur-sm w-[300px]';
+        return 'bg-card/60 p-3 rounded-lg border border-border/20 shadow-sm backdrop-blur-sm';
       case 'subtle':
       default:
         return 'bg-muted/20 p-3 rounded-md border border-border/20';

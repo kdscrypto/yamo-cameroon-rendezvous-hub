@@ -10,11 +10,11 @@ export const useAdsterraDimensionsFix = () => {
         const slot = container.getAttribute('data-slot');
         if (!slot) return;
 
-        // Dimensions attendues selon le slot (harmonisées avec config)
+        // Dimensions attendues selon le slot
         const expectedDimensions = {
           'BANNER_728x90': { width: 728, height: 90 },
           'SIDEBAR_RECTANGLE': { width: 300, height: 250 },
-          'CONTENT_RECTANGLE': { width: 300, height: 250 },
+          'CONTENT_RECTANGLE': { width: 336, height: 280 },
           'FOOTER_BANNER': { width: 728, height: 90 },
           'MOBILE_BANNER': { width: 320, height: 50 }
         };
@@ -35,20 +35,14 @@ export const useAdsterraDimensionsFix = () => {
           targetHeight = 250;
         }
 
-        // Appliquer les dimensions au conteneur de manière moins agressive
+        // Appliquer les dimensions au conteneur
         const element = container as HTMLElement;
-        
-        // Vérifier si les dimensions sont déjà correctes pour éviter les corrections inutiles
-        const currentWidth = parseInt(element.style.width) || element.offsetWidth;
-        const currentHeight = parseInt(element.style.height) || element.offsetHeight;
-        
-        if (Math.abs(currentWidth - targetWidth) > 5 || Math.abs(currentHeight - targetHeight) > 5) {
-          element.style.width = `${targetWidth}px`;
-          element.style.height = `${targetHeight}px`;
-          element.style.minWidth = `${targetWidth}px`;
-          element.style.minHeight = `${targetHeight}px`;
-          // Ne pas forcer maxWidth/maxHeight pour éviter les conflits avec sticky
-        }
+        element.style.width = `${targetWidth}px`;
+        element.style.height = `${targetHeight}px`;
+        element.style.minWidth = `${targetWidth}px`;
+        element.style.minHeight = `${targetHeight}px`;
+        element.style.maxWidth = `${targetWidth}px`;
+        element.style.maxHeight = `${targetHeight}px`;
 
         // Corriger aussi les éléments enfants (iframes, divs)
         const childElements = element.querySelectorAll('iframe, div');
@@ -103,8 +97,8 @@ export const useAdsterraDimensionsFix = () => {
 
     window.addEventListener('resize', handleResize);
 
-    // Correction périodique réduite pour éviter les interférences avec le scroll
-    const interval = setInterval(fixAdsterraDimensions, 10000);
+    // Correction périodique pour s'assurer que les bannières restent correctes
+    const interval = setInterval(fixAdsterraDimensions, 5000);
 
     return () => {
       observer.disconnect();

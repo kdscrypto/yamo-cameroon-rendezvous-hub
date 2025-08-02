@@ -22,8 +22,8 @@ export const AdsterraAdSlots: Record<AdSlotType, { key: string; width: number; h
   },
   CONTENT_RECTANGLE: {
     key: 'ea16b4d4359bf41430e0c1ad103b76af',
-    width: 300,
-    height: 250,
+    width: 336,
+    height: 280,
   },
   FOOTER_BANNER: {
     key: 'ea16b4d4359bf41430e0c1ad103b76af',
