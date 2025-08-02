@@ -110,7 +110,7 @@ const Index = React.memo(() => {
                 <OptimizedAdSections />
               </div>
               <aside className="lg:ml-auto lg:mr-4">
-                <div className="sticky top-20 space-y-6 w-[300px] z-30">
+                <div className="sticky top-20 space-y-6 w-[300px] z-30 shrink-0">
                   <AdContainer variant="sidebar" title="Annonces sponsorisées">
                     <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
                   </AdContainer>
