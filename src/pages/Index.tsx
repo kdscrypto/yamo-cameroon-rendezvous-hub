@@ -105,12 +105,12 @@ const Index = React.memo(() => {
         {/* Bannière rectangulaire au centre - Zone haute visibilité */}
         <section className="py-8">
           <div className="container mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-              <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 items-start">
+              <div>
                 <OptimizedAdSections />
               </div>
-              <aside className="lg:col-span-1">
-                <div className="sticky top-20 space-y-6">
+              <aside className="lg:ml-auto lg:mr-4">
+                <div className="sticky top-20 space-y-6 w-[300px]">
                   <AdContainer variant="sidebar" title="Annonces sponsorisées">
                     <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
                   </AdContainer>
