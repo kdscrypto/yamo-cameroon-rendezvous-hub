@@ -226,13 +226,6 @@ const AdDetail = () => {
               </div>
             </div>
 
-            {/* Similar Ads Section */}
-            {(similarAds && similarAds.length > 0) && (
-              <div className="mt-12">
-                <SimilarAds ads={similarAds} isLoading={isLoadingSimilarAds} />
-              </div>
-            )}
-
             {/* Content Ad Section - According to PLACEMENTS.AD_DETAIL.content */}
             {shouldShowAdsterraAd('AD_DETAIL', 'content') && (
               <div className="mt-12">
@@ -244,14 +237,10 @@ const AdDetail = () => {
               </div>
             )}
 
-            {/* Related Ads Section - According to PLACEMENTS.AD_DETAIL.related */}
-            {shouldShowAdsterraAd('AD_DETAIL', 'related') && (
+            {/* Similar Ads Section */}
+            {(similarAds && similarAds.length > 0) && (
               <div className="mt-8">
-                <AdContainer title="Annonces similaires" variant="bordered">
-                  <div className="flex justify-center">
-                    <AdsterraWrapper slot="CONTENT_RECTANGLE" />
-                  </div>
-                </AdContainer>
+                <SimilarAds ads={similarAds} isLoading={isLoadingSimilarAds} />
               </div>
             )}
           </div>
