@@ -18,6 +18,10 @@ interface WaitlistEntry {
   id: string;
   email: string;
   full_name: string | null;
+  pseudonym: string | null;
+  gender: string | null;
+  city: string | null;
+  telegram_username: string | null;
   created_at: string;
   notified: boolean;
 }
@@ -68,9 +72,12 @@ const WaitlistTable = ({
             />
           </TableHead>
           <TableHead>Email</TableHead>
-          <TableHead>Nom complet</TableHead>
+          <TableHead>Nom / Pseudonyme</TableHead>
+          <TableHead>Genre</TableHead>
+          <TableHead>Ville</TableHead>
+          <TableHead>Telegram</TableHead>
           <TableHead>Date d'inscription</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead>Statut</TableHead>
           <TableHead className="w-12"></TableHead>
         </TableRow>
       </TableHeader>
@@ -84,7 +91,27 @@ const WaitlistTable = ({
               />
             </TableCell>
             <TableCell className="font-medium">{entry.email}</TableCell>
-            <TableCell>{entry.full_name || '-'}</TableCell>
+            <TableCell>
+              <div className="space-y-1">
+                <div className="font-medium">{entry.full_name || '-'}</div>
+                {entry.pseudonym && (
+                  <div className="text-sm text-muted-foreground">@{entry.pseudonym}</div>
+                )}
+              </div>
+            </TableCell>
+            <TableCell>
+              <Badge variant="outline" className="text-xs">
+                {entry.gender || '-'}
+              </Badge>
+            </TableCell>
+            <TableCell>{entry.city || '-'}</TableCell>
+            <TableCell>
+              {entry.telegram_username ? (
+                <span className="text-sm">@{entry.telegram_username}</span>
+              ) : (
+                '-'
+              )}
+            </TableCell>
             <TableCell>
               {format(new Date(entry.created_at), 'dd MMM yyyy à HH:mm', { locale: fr })}
             </TableCell>

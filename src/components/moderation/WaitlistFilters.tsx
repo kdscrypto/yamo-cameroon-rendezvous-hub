@@ -23,6 +23,10 @@ interface WaitlistFiltersProps {
   onStatusFilterChange: (value: 'all' | 'notified' | 'pending') => void;
   dateFilter: { start?: Date; end?: Date };
   onDateFilterChange: (dateFilter: { start?: Date; end?: Date }) => void;
+  cityFilter: string;
+  onCityFilterChange: (value: string) => void;
+  genderFilter: string;
+  onGenderFilterChange: (value: string) => void;
 }
 
 const WaitlistFilters = ({
@@ -31,7 +35,11 @@ const WaitlistFilters = ({
   statusFilter,
   onStatusFilterChange,
   dateFilter,
-  onDateFilterChange
+  onDateFilterChange,
+  cityFilter,
+  onCityFilterChange,
+  genderFilter,
+  onGenderFilterChange
 }: WaitlistFiltersProps) => {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -39,9 +47,11 @@ const WaitlistFilters = ({
     onSearchChange('');
     onStatusFilterChange('all');
     onDateFilterChange({});
+    onCityFilterChange('');
+    onGenderFilterChange('all');
   };
 
-  const hasActiveFilters = searchTerm || statusFilter !== 'all' || dateFilter.start || dateFilter.end;
+  const hasActiveFilters = searchTerm || statusFilter !== 'all' || dateFilter.start || dateFilter.end || cityFilter || genderFilter !== 'all';
 
   return (
     <div className="space-y-4">
@@ -49,7 +59,7 @@ const WaitlistFilters = ({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
           <Input
-            placeholder="Rechercher par email ou nom..."
+            placeholder="Rechercher par email, nom ou pseudonyme..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10"
@@ -57,15 +67,36 @@ const WaitlistFilters = ({
         </div>
 
         <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-          <SelectTrigger className="w-full sm:w-[180px]">
+          <SelectTrigger className="w-full sm:w-[140px]">
             <SelectValue placeholder="Statut" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="all">Tous</SelectItem>
             <SelectItem value="pending">En attente</SelectItem>
             <SelectItem value="notified">Notifiés</SelectItem>
           </SelectContent>
         </Select>
+
+        <Select value={genderFilter} onValueChange={onGenderFilterChange}>
+          <SelectTrigger className="w-full sm:w-[140px]">
+            <SelectValue placeholder="Genre" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous</SelectItem>
+            <SelectItem value="homme">Homme</SelectItem>
+            <SelectItem value="femme">Femme</SelectItem>
+            <SelectItem value="couple">Couple</SelectItem>
+            <SelectItem value="autre">Autre</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="w-full sm:w-[140px]">
+          <Input
+            placeholder="Ville..."
+            value={cityFilter}
+            onChange={(e) => onCityFilterChange(e.target.value)}
+          />
+        </div>
 
         <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
           <PopoverTrigger asChild>

@@ -18,6 +18,8 @@ const WaitlistManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'notified' | 'pending'>('all');
   const [dateFilter, setDateFilter] = useState<{ start?: Date; end?: Date }>({});
+  const [cityFilter, setCityFilter] = useState('');
+  const [genderFilter, setGenderFilter] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
   
   const queryClient = useQueryClient();
@@ -76,9 +78,20 @@ const WaitlistManagement = () => {
       if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
         if (!entry.email.toLowerCase().includes(searchLower) && 
-            !(entry.full_name?.toLowerCase().includes(searchLower))) {
+            !(entry.full_name?.toLowerCase().includes(searchLower)) &&
+            !(entry.pseudonym?.toLowerCase().includes(searchLower))) {
           return false;
         }
+      }
+
+      // City filter
+      if (cityFilter && !entry.city?.toLowerCase().includes(cityFilter.toLowerCase())) {
+        return false;
+      }
+
+      // Gender filter
+      if (genderFilter !== 'all' && entry.gender !== genderFilter) {
+        return false;
       }
 
       // Status filter
@@ -99,7 +112,7 @@ const WaitlistManagement = () => {
 
       return true;
     });
-  }, [waitlistEntries, searchTerm, statusFilter, dateFilter]);
+  }, [waitlistEntries, searchTerm, statusFilter, dateFilter, cityFilter, genderFilter]);
 
   const totalPages = Math.ceil(filteredEntries.length / ITEMS_PER_PAGE);
   const paginatedEntries = filteredEntries.slice(
@@ -110,7 +123,7 @@ const WaitlistManagement = () => {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter, dateFilter]);
+  }, [searchTerm, statusFilter, dateFilter, cityFilter, genderFilter]);
 
   const markAsNotifiedMutation = useMutation({
     mutationFn: async (email: string) => {
@@ -198,6 +211,10 @@ const WaitlistManagement = () => {
             onStatusFilterChange={setStatusFilter}
             dateFilter={dateFilter}
             onDateFilterChange={setDateFilter}
+            cityFilter={cityFilter}
+            onCityFilterChange={setCityFilter}
+            genderFilter={genderFilter}
+            onGenderFilterChange={setGenderFilter}
           />
 
           {filteredEntries.length === 0 ? (

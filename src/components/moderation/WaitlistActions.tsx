@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,8 +19,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { MoreHorizontal, Mail, Download, Trash2, Check } from 'lucide-react';
+import { MoreHorizontal, Mail, Download, Trash2, Check, Send } from 'lucide-react';
 import { toast } from 'sonner';
+import EmailNotificationModal from './EmailNotificationModal';
 
 interface WaitlistActionsProps {
   selectedEmails: string[];
@@ -30,6 +30,7 @@ interface WaitlistActionsProps {
 
 const WaitlistActions = ({ selectedEmails, onSelectionChange }: WaitlistActionsProps) => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
   const queryClient = useQueryClient();
 
   const markAsNotifiedMutation = useMutation({
@@ -82,46 +83,58 @@ const WaitlistActions = ({ selectedEmails, onSelectionChange }: WaitlistActionsP
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (error) {
-        toast.error('Erreur lors de l\'export');
-        return;
-      }
+      if (error) throw error;
+
+      let content: string;
+      let mimeType: string;
+      let fileName: string;
 
       if (format === 'csv') {
-        const headers = ['Email', 'Nom complet', 'Date d\'inscription', 'Notifié'];
-        const csvContent = [
-          headers.join(','),
-          ...data.map(entry => [
-            entry.email,
-            entry.full_name || '',
-            new Date(entry.created_at).toLocaleDateString('fr-FR'),
-            entry.notified ? 'Oui' : 'Non'
-          ].join(','))
-        ].join('\n');
+        const headers = ['Email', 'Nom complet', 'Pseudonyme', 'Genre', 'Ville', 'Telegram', 'Date d\'inscription', 'Statut'];
+        const rows = data.map(entry => [
+          entry.email,
+          entry.full_name || '',
+          entry.pseudonym || '',
+          entry.gender || '',
+          entry.city || '',
+          entry.telegram_username || '',
+          new Date(entry.created_at).toLocaleString('fr-FR'),
+          entry.notified ? 'Notifié' : 'En attente'
+        ]);
 
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `waitlist-events-${new Date().toISOString().split('T')[0]}.csv`;
-        a.click();
-        URL.revokeObjectURL(url);
+        content = [headers, ...rows]
+          .map(row => row.map(cell => `"${cell}"`).join(','))
+          .join('\n');
+        
+        mimeType = 'text/csv';
+        fileName = `liste-attente-${new Date().toISOString().split('T')[0]}.csv`;
       } else {
-        const jsonContent = JSON.stringify(data, null, 2);
-        const blob = new Blob([jsonContent], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `waitlist-events-${new Date().toISOString().split('T')[0]}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+        content = JSON.stringify(data, null, 2);
+        mimeType = 'application/json';
+        fileName = `liste-attente-${new Date().toISOString().split('T')[0]}.json`;
       }
 
-      toast.success(`Données exportées en ${format.toUpperCase()}`);
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+
+      toast.success(`Export ${format.toUpperCase()} généré avec succès`);
     } catch (error) {
-      console.error('Export error:', error);
-      toast.error('Erreur lors de l\'export');
+      console.error('Error exporting data:', error);
+      toast.error('Erreur lors de l\'export des données');
     }
+  };
+
+  const handleEmailSuccess = () => {
+    onSelectionChange([]);
+    queryClient.invalidateQueries({ queryKey: ['event-waitlist'] });
+    queryClient.invalidateQueries({ queryKey: ['waitlist-detailed-stats'] });
   };
 
   return (
@@ -129,6 +142,16 @@ const WaitlistActions = ({ selectedEmails, onSelectionChange }: WaitlistActionsP
       <div className="flex items-center gap-2">
         {selectedEmails.length > 0 && (
           <>
+            <Button 
+              onClick={() => setShowEmailModal(true)}
+              disabled={selectedEmails.length === 0}
+              variant="default"
+              size="sm"
+            >
+              <Send className="h-4 w-4 mr-2" />
+              Envoyer notification ({selectedEmails.length})
+            </Button>
+
             <Button
               onClick={() => markAsNotifiedMutation.mutate(selectedEmails)}
               disabled={markAsNotifiedMutation.isPending}
@@ -136,7 +159,7 @@ const WaitlistActions = ({ selectedEmails, onSelectionChange }: WaitlistActionsP
               variant="outline"
             >
               <Check className="h-4 w-4 mr-2" />
-              Marquer comme notifié ({selectedEmails.length})
+              Marquer notifié ({selectedEmails.length})
             </Button>
             
             <Button
@@ -168,7 +191,10 @@ const WaitlistActions = ({ selectedEmails, onSelectionChange }: WaitlistActionsP
               Exporter en JSON
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => setShowEmailModal(true)}
+              disabled={selectedEmails.length === 0}
+            >
               <Mail className="h-4 w-4 mr-2" />
               Envoyer notification
             </DropdownMenuItem>
@@ -196,6 +222,15 @@ const WaitlistActions = ({ selectedEmails, onSelectionChange }: WaitlistActionsP
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {showEmailModal && (
+        <EmailNotificationModal
+          isOpen={showEmailModal}
+          onClose={() => setShowEmailModal(false)}
+          selectedEmails={selectedEmails}
+          onSuccess={handleEmailSuccess}
+        />
+      )}
     </>
   );
 };
