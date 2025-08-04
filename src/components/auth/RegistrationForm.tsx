@@ -367,7 +367,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         </Label>
         <div className="flex justify-center">
           <ReCAPTCHA
-            sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Clé de test de Google - REMPLACER EN PRODUCTION
+            sitekey="6LdBZ5orAAAAAFz3fXNiRhQXUpTBR81NCcVxh_qH" // Clé de production
             onChange={handleCaptchaChange}
             theme="dark"
           />
