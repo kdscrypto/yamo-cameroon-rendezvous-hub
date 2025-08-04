@@ -32,6 +32,7 @@ interface WaitlistTableProps {
   onSelectionChange: (emails: string[]) => void;
   onMarkAsNotified: (email: string) => void;
   onDelete: (email: string) => void;
+  onSendNotification: (email: string, name: string | null) => void;
 }
 
 const WaitlistTable = ({
@@ -39,7 +40,8 @@ const WaitlistTable = ({
   selectedEmails,
   onSelectionChange,
   onMarkAsNotified,
-  onDelete
+  onDelete,
+  onSendNotification
 }: WaitlistTableProps) => {
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -134,7 +136,7 @@ const WaitlistTable = ({
                       Marquer comme notifié
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => onSendNotification(entry.email, entry.full_name)}>
                     <Mail className="h-4 w-4 mr-2" />
                     Envoyer notification
                   </DropdownMenuItem>

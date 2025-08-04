@@ -51,20 +51,20 @@ const EmailNotificationModal = ({
 
   const sendNotificationMutation = useMutation({
     mutationFn: async () => {
-      const { data, error } = await supabase.functions.invoke('send-waitlist-notification', {
-        body: {
-          emails: selectedEmails,
-          subject,
-          template,
-          customContent,
-          eventName,
-          eventDate,
-          eventLocation
-        }
-      });
+      // Pour notre nouvelle fonction, nous envoyons un email à la fois
+      const results = [];
+      for (const email of selectedEmails) {
+        const { data, error } = await supabase.functions.invoke('send-waiting-list-notification-v2', {
+          body: {
+            email,
+            name: email.split('@')[0] // Utiliser la partie avant @ comme nom par défaut
+          }
+        });
 
-      if (error) throw error;
-      return data;
+        if (error) throw error;
+        results.push(data);
+      }
+      return results;
     },
     onSuccess: (data) => {
       console.log('Notifications sent successfully:', data);

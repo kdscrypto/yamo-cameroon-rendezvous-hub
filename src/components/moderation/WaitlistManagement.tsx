@@ -166,6 +166,34 @@ const WaitlistManagement = () => {
     }
   });
 
+  const handleSendNotification = async (email: string, name: string | null) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-waiting-list-notification-v2', {
+        body: {
+          email,
+          name: name || email.split('@')[0]
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success(`Notification envoyée avec succès à ${email}`);
+      
+      // Marquer comme notifié après l'envoi réussi
+      await supabase
+        .from('event_waitlist')
+        .update({ notified: true })
+        .eq('email', email);
+      
+      queryClient.invalidateQueries({ queryKey: ['event-waitlist'] });
+      queryClient.invalidateQueries({ queryKey: ['waitlist-stats'] });
+      
+    } catch (error: any) {
+      console.error('Failed to send notification:', error);
+      toast.error(`Échec de l'envoi de la notification : ${error.message || 'Erreur inconnue'}`);
+    }
+  };
+
   if (isLoading) {
     return (
       <Card>
@@ -235,6 +263,7 @@ const WaitlistManagement = () => {
                 onSelectionChange={setSelectedEmails}
                 onMarkAsNotified={(email) => markAsNotifiedMutation.mutate(email)}
                 onDelete={(email) => deleteEntryMutation.mutate(email)}
+                onSendNotification={handleSendNotification}
               />
               
               <WaitlistPagination
