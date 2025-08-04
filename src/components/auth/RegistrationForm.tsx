@@ -7,10 +7,12 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
-import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle } from 'lucide-react';
+import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle, Shield } from 'lucide-react';
 import ReferralInput from '@/components/referral/ReferralInput';
 import { validateEmail } from '@/utils/emailValidation';
 import { isValidPhoneNumber } from '@/utils/phoneUtils';
+import ReCAPTCHA from 'react-google-recaptcha';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -33,6 +35,8 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [phoneError, setPhoneError] = useState('');
   const [emailError, setEmailError] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
   
   const { signUp } = useAuth();
   const { toast } = useToast();
@@ -68,6 +72,49 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       }
     } else {
       setEmailError('');
+    }
+  };
+
+  // Fonction pour vérifier le token auprès de notre Edge Function
+  const handleCaptchaChange = async (token: string | null) => {
+    if (!token) {
+      setCaptchaToken(null);
+      setIsCaptchaVerified(false);
+      return;
+    }
+    setCaptchaToken(token);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('verify-captcha', {
+        body: { token }
+      });
+      
+      if (error) {
+        console.error('Erreur lors de la vérification du CAPTCHA:', error);
+        setIsCaptchaVerified(false);
+        toast({
+          title: "Erreur CAPTCHA",
+          description: "Erreur lors de la vérification du CAPTCHA.",
+          variant: "destructive"
+        });
+      } else {
+        setIsCaptchaVerified(data?.success || false);
+        if (!data?.success) {
+          toast({
+            title: "CAPTCHA invalide",
+            description: "La vérification CAPTCHA a échoué. Veuillez réessayer.",
+            variant: "destructive"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Erreur lors de la vérification du CAPTCHA:', error);
+      setIsCaptchaVerified(false);
+      toast({
+        title: "Erreur CAPTCHA",
+        description: "Une erreur s'est produite lors de la vérification.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -108,6 +155,16 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       toast({
         title: "Erreur",
         description: "Le format du numéro de téléphone n'est pas valide.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Validation du CAPTCHA
+    if (!isCaptchaVerified) {
+      toast({
+        title: "Vérification CAPTCHA requise",
+        description: "Vérification CAPTCHA échouée ou incomplète.",
         variant: "destructive"
       });
       return;
@@ -301,6 +358,27 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
         onChange={(value) => handleInputChange('referralCode', value)}
         disabled={isLoading}
       />
+
+      {/* Vérification reCAPTCHA */}
+      <div className="space-y-2 pt-2">
+        <Label className="text-neutral-200 font-medium flex items-center gap-2">
+          <Shield className="w-4 h-4 text-amber-500" />
+          Vérification de sécurité
+        </Label>
+        <div className="flex justify-center">
+          <ReCAPTCHA
+            sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // Clé de test de Google - REMPLACER EN PRODUCTION
+            onChange={handleCaptchaChange}
+            theme="dark"
+          />
+        </div>
+        {isCaptchaVerified && (
+          <div className="text-center text-green-400 text-sm flex items-center justify-center gap-2">
+            <Shield className="w-4 h-4" />
+            Vérification réussie
+          </div>
+        )}
+      </div>
       
       <div className="space-y-4 pt-2">
         <div className="flex items-start space-x-3">
@@ -340,7 +418,7 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       <Button 
         type="submit" 
         className="w-full h-14 text-lg font-bold bg-gradient-to-r from-amber-600 via-orange-600 to-red-700 text-white hover:from-amber-700 hover:via-orange-700 hover:to-red-800 shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 border-0 rounded-xl mt-6"
-        disabled={!formData.acceptTerms || !formData.isAdult || isLoading || !!phoneError || !!emailError}
+        disabled={!formData.acceptTerms || !formData.isAdult || isLoading || !!phoneError || !!emailError || !isCaptchaVerified}
       >
         {isLoading ? (
           <div className="flex items-center gap-3">
