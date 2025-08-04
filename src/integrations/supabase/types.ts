@@ -244,11 +244,13 @@ export type Database = {
           created_at: string
           email_address: string
           email_type: string
+          external_id: string | null
           id: string
           metadata: Json | null
           provider: string
           risk_level: string | null
           status: string
+          subject: string | null
           updated_at: string
         }
         Insert: {
@@ -256,11 +258,13 @@ export type Database = {
           created_at?: string
           email_address: string
           email_type: string
+          external_id?: string | null
           id?: string
           metadata?: Json | null
           provider?: string
           risk_level?: string | null
           status?: string
+          subject?: string | null
           updated_at?: string
         }
         Update: {
@@ -268,11 +272,13 @@ export type Database = {
           created_at?: string
           email_address?: string
           email_type?: string
+          external_id?: string | null
           id?: string
           metadata?: Json | null
           provider?: string
           risk_level?: string | null
           status?: string
+          subject?: string | null
           updated_at?: string
         }
         Relationships: []

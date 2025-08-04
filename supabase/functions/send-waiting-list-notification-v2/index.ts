@@ -97,21 +97,6 @@ const generateEmailHTML = (userName?: string) => {
 };
 
 const handler = async (req: Request): Promise<Response> => {
-  console.log('SONDE 2: Endpoint API atteint.');
-
-  // Vérifier la clé API Resend
-  if (!Deno.env.get("RESEND_API_KEY")) {
-    console.error('SONDE ERREUR: La clé RESEND_API_KEY est manquante ou undefined !');
-    return new Response(
-      JSON.stringify({ error: "Configuration du serveur incomplète." }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      }
-    );
-  }
-  console.log('SONDE 3: La clé RESEND_API_KEY est présente.');
-
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -174,10 +159,7 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const requestBody = await req.json();
-    console.log('SONDE 4: Corps de la requête reçu:', requestBody);
-    
-    const { email, name }: NotificationRequest = requestBody;
+    const { email, name }: NotificationRequest = await req.json();
 
     if (!email) {
       return new Response(
@@ -209,24 +191,24 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     // Enregistrer l'envoi dans la base de données pour le suivi
-    const { error: trackingError } = await supabase
-      .from('email_tracking')
-      .insert({
+    try {
+      await supabase.from('email_tracking').insert({
         email_address: email,
-        subject: "Confirmation de votre inscription sur la liste d'attente Yamo",
+        email_type: 'waitlist_notification',
         status: 'sent',
+        provider: 'resend',
+        subject: "Confirmation de votre inscription sur la liste d'attente Yamo",
+        external_id: emailResponse.data?.id,
         metadata: { 
           resend_id: emailResponse.data?.id,
           template: 'waiting_list_notification_v2',
           recipient_name: name 
         }
       });
-
-    if (trackingError) {
-      console.warn("Failed to track email:", trackingError);
+    } catch (trackingError) {
+      console.error("Failed to track email:", trackingError);
+      // Ne pas faire échouer l'ensemble de la requête pour une erreur de tracking
     }
-
-    console.log("Email sent successfully:", emailResponse.data);
 
     return new Response(
       JSON.stringify({ 
