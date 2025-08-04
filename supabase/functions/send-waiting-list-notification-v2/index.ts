@@ -97,6 +97,21 @@ const generateEmailHTML = (userName?: string) => {
 };
 
 const handler = async (req: Request): Promise<Response> => {
+  console.log('SONDE 2: Endpoint API atteint.');
+
+  // Vérifier la clé API Resend
+  if (!Deno.env.get("RESEND_API_KEY")) {
+    console.error('SONDE ERREUR: La clé RESEND_API_KEY est manquante ou undefined !');
+    return new Response(
+      JSON.stringify({ error: "Configuration du serveur incomplète." }),
+      { 
+        status: 500, 
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
+      }
+    );
+  }
+  console.log('SONDE 3: La clé RESEND_API_KEY est présente.');
+
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -159,7 +174,10 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    const { email, name }: NotificationRequest = await req.json();
+    const requestBody = await req.json();
+    console.log('SONDE 4: Corps de la requête reçu:', requestBody);
+    
+    const { email, name }: NotificationRequest = requestBody;
 
     if (!email) {
       return new Response(

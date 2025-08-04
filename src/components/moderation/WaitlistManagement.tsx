@@ -167,6 +167,8 @@ const WaitlistManagement = () => {
   });
 
   const handleSendNotification = async (email: string, name: string | null) => {
+    console.log(`SONDE 1: Tentative d'envoi à ${email}`);
+    
     try {
       const { data, error } = await supabase.functions.invoke('send-waiting-list-notification-v2', {
         body: {
