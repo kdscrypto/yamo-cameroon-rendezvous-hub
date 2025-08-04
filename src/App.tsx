@@ -35,6 +35,7 @@ import Produits from "./pages/Produits";
 import Analytics from "./pages/Analytics";
 import AdsterraTest from "./pages/AdsterraTest";
 import RecaptchaTest from "./pages/RecaptchaTest";
+import RecaptchaAdvancedTest from "./pages/RecaptchaAdvancedTest";
 
 import { PageTracker } from "@/components/analytics/PageTracker";
 import ErrorBoundary from "@/components/ErrorBoundary";
@@ -80,6 +81,7 @@ const AppContent = () => {
               <Route path="/email-verification" element={<EmailVerification />} />
               <Route path="/adsterra-test" element={<AdsterraTest />} />
               <Route path="/recaptcha-test" element={<RecaptchaTest />} />
+              <Route path="/recaptcha-advanced-test" element={<RecaptchaAdvancedTest />} />
               
               <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="*" element={<NotFound />} />

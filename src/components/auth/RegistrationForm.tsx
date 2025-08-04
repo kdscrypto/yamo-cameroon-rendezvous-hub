@@ -11,8 +11,7 @@ import { User, Mail, Lock, Eye, EyeOff, Phone, AlertCircle, Shield } from 'lucid
 import ReferralInput from '@/components/referral/ReferralInput';
 import { validateEmail } from '@/utils/emailValidation';
 import { isValidPhoneNumber } from '@/utils/phoneUtils';
-import ReCAPTCHA from 'react-google-recaptcha';
-import { supabase } from '@/integrations/supabase/client';
+import EnhancedReCAPTCHA from './EnhancedReCAPTCHA';
 
 interface RegistrationFormProps {
   isLoading: boolean;
@@ -35,8 +34,8 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [phoneError, setPhoneError] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isCaptchaVerified, setIsCaptchaVerified] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   
   const { signUp } = useAuth();
   const { toast } = useToast();
@@ -75,47 +74,9 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     }
   };
 
-  // Fonction pour vérifier le token auprès de notre Edge Function
-  const handleCaptchaChange = async (token: string | null) => {
-    if (!token) {
-      setCaptchaToken(null);
-      setIsCaptchaVerified(false);
-      return;
-    }
+  const handleCaptchaVerificationChange = (isVerified: boolean, token: string | null) => {
+    setIsCaptchaVerified(isVerified);
     setCaptchaToken(token);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('verify-captcha', {
-        body: { token }
-      });
-      
-      if (error) {
-        console.error('Erreur lors de la vérification du CAPTCHA:', error);
-        setIsCaptchaVerified(false);
-        toast({
-          title: "Erreur CAPTCHA",
-          description: "Erreur lors de la vérification du CAPTCHA.",
-          variant: "destructive"
-        });
-      } else {
-        setIsCaptchaVerified(data?.success || false);
-        if (!data?.success) {
-          toast({
-            title: "CAPTCHA invalide",
-            description: "La vérification CAPTCHA a échoué. Veuillez réessayer.",
-            variant: "destructive"
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Erreur lors de la vérification du CAPTCHA:', error);
-      setIsCaptchaVerified(false);
-      toast({
-        title: "Erreur CAPTCHA",
-        description: "Une erreur s'est produite lors de la vérification.",
-        variant: "destructive"
-      });
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -161,10 +122,10 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
     }
 
     // Validation du CAPTCHA
-    if (!isCaptchaVerified) {
+    if (!isCaptchaVerified || !captchaToken) {
       toast({
         title: "Vérification CAPTCHA requise",
-        description: "Vérification CAPTCHA échouée ou incomplète.",
+        description: "Veuillez compléter la vérification de sécurité.",
         variant: "destructive"
       });
       return;
@@ -360,24 +321,12 @@ const RegistrationForm = ({ isLoading, setIsLoading }: RegistrationFormProps) =>
       />
 
       {/* Vérification reCAPTCHA */}
-      <div className="space-y-2 pt-2">
-        <Label className="text-neutral-200 font-medium flex items-center gap-2">
-          <Shield className="w-4 h-4 text-amber-500" />
-          Vérification de sécurité
-        </Label>
-        <div className="flex justify-center">
-          <ReCAPTCHA
-            sitekey="6LdBZ5orAAAAAFz3fXNiRhQXUpTBR81NCcVxh_qH" // Clé de production
-            onChange={handleCaptchaChange}
-            theme="dark"
-          />
-        </div>
-        {isCaptchaVerified && (
-          <div className="text-center text-green-400 text-sm flex items-center justify-center gap-2">
-            <Shield className="w-4 h-4" />
-            Vérification réussie
-          </div>
-        )}
+      <div className="pt-2">
+        <EnhancedReCAPTCHA
+          onVerificationChange={handleCaptchaVerificationChange}
+          disabled={isLoading}
+          debug={false}
+        />
       </div>
       
       <div className="space-y-4 pt-2">
