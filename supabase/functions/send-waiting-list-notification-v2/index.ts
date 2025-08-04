@@ -173,7 +173,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     // Envoyer l'email via Resend
     const emailResponse = await resend.emails.send({
-      from: "Yamo <onboarding@resend.dev>", // À remplacer par votre domaine vérifié
+      from: "Yamo <noreply@yamo.chat>",
       to: [email],
       subject: "Confirmation de votre inscription sur la liste d'attente Yamo",
       html: generateEmailHTML(name),
