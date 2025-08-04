@@ -1,10 +1,13 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { isPhoneNumberFormat } from '@/utils/phoneUtils';
+import { supabase } from '@/integrations/supabase/client';
 import IdentifierField from './IdentifierField';
 import PasswordField from './PasswordField';
 import LoginSubmitButton from './LoginSubmitButton';
@@ -15,6 +18,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [identifierError, setIdentifierError] = useState('');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const { signIn } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -47,6 +51,10 @@ const LoginForm = () => {
     }
   };
 
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -63,9 +71,33 @@ const LoginForm = () => {
       return;
     }
 
+    if (!captchaToken) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez compléter la vérification de sécurité.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      // Vérifier le captcha côté serveur
+      const { data: captchaData, error: captchaError } = await supabase.functions.invoke('verify-captcha', {
+        body: { token: captchaToken }
+      });
+
+      if (captchaError || !captchaData?.success) {
+        toast({
+          title: "Erreur de sécurité",
+          description: "La vérification de sécurité a échoué. Veuillez réessayer.",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return;
+      }
+
       console.log('Attempting login with:', { 
         identifier: identifier.trim(), 
         type: isPhoneNumberFormat(identifier.trim()) ? 'phone' : 'email'
@@ -137,6 +169,19 @@ const LoginForm = () => {
             onPasswordChange={setPassword}
             isLoading={isLoading}
           />
+          
+          <div className="space-y-2">
+            <Label className="text-sm font-medium text-amber-400 flex items-center gap-2">
+              <span>🛡️</span> Vérification de sécurité
+            </Label>
+            <div className="flex justify-center">
+              <ReCAPTCHA
+                sitekey="6LdBZ5orAAAAAFz3fXNiRhQXUpTBR81NCcVxh_qH" // Clé de production
+                onChange={handleCaptchaChange}
+                theme="dark"
+              />
+            </div>
+          </div>
           
           <LoginSubmitButton isLoading={isLoading} />
         </form>
