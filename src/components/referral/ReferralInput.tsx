@@ -3,8 +3,12 @@ import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
-import { Gift, CheckCircle, XCircle } from 'lucide-react';
+import { Gift, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { useReferralOptimization } from '@/hooks/useReferralOptimization';
+import { useReferralRateLimit } from '@/hooks/useReferralRateLimit';
+import { logger } from '@/utils/environmentUtils';
 
 interface ReferralInputProps {
   value: string;
@@ -16,6 +20,13 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
   const [isValidating, setIsValidating] = useState(false);
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [referrerName, setReferrerName] = useState<string>('');
+  
+  const { validateReferralCode: optimizedValidate } = useReferralOptimization();
+  const { checkRateLimit, isBlocked, getRemainingTime } = useReferralRateLimit({
+    maxAttempts: 5,
+    windowMs: 60000, // 1 minute
+    blockDurationMs: 300000 // 5 minutes
+  });
 
   useEffect(() => {
     // Vérifier si on a un code de parrainage dans l'URL
@@ -36,53 +47,30 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
   }, [value]);
 
   const validateReferralCode = async (code: string) => {
+    // Vérifier les limitations de taux
+    if (!checkRateLimit('code_validation')) {
+      setIsValid(false);
+      setReferrerName('');
+      return;
+    }
+
     setIsValidating(true);
     
     try {
-      // Normaliser le code en majuscules pour la validation
       const normalizedCode = code.trim().toUpperCase();
+      logger.info('Validation optimisée du code de parrainage');
       
-      console.log('Validation du code de parrainage:', normalizedCode);
+      // Utiliser la validation optimisée avec cache
+      const result = await optimizedValidate(normalizedCode);
       
-      // Vérifier si le code de parrainage existe et est actif
-      const { data: referralData, error } = await supabase
-        .from('referral_codes')
-        .select('code, user_id')
-        .eq('code', normalizedCode)
-        .eq('is_active', true)
-        .maybeSingle();
-
-      if (error) {
-        console.error('Erreur lors de la validation du code:', error);
-        setIsValid(false);
-        setReferrerName('');
-      } else if (referralData) {
-        console.log('Code valide trouvé:', referralData);
-        
-        // Récupérer les informations du parrain séparément pour éviter les problèmes de jointure
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('full_name, email')
-          .eq('id', referralData.user_id)
-          .maybeSingle();
-
-        if (profileError) {
-          console.error('Erreur lors de la récupération du profil:', profileError);
-          // Le code est valide même si on ne peut pas récupérer le profil
-          setIsValid(true);
-          setReferrerName('Utilisateur');
-        } else {
-          setIsValid(true);
-          const name = profileData?.full_name || profileData?.email?.split('@')[0] || 'Utilisateur';
-          setReferrerName(name);
-        }
-      } else {
-        console.log('Aucun code trouvé pour:', normalizedCode);
-        setIsValid(false);
-        setReferrerName('');
+      setIsValid(result.isValid);
+      setReferrerName(result.referrerName || '');
+      
+      if (result.error) {
+        logger.warn('Erreur validation code:', result.error);
       }
     } catch (error) {
-      console.error('Erreur inattendue lors de la validation:', error);
+      logger.error('Erreur inattendue lors de la validation:', error);
       setIsValid(false);
       setReferrerName('');
     } finally {
@@ -148,7 +136,16 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
         </div>
       </div>
       
-      {getStatusMessage() && (
+      {isBlocked && (
+        <Alert className="border-amber-500/50 bg-amber-500/10">
+          <Clock className="h-4 w-4" />
+          <AlertDescription className="text-amber-400">
+            Trop de tentatives de validation. Réessayez dans {Math.ceil(getRemainingTime() / 1000)} secondes.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {getStatusMessage() && !isBlocked && (
         <div className={`flex items-center gap-2 text-sm ${
           isValid === true ? 'text-green-400' : 
           isValid === false ? 'text-red-400' : 
@@ -157,7 +154,6 @@ const ReferralInput = ({ value, onChange, disabled = false }: ReferralInputProps
           {getStatusMessage()}
         </div>
       )}
-      
       
       <div className="text-xs text-neutral-500">
         En saisissant un code de parrainage, vous aidez un membre de la communauté

@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/environmentUtils';
 
 interface ReferralStats {
   total_points: number;
@@ -39,7 +40,7 @@ export const useReferralData = () => {
           filter: `user_id=eq.${user.id}`
         },
         (payload) => {
-          console.log('Points de parrainage mis à jour:', payload);
+          logger.info('Points de parrainage mis à jour');
           if (payload.new) {
             setStats(payload.new as ReferralStats);
           }
