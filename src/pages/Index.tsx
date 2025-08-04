@@ -125,14 +125,6 @@ const Index = React.memo(() => {
         
         <SafetySection />
         
-        {/* Bannière footer - Dernière chance de conversion */}
-        <section className="py-6 border-t border-border/20 bg-muted/30">
-          <div className="container mx-auto px-4 flex justify-center">
-            <AdContainer variant="bordered" title="Dernières annonces">
-              <OptimizedAdsterraBanner slot="FOOTER_BANNER" />
-            </AdContainer>
-          </div>
-        </section>
         
         <Footer />
         
