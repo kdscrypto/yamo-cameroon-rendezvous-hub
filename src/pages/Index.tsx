@@ -6,7 +6,7 @@ import HeroSection from '@/components/Homepage/HeroSection';
 import CategoriesSection from '@/components/Homepage/CategoriesSection';
 import OptimizedAdSections from '@/components/Homepage/OptimizedAdSections';
 import SafetySection from '@/components/Homepage/SafetySection';
-import AdsterraWrapper from '@/components/AdsterraWrapper';
+import OptimizedAdsterraBanner from '@/components/OptimizedAdsterraBanner';
 import AdsterraVerification from '@/components/ads/AdsterraVerification';
 import AdContainer from '@/components/ads/AdContainer';
 import AdsterraDebugPanel from '@/components/ads/AdsterraDebugPanel';
@@ -95,7 +95,7 @@ const Index = React.memo(() => {
         <section className="py-6 bg-gradient-to-r from-background/50 to-accent/5">
           <div className="container mx-auto px-4 flex justify-center">
             <AdContainer variant="premium" title="Annonces premium">
-              <AdsterraWrapper slot="BANNER_728x90" />
+              <OptimizedAdsterraBanner slot="BANNER_728x90" />
             </AdContainer>
           </div>
         </section>
@@ -112,10 +112,10 @@ const Index = React.memo(() => {
               <aside className="lg:col-span-1">
                 <div className="sticky top-20 space-y-6">
                   <AdContainer variant="sidebar" title="Annonces sponsorisées">
-                    <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
+                    <OptimizedAdsterraBanner slot="SIDEBAR_RECTANGLE" />
                   </AdContainer>
                   <AdContainer variant="sidebar">
-                    <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
+                    <OptimizedAdsterraBanner slot="SIDEBAR_RECTANGLE" />
                   </AdContainer>
                 </div>
               </aside>
@@ -129,7 +129,7 @@ const Index = React.memo(() => {
         <section className="py-6 border-t border-border/20 bg-muted/30">
           <div className="container mx-auto px-4 flex justify-center">
             <AdContainer variant="bordered" title="Dernières annonces">
-              <AdsterraWrapper slot="FOOTER_BANNER" />
+              <OptimizedAdsterraBanner slot="FOOTER_BANNER" />
             </AdContainer>
           </div>
         </section>
@@ -139,7 +139,7 @@ const Index = React.memo(() => {
         {/* Bannière mobile sticky en bas - Optimisée pour mobile */}
         <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-background/95 backdrop-blur-sm border-t border-border/20 p-2">
           <div className="flex justify-center">
-            <AdsterraWrapper slot="MOBILE_BANNER" />
+            <OptimizedAdsterraBanner slot="MOBILE_BANNER" />
           </div>
         </div>
         

@@ -1,22 +1,18 @@
 import { useEffect } from 'react';
-import { shouldShowAdsInDev } from '@/config/adsterraConfig';
+import { shouldShowAds, enableTestMode, isDevelopment } from '@/config/adsterra';
 
 export const useAdsterra = () => {
   useEffect(() => {
-    // Ne pas charger les scripts en mode développement sauf si autorisé
-    if (process.env.NODE_ENV === 'development' && !shouldShowAdsInDev()) {
-      console.log('useAdsterra: Mode développement - scripts Adsterra non chargés (activez les tests dans AdsterraVerification)');
+    // Activer automatiquement le mode test en développement
+    enableTestMode();
+
+    // Ne pas charger les scripts globaux en mode développement sauf si autorisé
+    if (!shouldShowAds()) {
+      console.log('🔧 useAdsterra: Mode développement - scripts Adsterra non chargés. Mode test activé automatiquement.');
       return;
     }
 
-    // Vérifier si les scripts sont déjà chargés
-    const existingScript = document.querySelector('script[src*="adsterra"]');
-    if (existingScript) {
-      console.log('useAdsterra: Scripts Adsterra déjà chargés');
-      return;
-    }
-
-    console.log('useAdsterra: Chargement des scripts Adsterra');
+    console.log('🚀 useAdsterra: Environnement prêt pour Adsterra');
     
     // Note: Adsterra ne nécessite pas de script global
     // Les bannières sont chargées individuellement via leur code d'intégration
@@ -25,17 +21,19 @@ export const useAdsterra = () => {
 
   const refreshAds = () => {
     try {
-      if (process.env.NODE_ENV === 'development') {
-        console.log('useAdsterra: Mode développement - rafraîchissement simulé');
+      if (isDevelopment()) {
+        console.log('🔄 useAdsterra: Mode développement - rafraîchissement simulé');
+        // Forcer le rechargement des bannières en développement
+        window.dispatchEvent(new Event('adsterra-refresh'));
         return;
       }
 
-      console.log('useAdsterra: Rafraîchissement des bannières Adsterra');
+      console.log('🔄 useAdsterra: Rafraîchissement des bannières Adsterra');
       // Pour Adsterra, le rafraîchissement peut se faire en rechargeant les bannières
-      // Ceci dépend de la méthode d'intégration choisie
+      window.dispatchEvent(new Event('adsterra-refresh'));
       
     } catch (error) {
-      console.error('useAdsterra: Erreur lors du rafraîchissement:', error);
+      console.error('❌ useAdsterra: Erreur lors du rafraîchissement:', error);
     }
   };
 

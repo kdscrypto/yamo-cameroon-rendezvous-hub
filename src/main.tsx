@@ -6,12 +6,16 @@ import ErrorBoundary from "./components/ErrorBoundary.tsx";
 import "./index.css";
 import { optimizeForProduction } from './utils/environmentUtils';
 import { ProductionUtils } from './utils/productionMonitoring';
+import { initializeAdsterra } from './utils/adsterraSetup';
 
 // Optimiser pour la production
 optimizeForProduction();
 
 // Démarrer le monitoring de production
 ProductionUtils.startProductionMonitoring();
+
+// Initialiser le système Adsterra optimisé
+initializeAdsterra();
 
 // Ensure we have a root element before rendering
 const rootElement = document.getElementById("root");

@@ -1,6 +1,6 @@
 // src/components/AdsterraBanner.tsx
 import React, { useEffect, useRef } from 'react';
-import { AdsterraAdSlots, AdSlotType } from '@/config/adsterra';
+import { AdsterraAdSlots, AdSlotType, ADSTERRA_KEY, shouldShowAds, enableTestMode } from '@/config/adsterra';
 
 type AdsterraBannerProps = {
   slot: AdSlotType; // On passe maintenant un "slot" au lieu des détails
@@ -11,10 +11,13 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
   const adDetails = AdsterraAdSlots[slot];
 
   useEffect(() => {
+    // Activer le mode test en développement
+    enableTestMode();
+
     // Vérification et nettoyage du container
     const container = bannerRef.current;
     if (!container || !adDetails) {
-      console.warn(`AdsterraBanner: Container ou détails manquants pour ${slot}`);
+      console.warn(`🔧 AdsterraBanner: Container ou détails manquants pour ${slot}`);
       return;
     }
 
@@ -22,10 +25,7 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
     container.innerHTML = '';
 
     // En mode développement, vérifier si les tests sont autorisés
-    const isDev = process.env.NODE_ENV === 'development';
-    const devTestEnabled = isDev && localStorage.getItem('adsterra-dev-test') === 'true';
-    
-    if (isDev && !devTestEnabled) {
+    if (!shouldShowAds()) {
       // Afficher un placeholder en développement
       container.innerHTML = `
         <div style="
@@ -42,20 +42,22 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
           border-radius: 4px;
         ">
           <div>
-            <div style="font-weight: bold; margin-bottom: 4px;">Adsterra ${slot}</div>
+            <div style="font-weight: bold; margin-bottom: 4px;">🎯 Adsterra ${slot}</div>
             <div style="font-size: 12px; opacity: 0.8;">${adDetails.width}x${adDetails.height}</div>
             <div style="font-size: 10px; margin-top: 4px; opacity: 0.6;">Mode développement</div>
+            <div style="font-size: 10px; margin-top: 2px; opacity: 0.4;">Clé: ${ADSTERRA_KEY}</div>
           </div>
         </div>
       `;
+      console.log(`🎯 AdsterraBanner: Placeholder affiché pour ${slot} (${adDetails.width}x${adDetails.height}) - Activez le mode test avec: localStorage.setItem('adsterra-dev-test', 'true')`);
       return;
     }
 
-    const { key: adKey, width, height } = adDetails;
+    const { width, height } = adDetails;
 
     // Vérifier que la clé est valide
-    if (!adKey || adKey.length < 10) {
-      console.error(`AdsterraBanner: Clé invalide pour ${slot}: ${adKey}`);
+    if (!ADSTERRA_KEY || ADSTERRA_KEY.length < 10) {
+      console.error(`❌ AdsterraBanner: Clé invalide pour ${slot}: ${ADSTERRA_KEY}`);
       container.innerHTML = `
         <div style="
           width: 100%; 
@@ -69,7 +71,7 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
           font-size: 12px;
           text-align: center;
         ">
-          Erreur: Clé Adsterra invalide
+          ❌ Erreur: Clé Adsterra invalide
         </div>
       `;
       return;
@@ -81,7 +83,7 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
       configScript.type = 'text/javascript';
       configScript.innerHTML = `
         atOptions = {
-          'key': '${adKey}',
+          'key': '${ADSTERRA_KEY}',
           'format': 'iframe',
           'height': ${height},
           'width': ${width},
@@ -92,12 +94,12 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
       // Script d'invocation
       const invokeScript = document.createElement('script');
       invokeScript.type = 'text/javascript';
-      invokeScript.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+      invokeScript.src = `//www.topcreativeformat.com/${ADSTERRA_KEY}/invoke.js`;
       invokeScript.async = true;
 
       // Gestion des erreurs de chargement
       invokeScript.onerror = () => {
-        console.error(`AdsterraBanner: Erreur de chargement du script pour ${slot}`);
+        console.error(`❌ AdsterraBanner: Erreur de chargement du script pour ${slot}`);
         container.innerHTML = `
           <div style="
             width: 100%; 
@@ -112,8 +114,9 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
             text-align: center;
           ">
             <div>
-              <div>Pub temporairement indisponible</div>
+              <div>⚠️ Pub temporairement indisponible</div>
               <div style="font-size: 10px; margin-top: 4px; opacity: 0.8;">Rechargement automatique...</div>
+              <div style="font-size: 10px; margin-top: 2px; opacity: 0.6;">Clé: ${ADSTERRA_KEY}</div>
             </div>
           </div>
         `;
@@ -128,14 +131,19 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
         }, 5000);
       };
 
+      // Succès du chargement
+      invokeScript.onload = () => {
+        console.log(`✅ AdsterraBanner: Script chargé avec succès pour ${slot}`);
+      };
+
       // Ajouter les scripts au container
       container.appendChild(configScript);
       container.appendChild(invokeScript);
 
-      console.log(`AdsterraBanner: Bannière ${slot} initialisée avec la clé ${adKey}`);
+      console.log(`🚀 AdsterraBanner: Bannière ${slot} initialisée avec la clé ${ADSTERRA_KEY} (${width}x${height})`);
 
     } catch (error) {
-      console.error(`AdsterraBanner: Erreur lors de l'initialisation de ${slot}:`, error);
+      console.error(`💥 AdsterraBanner: Erreur lors de l'initialisation de ${slot}:`, error);
       container.innerHTML = `
         <div style="
           width: 100%; 
@@ -149,7 +157,10 @@ const AdsterraBanner: React.FC<AdsterraBannerProps> = ({ slot }) => {
           font-size: 12px;
           text-align: center;
         ">
-          Erreur de chargement
+          <div>
+            <div>💥 Erreur de chargement</div>
+            <div style="font-size: 10px; margin-top: 2px; opacity: 0.8;">Clé: ${ADSTERRA_KEY}</div>
+          </div>
         </div>
       `;
     }

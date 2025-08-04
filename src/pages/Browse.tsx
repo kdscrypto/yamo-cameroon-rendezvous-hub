@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import SearchResults from '@/components/SearchResults';
 import SEO from '@/components/SEO';
-import AdsterraWrapper from '@/components/AdsterraWrapper';
+import OptimizedAdsterraBanner from '@/components/OptimizedAdsterraBanner';
 import AdContainer from '@/components/ads/AdContainer';
 import { useApprovedAds } from '@/hooks/useApprovedAds';
 import { useSEO } from '@/hooks/useSEO';
@@ -134,7 +134,7 @@ const Browse = () => {
             {/* Header Ad Banner */}
             <div className="mb-8">
               <div className="flex justify-center">
-                <AdsterraWrapper slot="BANNER_728x90" />
+                <OptimizedAdsterraBanner slot="BANNER_728x90" />
               </div>
             </div>
 
@@ -208,10 +208,10 @@ const Browse = () => {
               {/* Sidebar with Ads */}
               <div className="lg:col-span-1 space-y-6">
                 <AdContainer title="Publicité" variant="bordered">
-                  <AdsterraWrapper slot="SIDEBAR_RECTANGLE" />
+                  <OptimizedAdsterraBanner slot="SIDEBAR_RECTANGLE" />
                 </AdContainer>
                 <AdContainer title="Partenaires" variant="subtle">
-                  <AdsterraWrapper slot="CONTENT_RECTANGLE" />
+                  <OptimizedAdsterraBanner slot="CONTENT_RECTANGLE" />
                 </AdContainer>
               </div>
             </div>

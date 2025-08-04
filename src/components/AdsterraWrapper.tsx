@@ -11,7 +11,7 @@ type AdsterraWrapperProps = {
 const AdsterraWrapper: React.FC<AdsterraWrapperProps> = ({ slot, className }) => {
   const adDetails = AdsterraAdSlots[slot];
 
-  if (!adDetails || adDetails.key.startsWith('REMPLACEZ_MOI')) {
+  if (!adDetails) {
     // Ne rien rendre si le slot n'est pas bien configuré
     return null;
   }

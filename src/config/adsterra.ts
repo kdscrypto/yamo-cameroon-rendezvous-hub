@@ -1,5 +1,8 @@
 // src/config/adsterra.ts
 
+// Clé Adsterra unique pour tous les placements
+export const ADSTERRA_KEY = 'ea16b4d4359bf41430e0c1ad103b76af';
+
 // Définition des types de slots publicitaires disponibles dans l'application
 export type AdSlotType = 
   | 'BANNER_728x90'
@@ -7,32 +10,47 @@ export type AdSlotType =
   | 'CONTENT_RECTANGLE'
   | 'FOOTER_BANNER'
   | 'MOBILE_BANNER';
-  
-// Base de données centrale pour toutes nos clés et dimensions Adsterra
-export const AdsterraAdSlots: Record<AdSlotType, { key: string; width: number; height: number }> = {
+
+// Configuration des dimensions pour chaque type de slot
+export const AdsterraAdSlots: Record<AdSlotType, { width: number; height: number }> = {
   BANNER_728x90: {
-    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 728,
     height: 90,
   },
   SIDEBAR_RECTANGLE: {
-    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 300,
     height: 250,
   },
   CONTENT_RECTANGLE: {
-    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 336,
     height: 280,
   },
   FOOTER_BANNER: {
-    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 728,
     height: 90,
   },
   MOBILE_BANNER: {
-    key: 'ea16b4d4359bf41430e0c1ad103b76af',
     width: 320,
     height: 50,
   },
+};
+
+// Utilitaires pour le développement et les tests
+export const isDevelopment = () => process.env.NODE_ENV === 'development';
+export const isTestModeEnabled = () => {
+  if (typeof window === 'undefined') return false;
+  return localStorage.getItem('adsterra-dev-test') === 'true';
+};
+
+// Activer le mode test en développement par défaut
+export const enableTestMode = () => {
+  if (typeof window !== 'undefined' && isDevelopment()) {
+    localStorage.setItem('adsterra-dev-test', 'true');
+    console.log('🔧 Mode test Adsterra activé pour le développement');
+  }
+};
+
+// Vérifier si les ads doivent être affichées
+export const shouldShowAds = () => {
+  return !isDevelopment() || isTestModeEnabled();
 };
