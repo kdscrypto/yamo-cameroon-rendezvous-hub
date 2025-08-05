@@ -37,7 +37,7 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
   });
 
   const moderationMutation = useMutation({
-    mutationFn: async ({ action, reason, notes }: { action: 'approve' | 'reject'; reason?: string; notes?: string }) => {
+    mutationFn: async ({ action, reason, notes, newCategory }: { action: 'approve' | 'reject'; reason?: string; notes?: string; newCategory?: string }) => {
       console.log('🚀 STARTING MODERATION PROCESS:', { action, reason, notes, adId: ad.id });
       console.log('📊 AD DATA:', ad);
       console.log('👤 USER ID:', user?.id);
@@ -59,6 +59,12 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
           moderated_at: new Date().toISOString(),
           moderated_by: user.id
         };
+
+        // Update category if provided and different from current
+        if (action === 'approve' && newCategory && newCategory !== ad.category) {
+          updateData.category = newCategory;
+          console.log('🏷️ Updating category from', ad.category, 'to', newCategory);
+        }
 
         if (action === 'reject') {
           let moderationNotes = '';
@@ -134,7 +140,7 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
     }
   });
 
-  const handleModerationSubmit = (action: 'approve' | 'reject', reason?: string, notes?: string) => {
+  const handleModerationSubmit = (action: 'approve' | 'reject', reason?: string, notes?: string, newCategory?: string) => {
     console.log('🎯 MODAL SUBMIT HANDLER CALLED:', { action, reason, notes });
     console.log('🔄 Mutation state:', { 
       isPending: moderationMutation.isPending, 
@@ -144,7 +150,7 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
     
     try {
       console.log('🚀 CALLING MUTATION...');
-      moderationMutation.mutate({ action, reason, notes });
+      moderationMutation.mutate({ action, reason, notes, newCategory });
     } catch (error) {
       console.error('💥 ERROR IN SUBMIT HANDLER:', error);
     }

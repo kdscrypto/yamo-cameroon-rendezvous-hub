@@ -9,7 +9,7 @@ import { Check, X, AlertCircle } from 'lucide-react';
 interface ModerationActionsProps {
   ad: any;
   moderationReasons: any[] | undefined;
-  onSubmit: (action: 'approve' | 'reject', reason?: string, notes?: string) => void;
+  onSubmit: (action: 'approve' | 'reject', reason?: string, notes?: string, newCategory?: string) => void;
   isSubmitting: boolean;
 }
 
@@ -17,6 +17,15 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
   const [moderationAction, setModerationAction] = useState<'approve' | 'reject' | null>(null);
   const [selectedReason, setSelectedReason] = useState('');
   const [customNotes, setCustomNotes] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(ad?.category || '');
+
+  // Liste des catégories disponibles
+  const categories = [
+    { value: 'rencontres', label: 'Rencontres' },
+    { value: 'massages', label: 'Massages' },
+    { value: 'produits', label: 'Produits' },
+    { value: 'evenements', label: 'Événements' }
+  ];
 
   const handleSubmit = () => {
     console.log('🔥 HANDLE SUBMIT CALLED');
@@ -28,14 +37,15 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       return;
     }
     
-    console.log('🚀 Calling onSubmit with:', { moderationAction, selectedReason, customNotes });
-    onSubmit(moderationAction, selectedReason, customNotes);
+    console.log('🚀 Calling onSubmit with:', { moderationAction, selectedReason, customNotes, selectedCategory });
+    onSubmit(moderationAction, selectedReason, customNotes, selectedCategory);
   };
 
   const resetForm = () => {
     setModerationAction(null);
     setSelectedReason('');
     setCustomNotes('');
+    setSelectedCategory(ad?.category || '');
   };
 
   const canSubmit = () => {
@@ -135,14 +145,37 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       )}
 
       {moderationAction === 'approve' && (
-        <div className="p-4 border border-green-200 dark:border-green-800 rounded-lg bg-green-50 dark:bg-green-900/20">
-          <div className="flex items-center gap-2 text-green-800 dark:text-green-400">
-            <Check className="w-4 h-4" />
-            <span className="font-medium">Approbation de l'annonce</span>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="category" className="text-foreground font-medium">Catégorie de l'annonce</Label>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="bg-background text-foreground border-border">
+                <SelectValue placeholder="Sélectionnez une catégorie" />
+              </SelectTrigger>
+              <SelectContent className="bg-background border-border">
+                {categories.map((category) => (
+                  <SelectItem key={category.value} value={category.value} className="text-foreground">
+                    {category.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {selectedCategory !== ad?.category && (
+              <p className="text-sm text-yellow-600 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded border border-yellow-200 dark:border-yellow-800">
+                ⚠️ Catégorie modifiée : "{categories.find(c => c.value === ad?.category)?.label}" → "{categories.find(c => c.value === selectedCategory)?.label}"
+              </p>
+            )}
           </div>
-          <p className="text-sm text-green-700 dark:text-green-300 mt-2">
-            Cette annonce sera approuvée et deviendra visible publiquement.
-          </p>
+          
+          <div className="p-4 border border-green-200 dark:border-green-800 rounded-lg bg-green-50 dark:bg-green-900/20">
+            <div className="flex items-center gap-2 text-green-800 dark:text-green-400">
+              <Check className="w-4 h-4" />
+              <span className="font-medium">Approbation de l'annonce</span>
+            </div>
+            <p className="text-sm text-green-700 dark:text-green-300 mt-2">
+              Cette annonce sera approuvée et deviendra visible publiquement.
+            </p>
+          </div>
         </div>
       )}
 

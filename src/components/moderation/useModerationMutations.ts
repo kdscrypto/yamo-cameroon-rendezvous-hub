@@ -17,7 +17,9 @@ export const useModerationMutations = () => {
   };
 
   const quickApproveMutation = useMutation({
-    mutationFn: async (adId: string) => {
+    mutationFn: async (params: string | { adId: string; newCategory?: string }) => {
+      const adId = typeof params === 'string' ? params : params.adId;
+      const newCategory = typeof params === 'object' ? params.newCategory : undefined;
       try {
         console.log('=== DÉBUT APPROBATION ANNONCE ===');
         console.log('ID annonce à approuver:', adId);
@@ -31,7 +33,7 @@ export const useModerationMutations = () => {
         console.log('Récupération des détails de l\'annonce...');
         const { data: adData, error: fetchError } = await supabase
           .from('ads')
-          .select('expires_at, title, moderation_status, status, user_id')
+          .select('expires_at, title, moderation_status, status, user_id, category')
           .eq('id', adId)
           .single();
         
@@ -51,12 +53,18 @@ export const useModerationMutations = () => {
         const isVip = adData.expires_at && new Date(adData.expires_at) > new Date();
         console.log('Annonce VIP:', isVip);
         
-        const updateData = {
+        const updateData: any = {
           moderation_status: 'approved' as const,
           status: 'active' as const,
           moderated_at: new Date().toISOString(),
           moderated_by: user.id
         };
+
+        // Update category if provided and different from current
+        if (newCategory && newCategory !== adData.category) {
+          updateData.category = newCategory;
+          console.log('🏷️ Updating category from', adData.category, 'to', newCategory);
+        }
 
         console.log('Données de mise à jour:', updateData);
         
