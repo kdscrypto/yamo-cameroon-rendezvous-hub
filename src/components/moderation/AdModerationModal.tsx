@@ -76,7 +76,7 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto bg-background">
         <DialogHeader className="border-b border-border pb-4">
-          <DialogTitle className="flex items-center gap-2 text-primary">
+          <DialogTitle className="flex items-center gap-2 text-hierarchy-secondary">
             Modération d'annonce
             {isVip && (
               <span className="text-sm bg-primary text-primary-foreground px-2 py-1 rounded-full font-medium">
@@ -84,7 +84,7 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
               </span>
             )}
           </DialogTitle>
-          <DialogDescription className="text-muted-foreground">
+          <DialogDescription className="text-hierarchy-body">
             Examinez l'annonce et prenez une décision de modération
             {isVip && ' (Cette annonce bénéficiera d\'une mise en avant prioritaire si approuvée)'}
           </DialogDescription>
@@ -92,10 +92,10 @@ const AdModerationModal = ({ ad, open, onOpenChange, onModerationComplete }: AdM
 
         <Tabs defaultValue="preview" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-muted">
-            <TabsTrigger value="preview" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-primary">
+            <TabsTrigger value="preview" className="text-hierarchy-body data-[state=active]:bg-background data-[state=active]:text-hierarchy-tertiary font-medium">
               Aperçu public
             </TabsTrigger>
-            <TabsTrigger value="moderation" className="text-foreground data-[state=active]:bg-background data-[state=active]:text-primary">
+            <TabsTrigger value="moderation" className="text-hierarchy-body data-[state=active]:bg-background data-[state=active]:text-hierarchy-tertiary font-medium">
               Modération
             </TabsTrigger>
           </TabsList>

@@ -45,7 +45,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
   return (
     <div className="space-y-6 bg-background border border-border rounded-lg p-6">
       <div className="text-center mb-4">
-        <h2 className="text-lg font-semibold text-primary mb-2">
+        <h2 className="text-hierarchy-tertiary mb-2">
           Aperçu de l'annonce (telle qu'elle apparaîtra aux visiteurs)
         </h2>
         <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -55,7 +55,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-bold text-foreground">{ad.title}</h1>
+            <h1 className="text-hierarchy-secondary">{ad.title}</h1>
             {isVip && (
               <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0">
                 <Star className="w-3 h-3 mr-1" />
@@ -63,7 +63,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-4 text-sm text-hierarchy-body">
             <span className="flex items-center gap-1">
               <MapPin className="w-4 h-4" />
               {getLocationDisplay(ad.location)}
@@ -76,11 +76,11 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="text-foreground border-border">
+          <Button variant="outline" size="sm" className="text-hierarchy-body border-border">
             <Heart className="w-4 h-4 mr-1" />
             Sauvegarder
           </Button>
-          <Button variant="outline" size="sm" className="text-foreground border-border">
+          <Button variant="outline" size="sm" className="text-hierarchy-body border-border">
             <Share2 className="w-4 h-4 mr-1" />
             Partager
           </Button>
@@ -93,7 +93,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
           {getCategoryDisplay(ad.category)}
         </Badge>
         {ad.price && (
-          <div className="text-2xl font-bold text-primary">
+          <div className="text-hierarchy-secondary">
             {ad.price} FCFA
           </div>
         )}
@@ -102,7 +102,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
       {/* Images */}
       {ad.images && ad.images.length > 0 ? (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-foreground">Photos</h3>
+          <h3 className="text-hierarchy-tertiary">Photos</h3>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             {ad.images.map((imageUrl: string, index: number) => (
               <div key={index} className="aspect-square bg-muted rounded-lg overflow-hidden border border-border">
@@ -122,16 +122,16 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
       ) : (
         <div className="text-center py-8">
           <User className="w-16 h-16 text-muted-foreground mx-auto mb-2" />
-          <p className="text-muted-foreground">Aucune image disponible</p>
+          <p className="text-hierarchy-tertiary">Aucune image disponible</p>
         </div>
       )}
 
       {/* Description */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-foreground">Description</h3>
+        <h3 className="text-hierarchy-tertiary">Description</h3>
         <Card className="bg-card border-border">
           <CardContent className="p-4">
-            <p className="text-foreground whitespace-pre-wrap leading-relaxed">
+            <p className="text-hierarchy-body whitespace-pre-wrap leading-relaxed">
               {ad.description}
             </p>
           </CardContent>
@@ -142,14 +142,14 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
 
       {/* Contact Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+        <h3 className="text-hierarchy-tertiary flex items-center gap-2">
           <MessageCircle className="w-5 h-5" />
           Informations de contact
         </h3>
         
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-foreground">Contacter l'annonceur</CardTitle>
+            <CardTitle className="text-hierarchy-tertiary">Contacter l'annonceur</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Phone contact */}
@@ -158,8 +158,8 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
                 <div className="flex items-center gap-3">
                   <Phone className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="font-medium text-foreground">Téléphone</p>
-                    <p className="text-sm text-muted-foreground">Appel direct</p>
+                    <p className="font-medium text-hierarchy-body">Téléphone</p>
+                    <p className="text-sm text-hierarchy-caption">Appel direct</p>
                   </div>
                 </div>
                 <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
@@ -174,11 +174,11 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
                 <div className="flex items-center gap-3">
                   <Mail className="w-5 h-5 text-primary" />
                   <div>
-                    <p className="font-medium text-foreground">Email</p>
-                    <p className="text-sm text-muted-foreground">Message sécurisé</p>
+                    <p className="font-medium text-hierarchy-body">Email</p>
+                    <p className="text-sm text-hierarchy-caption">Message sécurisé</p>
                   </div>
                 </div>
-                <Button variant="outline" className="text-foreground border-border">
+                <Button variant="outline" className="text-hierarchy-body border-border">
                   Envoyer un message
                 </Button>
               </div>
@@ -190,8 +190,8 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
                 <div className="flex items-center gap-3">
                   <MessageCircle className="w-5 h-5 text-green-600" />
                   <div>
-                    <p className="font-medium text-foreground">WhatsApp</p>
-                    <p className="text-sm text-muted-foreground">Chat instantané</p>
+                    <p className="font-medium text-hierarchy-body">WhatsApp</p>
+                    <p className="text-sm text-hierarchy-caption">Chat instantané</p>
                   </div>
                 </div>
                 <Button className="bg-green-600 text-white hover:bg-green-700">
@@ -203,7 +203,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
             {/* Fallback if no contact info */}
             {!ad.phone && !ad.email && !ad.whatsapp && (
               <div className="text-center py-4">
-                <p className="text-muted-foreground">
+                <p className="text-hierarchy-tertiary">
                   Aucune information de contact disponible
                 </p>
               </div>
@@ -215,7 +215,7 @@ const AdFullPreview = ({ ad }: AdFullPreviewProps) => {
       {/* Safety notice */}
       <Card className="bg-muted/50 border-border">
         <CardContent className="p-4">
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-sm text-hierarchy-caption text-center text-enhanced-contrast">
             🛡️ Pour votre sécurité, ne partagez jamais d'informations personnelles avant d'avoir vérifié l'identité de votre interlocuteur.
           </p>
         </CardContent>

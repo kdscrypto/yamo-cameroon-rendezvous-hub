@@ -50,7 +50,7 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
   return (
     <div className="space-y-4 bg-card border border-border rounded-lg p-4">
       <div className="flex justify-between items-start">
-        <h3 className="text-lg font-semibold text-card-foreground">{ad.title}</h3>
+        <h3 className="text-hierarchy-secondary">{ad.title}</h3>
         <Badge className={getStatusColor(ad.moderation_status)}>
           {ad.moderation_status === 'pending' ? 'En attente' :
            ad.moderation_status === 'approved' ? 'Approuvée' : 'Rejetée'}
@@ -58,21 +58,21 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
       </div>
 
       <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
-        <p className="text-foreground font-medium">{getCategoryDisplay(ad.category)} • {getLocationDisplay(ad.location)}</p>
-        <p>Créée le {new Date(ad.created_at).toLocaleDateString('fr-FR')}</p>
-        {ad.price && <p className="text-lg font-semibold text-primary mt-2">{ad.price} FCFA</p>}
+        <p className="text-hierarchy-body font-medium">{getCategoryDisplay(ad.category)} • {getLocationDisplay(ad.location)}</p>
+        <p className="text-hierarchy-body">Créée le {new Date(ad.created_at).toLocaleDateString('fr-FR')}</p>
+        {ad.price && <p className="text-hierarchy-tertiary text-lg font-semibold mt-2">{ad.price} FCFA</p>}
       </div>
 
       <div className="space-y-2">
-        <Label className="text-foreground font-medium">Description</Label>
+        <Label className="text-hierarchy-tertiary font-medium">Description</Label>
         <div className="p-3 bg-muted/50 border border-border rounded-md max-h-32 overflow-y-auto">
-          <p className="text-sm text-foreground whitespace-pre-wrap">{ad.description}</p>
+          <p className="text-sm text-hierarchy-body whitespace-pre-wrap">{ad.description}</p>
         </div>
       </div>
 
       {ad.images && ad.images.length > 0 ? (
         <div className="space-y-2">
-          <Label className="text-foreground font-medium">Images ({ad.images.length})</Label>
+          <Label className="text-hierarchy-tertiary font-medium">Images ({ad.images.length})</Label>
           <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border border-border rounded-md p-2 bg-muted/30">
             {ad.images.map((imageUrl: string, index: number) => (
               <div key={index} className="aspect-square bg-muted border border-border rounded-lg overflow-hidden">
@@ -91,11 +91,11 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
         </div>
       ) : (
         <div className="space-y-2">
-          <Label className="text-foreground font-medium">Images</Label>
+          <Label className="text-hierarchy-tertiary font-medium">Images</Label>
           <div className="aspect-video bg-muted/30 border border-border rounded-lg flex items-center justify-center">
             <div className="text-center">
               <User className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">Aucune image</p>
+              <p className="text-sm text-hierarchy-tertiary">Aucune image</p>
             </div>
           </div>
         </div>
@@ -103,9 +103,9 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
 
       {ad.moderation_notes && (
         <div className="space-y-2">
-          <Label className="text-foreground font-medium">Notes de modération précédentes</Label>
+          <Label className="text-red-400 text-lg font-semibold">Notes de modération précédentes</Label>
           <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-md">
-            <p className="text-sm text-foreground font-medium">{ad.moderation_notes}</p>
+            <p className="text-sm text-red-300 text-enhanced-contrast font-medium">{ad.moderation_notes}</p>
           </div>
         </div>
       )}
