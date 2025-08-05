@@ -99,13 +99,13 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
 
       {moderationAction === 'reject' && (
         <div className="space-y-4 p-4 border border-destructive/30 rounded-lg bg-destructive/10">
-          <div className="flex items-center gap-2 text-hierarchy-body mb-2">
+          <div className="flex items-center gap-2 text-white mb-2">
             <AlertCircle className="w-4 h-4 text-destructive" />
             <span className="font-medium">Raisons du rejet</span>
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="reason" className="text-hierarchy-body font-medium">Raison prédéfinie (optionnel)</Label>
+            <Label htmlFor="reason" className="text-white font-medium">Raison prédéfinie (optionnel)</Label>
             <Select value={selectedReason} onValueChange={setSelectedReason}>
               <SelectTrigger className="bg-background text-foreground border-border">
                 <SelectValue placeholder="Sélectionnez une raison" />
@@ -121,7 +121,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes" className="text-hierarchy-body font-medium">Message explicatif pour l'annonceur *</Label>
+            <Label htmlFor="notes" className="text-white font-medium">Message explicatif pour l'annonceur *</Label>
             <Textarea
               id="notes"
               placeholder="Expliquez clairement à l'annonceur pourquoi son annonce est rejetée et comment il peut l'améliorer..."
@@ -130,7 +130,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
               rows={4}
               className="resize-none bg-background text-foreground border-border focus:border-primary"
             />
-            <p className="text-xs text-hierarchy-caption">
+            <p className="text-xs text-white">
               Ce message sera visible par l'annonceur dans son tableau de bord
             </p>
           </div>
@@ -147,7 +147,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
       {moderationAction === 'approve' && (
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="category" className="text-hierarchy-body font-medium">Catégorie de l'annonce</Label>
+            <Label htmlFor="category" className="text-white font-medium">Catégorie de l'annonce</Label>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="bg-background text-foreground border-border">
                 <SelectValue placeholder="Sélectionnez une catégorie" />
@@ -194,7 +194,7 @@ const ModerationActions = ({ ad, moderationReasons, onSubmit, isSubmitting }: Mo
               {isSubmitting ? 'Traitement...' : 
                moderationAction === 'approve' ? 'Confirmer l\'approbation' : 'Confirmer le rejet'}
             </Button>
-            <Button variant="outline" onClick={resetForm} disabled={isSubmitting} className="text-hierarchy-body border-border">
+            <Button variant="outline" onClick={resetForm} disabled={isSubmitting} className="text-white border-border">
               Annuler
             </Button>
           </div>

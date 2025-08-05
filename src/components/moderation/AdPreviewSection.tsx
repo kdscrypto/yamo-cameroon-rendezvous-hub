@@ -58,21 +58,21 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
       </div>
 
       <div className="text-sm text-muted-foreground bg-muted/50 p-3 rounded-md">
-        <p className="text-hierarchy-body font-medium">{getCategoryDisplay(ad.category)} • {getLocationDisplay(ad.location)}</p>
-        <p className="text-hierarchy-body">Créée le {new Date(ad.created_at).toLocaleDateString('fr-FR')}</p>
+        <p className="text-white font-medium">{getCategoryDisplay(ad.category)} • {getLocationDisplay(ad.location)}</p>
+        <p className="text-white">Créée le {new Date(ad.created_at).toLocaleDateString('fr-FR')}</p>
         {ad.price && <p className="text-hierarchy-tertiary text-lg font-semibold mt-2">{ad.price} FCFA</p>}
       </div>
 
       <div className="space-y-2">
-        <Label className="text-hierarchy-tertiary font-medium">Description</Label>
+        <Label className="text-white font-medium">Description</Label>
         <div className="p-3 bg-muted/50 border border-border rounded-md max-h-32 overflow-y-auto">
-          <p className="text-sm text-hierarchy-body whitespace-pre-wrap">{ad.description}</p>
+          <p className="text-sm text-white whitespace-pre-wrap">{ad.description}</p>
         </div>
       </div>
 
       {ad.images && ad.images.length > 0 ? (
         <div className="space-y-2">
-          <Label className="text-hierarchy-tertiary font-medium">Images ({ad.images.length})</Label>
+          <Label className="text-white font-medium">Images ({ad.images.length})</Label>
           <div className="grid grid-cols-2 gap-2 max-h-64 overflow-y-auto border border-border rounded-md p-2 bg-muted/30">
             {ad.images.map((imageUrl: string, index: number) => (
               <div key={index} className="aspect-square bg-muted border border-border rounded-lg overflow-hidden">
@@ -91,11 +91,11 @@ const AdPreviewSection = ({ ad }: AdPreviewSectionProps) => {
         </div>
       ) : (
         <div className="space-y-2">
-          <Label className="text-hierarchy-tertiary font-medium">Images</Label>
+          <Label className="text-white font-medium">Images</Label>
           <div className="aspect-video bg-muted/30 border border-border rounded-lg flex items-center justify-center">
             <div className="text-center">
               <User className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-hierarchy-tertiary">Aucune image</p>
+              <p className="text-sm text-white">Aucune image</p>
             </div>
           </div>
         </div>
